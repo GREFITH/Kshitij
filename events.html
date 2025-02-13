@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indian Cultural Events</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background-color: #FF9933;
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 2rem 0;
+        }
+
+        .event-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            animation: fadeInUp 1s ease-in-out;
+        }
+
+        .event-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .event-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .event-info {
+            padding: 1rem;
+        }
+
+        .event-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: #138808;
+        }
+
+        .event-date, .event-location {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .event-description {
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #138808;
+            color: white;
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #0e6606;
+        }
+
+        .live-updates {
+            background-color: white;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-top: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .live-updates h2 {
+            color: #FF9933;
+            margin-bottom: 1rem;
+        }
+
+        .update {
+            border-left: 4px solid #138808;
+            padding-left: 1rem;
+            margin-bottom: 1rem;
+            animation: slideIn 0.5s ease-in-out;
+        }
+
+        .update-time {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+            margin-top: 2rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Indian Cultural Events</h1>
+            <p>Celebrating the Rich Heritage of India</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="events-grid">
+            <div class="event-card">
+                <img src="images/navratri.jpg" alt="Mandli Garba" class="event-image">
+                <div class="event-info">
+                    <h3 class="event-title">Mandli Garba</h3>
+                    <p class="event-date">October 3-11 2024</p>
+                    <p class="event-location">Madhuban Party Plot:B/H Vedant Kadam Bunglows, 100 Feet Rd, off New Science City Road, Ognaj, Ahmedabad, Gujarat 380060</p>
+                    <p class="event-description">Experience the magic of Navratri like never before at Mandli Garba.
+                    </p>
+                    <a href="#" class="btn">Learn More</a>
+                </div>
+            </div>
+
+            <div class="event-card">
+                <img src="images/holi.jpg" alt="Holi Festival" class="event-image">
+                <div class="event-info">
+                    <h3 class="event-title">PUSHKAR HOLI SUNDOWNER 2.0</h3>
+                    <p class="event-date">March 13, 2025</p>
+                    <p class="event-location">Chauhan Sheraton by Mansingh Group
+                        Vamdev Road, near Gurudwara, Pushkar, Pushkar, Rajasthan 305022, India</p>
+                    <p class="event-description">Join the joyous celebration of colors, music, and spring at the Pushkar Holi Sundowner 2.0</p>
+                    <a href="#" class="btn">Learn More</a>
+                </div>
+            </div>
+
+            <div class="event-card">
+                <img src="images/Kumbh-Mela-aarti.jpg" alt="Kumbh Mela" class="event-image">
+                <div class="event-info">
+                    <h3 class="event-title">Kumbh Mela</h3>
+                    <p class="event-date">January 14 - March 4, 2025</p>
+                    <p class="event-location">Haridwar, Uttarakhand</p>
+                    <p class="event-description">Witness the world's largest religious gathering, held every 12 years at the banks of the holy Ganges River.</p>
+                    <a href="#" class="btn">Learn More</a>
+                </div>
+            </div>
+
+            <div class="event-card">
+                <img src="images/sunrise-yoga-1.jpg" alt="International Yoga Day" class="event-image">
+                <div class="event-info">
+                    <h3 class="event-title">International Yoga Day</h3>
+                    <p class="event-date">June 21, 2024</p>
+                    <p class="event-location">Nationwide</p>
+                    <p class="event-description">Join millions in celebrating the ancient practice of yoga with mass yoga sessions across India.</p>
+                    <a href="#" class="btn">Learn More</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="live-updates">
+            <h2>Live Updates</h2>
+            <div class="update">
+                <p class="update-time">September 17, 2024 - 10:30 AM</p>
+                <p>Preparations for the Diwali Festival are in full swing across major cities. Artisans are busy creating intricate rangoli designs and light installations.</p>
+            </div>
+            <div class="update">
+                <p class="update-time">September 17, 2024 - 2:15 PM</p>
+                <p>The Ministry of Culture announces special cultural performances to be held at historical monuments during the upcoming Diwali celebrations.</p>
+            </div>
+            <div class="update">
+                <p class="update-time">September 17, 2024 - 5:45 PM</p>
+                <p>Registration for the International Yoga Day main event in New Delhi opens. Limited spots available for participation at the iconic Red Fort.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Indian Cultural Events. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // This script would be used to fetch and display live updates dynamically
+        // For demonstration purposes, we'll simulate adding a new update every 30 seconds
+        setInterval(function() {
+            var updateSection = document.querySelector('.live-updates');
+            var newUpdate = document.createElement('div');
+            newUpdate.className = 'update';
+            var currentTime = new Date().toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+            newUpdate.innerHTML = `
+                <p class="update-time">September 17, 2024 - ${currentTime}</p>
+                <p>New update: More event details have been announced. Check the official website for the latest information.</p>
+            `;
+            updateSection.insertBefore(newUpdate, updateSection.children[1]);
+            if (updateSection.children.length > 5) {
+                updateSection.removeChild(updateSection.lastChild);
+            }
+        }, 30000);
+    </script>
+</body>
+</html>

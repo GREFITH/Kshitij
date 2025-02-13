@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indian Culture and Heritage Photo Gallery</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #FF9933;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.05);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .gallery-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item:hover .gallery-caption {
+            transform: translateY(0);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            max-width: 80%;
+            max-height: 80%;
+        }
+
+        .modal-content img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Indian Culture and Heritage Photo Gallery</h1>
+        <div class="gallery">
+            <div class="gallery-item fade-in" onclick="openModal('/api/placeholder/600/400')">
+                <img src="images/Taj_Mahal_(Edited).jpeg" alt="Taj Mahal">
+                <div class="gallery-caption">Taj Mahal, Agra</div>
+            </div>
+            <div class="gallery-item fade-in" onclick="openModal('/api/placeholder/600/400')">
+                <img src="images/bharatnatyam.jpg" alt="Traditional Indian Dance">
+                <div class="gallery-caption">Bharatanatyam Performance</div>
+            </div>
+            <div class="gallery-item fade-in" onclick="openModal('/api/placeholder/600/400')">
+                <img src="images/Diwali_3.jpg" alt="Indian Festival">
+                <div class="gallery-caption">Diwali Celebration</div>
+            </div>
+            <div class="gallery-item fade-in" onclick="openModal('/api/placeholder/600/400')">
+                <img src="images/dishes.jpg" alt="Indian Cuisine">
+                <div class="gallery-caption">Assorted Indian Dishes</div>
+            </div>
+            <div class="gallery-item fade-in" onclick="openModal('/api/placeholder/600/400')">
+                <img src="images/colorfulsaree.jpg" alt="Traditional Indian Clothing">
+                <div class="gallery-caption">Colorful Sarees</div>
+            </div>
+            <div class="gallery-item fade-in" onclick="openModal('/api/placeholder/600/400')">
+                <img src="images/hawamahal.png" alt="Indian Architecture">
+                <div class="gallery-caption">Hawa Mahal, Jaipur</div>
+            </div>
+            <div class="gallery-item fade-in" onclick="openModal('/api/placeholder/600/400')">
+                <img src="images/wedding.jpg" alt="Indian Wedding">
+                <div class="gallery-caption">Traditional Indian Wedding Ceremony</div>
+            </div>
+            <div class="gallery-item fade-in" onclick="openModal('/api/placeholder/600/400')">
+                <img src="images/sunrise-yoga-1.jpg" alt="Yoga">
+                <div class="gallery-caption">Yoga at Sunrise</div>
+            </div>
+            <div class="gallery-item fade-in" onclick="openModal('/api/placeholder/600/400')">
+                <img src="images/sitar.jpg" alt="Indian Music">
+                <div class="gallery-caption">Sitar Performance</div>
+            </div>
+            <div class="gallery-item fade-in" onclick="openModal('/api/placeholder/600/400')">
+                <img src="images/handwoven.jpeg" alt="Indian Textiles">
+                <div class="gallery-caption">Handwoven Textiles</div>
+            </div>
+            <div class="gallery-item fade-in" onclick="openModal('/api/placeholder/600/400')">
+                <img src="images/spice.jpg" alt="Indian Spices">
+                <div class="gallery-caption">Colorful Spice Market</div>
+            </div>
+            <div class="gallery-item fade-in" onclick="openModal('/api/placeholder/600/400')">
+                <img src="images/madhubani.jpeg" alt="Indian Art">
+                <div class="gallery-caption">Madhubani Painting</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="myModal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <div class="modal-content">
+            <img id="modalImage" src="images/loginbackground.jpg" alt="Large version">
+        </div>
+    </div>
+
+    <script>
+        function openModal(imageSrc) {
+            var modal = document.getElementById("myModal");
+            var modalImg = document.getElementById("modalImage");
+            modal.style.display = "flex";
+            modalImg.src = imageSrc;
+        }
+
+        function closeModal() {
+            var modal = document.getElementById("myModal");
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById("myModal");
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>

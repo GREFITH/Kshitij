@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indian Treasures - Exquisite Ornaments, Clothes, Art, and Crafts</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background-color: #FF9933;
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin: 0 10px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: #1bc20c;
+        }
+
+        .hero {
+            background-image: url('/api/placeholder/1200/400');
+            background-size: cover;
+            background-position: center;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            animation: zoomIn 1s ease-in-out;
+        }
+
+        .hero-content {
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 2rem;
+            border-radius: 10px;
+        }
+
+        .hero h2 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #138808;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #ff7702;
+        }
+
+        .products {
+            padding: 4rem 0;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .product-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            animation: fadeInUp 1s ease-in-out;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .product-info {
+            padding: 1rem;
+        }
+
+        .product-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-description {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .product-price {
+            font-weight: 600;
+            color: #ff7702;
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+            margin-top: 2rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Indian Treasures</h1>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="#ornaments">Ornaments</a></li>
+                    <li><a href="#clothes">Clothes</a></li>
+                    <li><a href="#art">Art</a></li>
+                    <li><a href="#crafts">Crafts</a></li>
+                </ul>
+            </nav>
+        </div>
+        <script src="https://cdn.botpress.cloud/webchat/v2.1/inject.js"></script>
+<script src="https://mediafiles.botpress.cloud/550b0c25-2584-43ba-8cdc-76646b136d3c/webchat/v2.1/config.js"></script>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h2>Discover the Beauty of India</h2>
+            <p>Exquisite ornaments, traditional clothes, breathtaking art, and intricate crafts</p>
+            <a href="#products" class="btn">Shop Now</a>
+        </div>
+    </section>
+
+    <section id="products" class="products">
+        <div class="container">
+            <h2>Our Products</h2>
+            <div class="product-grid">
+                <!-- Ornaments -->
+                <div class="product-card">
+                    <img src="images/handicraft.jpg" alt="Handicrafts" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">Handicrafts</h3>
+                        <p class="product-description">Handcrafted woven baskets made from natural materials like bamboo or cane</p>
+                        <p class="product-price">Rs.500.98</p>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="images/idol.jpg" alt="Saraswatiji" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">Saraswatiji</h3>
+                        <p class="product-description">Brown Metallic idol of lordess Saraswati </p>
+                        <p class="product-price">Rs.695.50</p>
+                    </div>
+                </div>
+
+                <!-- Clothes -->
+                <div class="product-card">
+                    <img src="images/silk.jpeg" alt="Silk Saree" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">Silk Saree</h3>
+                        <p class="product-description">Handwoven Banarasi silk saree with golden zari work</p>
+                        <p class="product-price">Rs.10500.65</p>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="images/kurta.jpg" alt="Embroidered Kurta" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">Embroidered Kurta</h3>
+                        <p class="product-description">Cotton kurta with colorful hand embroidery</p>
+                        <p class="product-price">Rs.1,999.87</p>
+                    </div>
+                </div>
+
+                <!-- Art -->
+                <div class="product-card">
+                    <img src="images/madhubani.jpeg" alt="Madhubani Painting" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">Madhubani Painting</h3>
+                        <p class="product-description">Traditional Madhubani painting on handmade paper</p>
+                        <p class="product-price">Rs.12,000.89</p>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="images/bronze.jpg" alt="Bronze Sculpture" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">Bronze Sculpture</h3>
+                        <p class="product-description">Handcrafted bronze sculpture of Lord Ganesha</p>
+                        <p class="product-price">Rs.3,000.90</p>
+                    </div>
+                </div>
+
+                <!-- Crafts -->
+                <div class="product-card">
+                    <img src="images/wood.jpeg" alt="Wooden Elephant" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">Wooden Elephant</h3>
+                        <p class="product-description">Hand-carved rosewood elephant with brass inlay</p>
+                        <p class="product-price">Rs.1079.99</p>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="images/PASHMS744-1.png" alt="Pashmina Shawl" class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">Pashmina Shawl</h3>
+                        <p class="product-description">100% pure pashmina shawl with intricate embroidery</p>
+                        <p class="product-price">Rs.7000</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Indian Treasures. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

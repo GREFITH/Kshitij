@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fun Camera</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f0f0;
+        }
+        .container {
+            text-align: center;
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+        #videoElement {
+            width: 100%;
+            max-width: 500px;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+        #canvasElement {
+            display: none;
+        }
+        #photoButton {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        #photoButton:hover {
+            background-color: #2980b9;
+        }
+        #photoContainer {
+            margin-top: 2rem;
+        }
+        #photoImage {
+            max-width: 100%;
+            border-radius: 10px;
+            display: none;
+        }
+    </style>
+    <script src="https://cdn.botpress.cloud/webchat/v2.1/inject.js"></script>
+    <script src="https://mediafiles.botpress.cloud/550b0c25-2584-43ba-8cdc-76646b136d3c/webchat/v2.1/config.js"></script>
+</head>
+<body>
+    <!-- <nav>
+        <ul>
+            <li style="list-style: none;"><a style="text-decoration: none; color: orange;" href="index.html">Home</a></li>
+        </ul>
+    </nav> -->
+    <div class="container">
+        <h1>Fun Camera</h1>
+        <video id="videoElement" autoplay playsinline></video>
+        <canvas id="canvasElement"></canvas>
+        <button id="photoButton">Take Photo</button>
+        <div id="photoContainer">
+            <img id="photoImage" alt="Your photo">
+        </div>
+    </div>
+
+    <script>
+        const video = document.getElementById('videoElement');
+        const canvas = document.getElementById('canvasElement');
+        const photo = document.getElementById('photoImage');
+        const photoButton = document.getElementById('photoButton');
+
+        // Access the user's camera
+        async function setupCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+            } catch (error) {
+                console.error('Error accessing the camera:', error);
+                alert('Unable to access the camera. Please make sure you have given permission and your device has a camera.');
+            }
+        }
+
+        // Take a photo
+        function takePhoto() {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            photo.src = canvas.toDataURL('image/jpeg');
+            photo.style.display = 'block';
+        }
+
+        // Set up event listeners
+        photoButton.addEventListener('click', takePhoto);
+        
+        // Initialize the camera when the page loads
+        setupCamera();
+    </script>
+</body>
+</html>
