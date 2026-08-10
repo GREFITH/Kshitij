@@ -72,7 +72,7 @@ body.sb-closed .tb-open{display:flex}
 .tb-title{font-size:14px;font-weight:700;letter-spacing:-.02em;color:#111}
 .tb-sp{flex:1}
 .tb-upd{font-size:11px;color:#ccc}
-.tb-cd{display:flex;align-items:center;gap:4px;font-size:11px;color:#bbb;font-variant-numeric:tabular-nums;background:#F4F4F1;border-radius:20px;padding:4px 10px;border:1px solid var(--bdr)}
+
 .btn-run{display:flex;align-items:center;gap:5px;background:#F4F4F1;border:1px solid var(--bdr);color:#555;border-radius:7px;padding:6px 13px;font-size:11.5px;font-weight:600;transition:.12s}
 .btn-run:hover{background:#EAEAE5;color:#111}
 .btn-run:disabled{opacity:.4;cursor:default}
@@ -382,10 +382,7 @@ td{padding:10px 14px;vertical-align:middle}
   <span class="tb-title" id="tb-title">Dashboard</span>
   <div class="tb-sp"></div>
   <span class="tb-upd" id="tb-upd"></span>
-  <div class="tb-cd">
-    <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.3"/><path d="M6 3.5V6.5l1.5 1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-    <span id="cd-num">—</span>
-  </div>
+
   <button class="btn-run" id="run-btn" onclick="runJobs()">
     <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M2.5 1.5L7 4.5L2.5 7.5V1.5Z" fill="currentColor"/></svg>
     Run Jobs
@@ -403,38 +400,36 @@ td{padding:10px 14px;vertical-align:middle}
     <span class="n-close" onclick="this.closest('.notice').style.display='none'">×</span>
   </div>
 
-  <div class="stat-strip" id="stats-strip">
+  <div class="stat-strip" id="stats-strip" style="grid-template-columns:repeat(4,1fr)">
     <div class="ss-cell"><div class="ss-l">Sessions</div><div class="ss-v" id="s-tot">—</div><div class="ss-s">all time</div></div>
     <div class="ss-cell"><div class="ss-l">Identified</div><div class="ss-v" id="s-id">—</div><div class="ss-s">IP resolved</div></div>
     <div class="ss-cell ac"><div class="ss-l">Hot Leads</div><div class="ss-v hl" id="s-hot">—</div><div class="ss-s">score ≥ 70</div></div>
     <div class="ss-cell"><div class="ss-l">Companies</div><div class="ss-v" id="s-co">—</div><div class="ss-s">unique orgs</div></div>
-    <div class="ss-cell"><div class="ss-l">Pending</div><div class="ss-v" id="s-pend">—</div><div class="ss-s">in queue</div></div>
-    <div class="ss-cell"><div class="ss-l">Unmatched</div><div class="ss-v" id="s-unm">—</div><div class="ss-s">ISP / cloud</div></div>
   </div>
 
   <div class="content">
-    <div class="chart-row">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
       <div class="cbox">
-        <div class="cb-t">Sessions — Last 7 Days</div>
-        <div class="cb-s">Unique visitor sessions per day</div>
-        <canvas id="cSess"></canvas>
+        <div class="cb-t">Company Breakdown</div>
+        <div class="cb-s">Identified vs ISP / unmatched</div>
+        <canvas id="cCompanyType" style="max-height:160px"></canvas>
       </div>
       <div class="cbox">
         <div class="cb-t">ICP Score Distribution</div>
         <div class="cb-s">Companies by tier</div>
         <canvas id="cScore"></canvas>
       </div>
-      <div class="cbox" id="job-mini-box">
-        <div class="cb-t">Job Pipeline</div>
-        <div class="cb-s" id="job-mini-s">Queue status</div>
-        <div id="job-mini-stats" style="display:flex;flex-direction:column;gap:4px;margin-top:8px"></div>
-      </div>
+    </div>
+
+    <div class="cbox" style="padding:18px 22px">
+      <div class="cb-t" style="margin-bottom:2px">Identification Pipeline</div>
+      <div class="cb-s" style="margin-bottom:14px">Sessions → Identified → Companies → Hot Leads</div>
+      <canvas id="cFunnel" style="max-height:90px"></canvas>
     </div>
 
     <div>
       <div class="sec-hd" style="margin-bottom:10px">
         <span class="sec-t">Identified Companies</span>
-        <span class="sec-a" onclick="goTo('companies')">See all →</span>
       </div>
       <div class="tbl-wrap"><div class="tbl-scroll"><table>
         <thead><tr><th>Company</th><th>Score</th><th>Industry</th><th>Size</th><th>Location</th><th>Sessions</th><th>Last Seen</th><th>Summary</th><th></th></tr></thead>
@@ -448,9 +443,9 @@ td{padding:10px 14px;vertical-align:middle}
         <div id="feed-dash"></div>
       </div>
       <div class="cbox" style="align-self:start">
-        <div class="cb-t">Session Status</div>
-        <div class="cb-s">Identification breakdown</div>
-        <canvas id="cSessStatus" style="max-height:120px"></canvas>
+        <div class="cb-t">Job Pipeline</div>
+        <div class="cb-s" id="job-mini-s">Queue status</div>
+        <div id="job-mini-stats" style="display:flex;flex-direction:column;gap:4px;margin-top:8px"></div>
       </div>
     </div>
   </div>
@@ -581,7 +576,7 @@ const JOBS_API = 'https://sgaaeuqsmuydftxbftpw.supabase.co/functions/v1/process-
 const ENR_API  = 'https://sgaaeuqsmuydftxbftpw.supabase.co/functions/v1/enqueue-apollo';
 const REFRESH  = 30000, JOB_TICK = 60000;
 
-let charts={}, cd=30, cdTimer, state=null;
+let charts={}, state=null;
 const $=id=>document.getElementById(id);
 const esc=s=>String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function rel(ts){if(!ts)return'—';const s=Math.floor((Date.now()-new Date(ts))/1000);if(s<60)return s+'s ago';if(s<3600)return Math.floor(s/60)+'m ago';if(s<86400)return Math.floor(s/3600)+'h ago';return Math.floor(s/86400)+'d ago'}
@@ -610,7 +605,7 @@ function goTo(p){
 }
 document.querySelectorAll('.nav-item[data-page]').forEach(b=>b.addEventListener('click',()=>goTo(b.dataset.page)));
 
-function startCd(){clearInterval(cdTimer);cd=REFRESH/1000;cdTimer=setInterval(()=>{cd--;$('cd-num').textContent=cd>0?cd+'s':'…';if(cd<=0)clearInterval(cdTimer)},1000)}
+
 
 /* load */
 async function load(){
@@ -623,14 +618,13 @@ async function load(){
     $('tb-upd').textContent='Updated '+new Date().toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
   }catch(e){console.error(e)}
 }
-async function manualRefresh(){await load();startCd()}
+async function manualRefresh(){await load()}
 
 /* render all */
 function renderAll(d){
   const s=d.sessions||{},tot=Object.values(s).reduce((a,b)=>a+b,0);
   $('s-tot').textContent=tot; $('s-id').textContent=s.resolved||0;
   $('s-hot').textContent=d.hot_leads||0; $('s-co').textContent=(d.companies||[]).length;
-  $('s-pend').textContent=s.pending||0; $('s-unm').textContent=s.unmatched||0;
   $('nb-sess').textContent=tot||'—'; $('nb-co').textContent=(d.companies||[]).length||'—';
   $('nb-vis').textContent=(d.recent_visits||[]).length||'—';
   $('nb-jobs').textContent=Object.values(d.jobs||{}).reduce((a,b)=>a+b,0)||'—';
@@ -818,21 +812,19 @@ const GX={grid:{display:false},border:{display:false},ticks:{color:'#ccc',font:{
 const GY={beginAtZero:true,grid:{color:'rgba(0,0,0,.05)',drawTicks:false},border:{display:false},ticks:{color:'#ccc',font:{size:10},maxTicksLimit:4,padding:8}};
 
 function buildCharts(d){
-  /* sessions area */
-  if(charts.cSess)charts.cSess.destroy();
-  const days=Object.keys(d.daily_sessions||{}),vals=Object.values(d.daily_sessions||{});
-  const cvs=$('cSess'),ctx=cvs.getContext('2d');
-  const grad=ctx.createLinearGradient(0,0,0,140);
-  grad.addColorStop(0,'rgba(243,228,0,.18)');grad.addColorStop(1,'rgba(243,228,0,0)');
-  charts.cSess=new Chart(cvs,{type:'line',
-    data:{labels:days.map(x=>new Date(x).toLocaleDateString('en',{weekday:'short'})),
-      datasets:[{data:vals,borderColor:'#111',backgroundColor:grad,borderWidth:2,
-        pointBackgroundColor:vals.map((v,i)=>i===vals.length-1?'#F3E400':'#fff'),
-        pointBorderColor:vals.map((v,i)=>i===vals.length-1?'#F3E400':'#111'),
-        pointBorderWidth:vals.map((v,i)=>i===vals.length-1?0:1.5),
-        pointRadius:vals.map((v,i)=>i===vals.length-1?7:3.5),
-        pointHoverRadius:8,fill:true,tension:.45}]},
-    options:{responsive:true,plugins:{legend:{display:false},tooltip:TIP},scales:{x:GX,y:GY}}});
+  /* company type donut */
+  if(charts.cCT)charts.cCT.destroy();
+  const cos=d.companies||[];
+  const realCo=cos.filter(c=>!c.is_isp).length;
+  const ispCo=cos.filter(c=>c.is_isp).length;
+  const unmatched=(d.sessions||{}).unmatched||0;
+  if($('cCompanyType')&&(realCo||ispCo||unmatched)){
+    charts.cCT=new Chart($('cCompanyType'),{type:'doughnut',
+      data:{labels:['Real Companies','ISP / Cloud','Unmatched'],
+        datasets:[{data:[realCo,ispCo,unmatched],backgroundColor:['#111','#F3E400','#E0E0DB'],borderWidth:3,borderColor:'#fff'}]},
+      options:{cutout:'62%',responsive:true,plugins:{legend:{display:true,position:'right',
+        labels:{color:'#888',font:{size:10},boxWidth:8,padding:10,usePointStyle:true}},tooltip:TIP}}});
+  }
 
   /* score bars */
   if(charts.cScore)charts.cScore.destroy();
@@ -849,17 +841,21 @@ function buildCharts(d){
   /* job mini — stat rows instead of doughnut */
   renderJobMini(d);
 
-  /* session status doughnut */
-  if(charts.cSessStatus)charts.cSessStatus.destroy();
-  const ss=d.sessions||{};
-  const ssLabels=[],ssVals=[],ssCols=[];
-  if(ss.resolved){ssLabels.push('Resolved');ssVals.push(ss.resolved);ssCols.push('#111');}
-  if(ss.unmatched){ssLabels.push('Unmatched');ssVals.push(ss.unmatched);ssCols.push('#E0E0DB');}
-  if(ss.pending){ssLabels.push('Pending');ssVals.push(ss.pending);ssCols.push('#F3E400');}
-  if(ssVals.length&&$('cSessStatus')){
-    charts.cSessStatus=new Chart($('cSessStatus'),{type:'doughnut',
-      data:{labels:ssLabels,datasets:[{data:ssVals,backgroundColor:ssCols,borderWidth:3,borderColor:'#fff'}]},
-      options:{cutout:'65%',responsive:true,plugins:{legend:{display:true,position:'bottom',labels:{color:'#888',font:{size:9.5},boxWidth:7,padding:8,usePointStyle:true}},tooltip:TIP}}});
+  /* funnel / ladder chart */
+  if(charts.cFunnel)charts.cFunnel.destroy();
+  if($('cFunnel')){
+    const s2=d.sessions||{},tot2=Object.values(s2).reduce((a,b)=>a+b,0);
+    const identified=(s2.resolved||0)+(s2.unmatched||0);
+    const fVals=[tot2,identified,(d.companies||[]).length,d.hot_leads||0];
+    const fLabels=['Sessions','Identified','Companies','Hot Leads'];
+    const fColors=['#E0E0DB','#9BCBEB','#111','#F3E400'];
+    charts.cFunnel=new Chart($('cFunnel'),{type:'bar',
+      data:{labels:fLabels,datasets:[{data:fVals,backgroundColor:fColors,borderRadius:5,borderSkipped:false,barThickness:18}]},
+      options:{indexAxis:'y',responsive:true,
+        plugins:{legend:{display:false},tooltip:{...TIP,callbacks:{label:ctx=>ctx.parsed.x+' '+ctx.label.toLowerCase()}}},
+        scales:{
+          x:{...GY,grid:{color:'rgba(0,0,0,.04)',drawTicks:false},ticks:{color:'#ccc',font:{size:10}}},
+          y:{...GX,ticks:{color:'#555',font:{size:10.5,weight:'600'},padding:4}}}}});
   }
 }
 
@@ -949,8 +945,8 @@ async function runJobs(){
 
 /* ── BOOT ── */
 (async()=>{
-  await load();startCd();
-  setInterval(()=>{load().then(startCd)},REFRESH);
+  await load();
+  setInterval(()=>{load()},REFRESH);
   setInterval(async()=>{try{const r=await fetch(JOBS_API,{method:'POST'});const d=await r.json();if((d.processed||0)>0)setTimeout(()=>load(),1200)}catch{}},JOB_TICK);
 })();
 </script>
