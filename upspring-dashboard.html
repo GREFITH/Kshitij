@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
@@ -7,873 +7,611 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
-/* ── TOKENS ────────────────────────────────────────────────────────────── */
-:root {
-  --y:#F3E400; --yd:#C8BB00; --ybg:#FEFCE8;
-  --bl:#9BCBEB; --bld:#5AAAD4;
-  --bg:#F3F3F1; --surf:#FFFFFF; --surf2:#F8F8F6;
-  --bdr:#E2E2DE; --bdr2:#CCCCC8;
-  --ink:#0C0C0A; --ink2:#4C4C48; --ink3:#8C8C86; --ink4:#C4C4BE;
-  --sb:#0C0C0A; --sbs:#161614; --sbbd:#252522;
-  --sbink:#E8E8E2; --sbink2:#7C7C76; --sbink3:#3A3A36;
-  --ok:#166534; --okbg:#DCFCE7;
-  --warn:#92400E; --warnbg:#FEF3C7;
-  --err:#991B1B; --errbg:#FEE2E2;
-  --sw:260px; --th:60px;
-  --r:7px; --rlg:10px;
-  --sh:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.04);
-  --shm:0 4px 16px rgba(0,0,0,.08);
-  --font:'Inter',system-ui,sans-serif;
-}
-[data-theme="dark"]{
-  --bg:#0C0C0A; --surf:#161614; --surf2:#1C1C1A;
-  --bdr:#282826; --bdr2:#383836;
-  --ink:#F0F0E8; --ink2:#A0A098; --ink3:#5C5C58; --ink4:#363632;
-  --ok:#4ADE80; --okbg:#052E16; --warn:#FCD34D; --warnbg:#451A03; --err:#F87171; --errbg:#450A0A;
-}
-@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0C0C0A;--surf:#161614;--surf2:#1C1C1A;--bdr:#282826;--bdr2:#383836;
-  --ink:#F0F0E8;--ink2:#A0A098;--ink3:#5C5C58;--ink4:#363632;
-  --ok:#4ADE80;--okbg:#052E16;--warn:#FCD34D;--warnbg:#451A03;--err:#F87171;--errbg:#450A0A;
-}}
-
-/* ── RESET ─────────────────────────────────────────────────────────────── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
-body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:13px;line-height:1.5;display:flex;min-height:100vh;overflow-x:hidden}
+html{-webkit-font-smoothing:antialiased}
+body{font-family:'Inter',system-ui,sans-serif;background:#F5F5F2;color:#111;font-size:13px;line-height:1.5;display:flex;min-height:100vh}
 a{color:inherit;text-decoration:none}
-button{font-family:var(--font);cursor:pointer;border:none;background:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
 svg{display:block;flex-shrink:0}
 
-/* ── SIDEBAR ───────────────────────────────────────────────────────────── */
-.sb{width:var(--sw);background:var(--sb);position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;z-index:60}
+/* ── SIDEBAR ─────────────────────────────────────────────────────── */
+.sb{width:220px;background:#fff;border-right:1px solid #E8E8E4;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;z-index:60}
 
-/* logo */
-.sb-logo{height:var(--th);padding:0 16px;display:flex;align-items:center;gap:11px;border-bottom:1px solid var(--sbbd);flex-shrink:0}
-.logo-mark{
-  width:32px;height:32px;border-radius:6px;background:var(--y);
-  display:flex;align-items:center;justify-content:center;flex-shrink:0;
-}
-.logo-text .lt-name{color:#fff;font-size:14px;font-weight:800;letter-spacing:-.01em;line-height:1.1}
-.logo-text .lt-sub{color:var(--sbink3);font-size:9.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;margin-top:2px}
+.sb-logo{height:60px;padding:0 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #E8E8E4;flex-shrink:0}
+.logo-mark{width:28px;height:28px;background:#F3E400;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-name{font-size:15px;font-weight:800;letter-spacing:-.03em;color:#111}
 
-/* section label */
-.sb-sec{font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--sbink3);padding:14px 16px 5px;display:block}
+.sb-nav{flex:1;padding:12px 10px;display:flex;flex-direction:column;gap:1px;overflow-y:auto}
+.nav-sec{font-size:9.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#ccc;padding:10px 8px 4px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:7.5px 8px;border-radius:6px;color:#777;font-size:12.5px;font-weight:500;cursor:pointer;width:100%;text-align:left;transition:background .1s,color .1s;position:relative}
+.nav-item:hover{background:#F5F5F2;color:#111}
+.nav-item.active{color:#111;font-weight:600;background:#FAFAF8}
+.nav-item.active::before{content:'';position:absolute;left:-2px;top:50%;transform:translateY(-50%);width:3px;height:16px;background:#F3E400;border-radius:2px}
+.nav-item .ni-ico{width:15px;height:15px;flex-shrink:0;opacity:.45}
+.nav-item.active .ni-ico{opacity:1}
+.ni-badge{margin-left:auto;font-size:10px;font-weight:700;background:#F0F0EC;color:#999;border-radius:20px;padding:1px 6px;font-variant-numeric:tabular-nums}
+.nav-item.active .ni-badge{background:#F3E400;color:#111}
+.sb-div{height:1px;background:#E8E8E4;margin:6px 0}
 
-/* nav */
-.sb-nav{flex:1;padding:8px 10px;display:flex;flex-direction:column;overflow-y:auto}
-.sb-nav::-webkit-scrollbar{width:3px}
-.sb-nav::-webkit-scrollbar-thumb{background:var(--sbbd);border-radius:2px}
+.sb-foot{padding:10px;border-top:1px solid #E8E8E4;flex-shrink:0}
+.site-pill{display:flex;align-items:center;gap:8px;padding:8px 10px;background:#F5F5F2;border-radius:7px}
+.pulse{width:6px;height:6px;border-radius:50%;background:#22c55e;flex-shrink:0;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+.site-url{font-size:10.5px;font-weight:600;color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px}
+.site-st{font-size:9.5px;color:#aaa;margin-top:1px}
 
-.nav-item{
-  display:flex;align-items:center;gap:10px;
-  padding:8.5px 10px;border-radius:6px;
-  color:var(--sbink2);font-size:12.5px;font-weight:500;
-  transition:background .12s,color .12s;
-  cursor:pointer;width:100%;text-align:left;
-  position:relative;
-}
-.nav-item:hover{background:var(--sbs);color:#ccc}
-.nav-item.active{background:var(--sbs);color:#fff}
-.nav-item.active .ni-icon{color:var(--y)}
-.nav-item.active::after{
-  content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);
-  width:3px;height:20px;background:var(--y);border-radius:0 3px 3px 0;
-}
-.ni-icon{width:18px;height:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--sbink2)}
-.ni-icon svg{width:15px;height:15px}
-.ni-label{flex:1;line-height:1}
-.ni-badge{
-  font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;
-  font-variant-numeric:tabular-nums;background:var(--sbbd);color:var(--sbink2);
-}
-.ni-badge.live{background:#0A2E0A;color:#4ade80}
-.ni-badge.yellow{background:rgba(243,228,0,.15);color:var(--y)}
-.sb-divider{height:1px;background:var(--sbbd);margin:6px 0}
-
-/* footer */
-.sb-foot{padding:10px;border-top:1px solid var(--sbbd);flex-shrink:0}
-.sb-site{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:6px;background:var(--sbs)}
-.site-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;flex-shrink:0;animation:sdot 2s ease-in-out infinite}
-@keyframes sdot{0%,100%{opacity:1}50%{opacity:.25}}
-.site-label{color:var(--sbink2);font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.site-meta{color:var(--sbink3);font-size:9px;margin-top:1px}
-
-/* ── TOPBAR ─────────────────────────────────────────────────────────────── */
-.tb{position:fixed;top:0;left:var(--sw);right:0;height:var(--th);background:var(--surf);border-bottom:1px solid var(--bdr);display:flex;align-items:center;padding:0 24px;gap:12px;z-index:50}
-.tb-page{font-size:14px;font-weight:700;color:var(--ink)}
-.tb-sep{color:var(--bdr2);margin:0 2px}
-.tb-sub{font-size:12px;color:var(--ink3)}
+/* ── TOPBAR ──────────────────────────────────────────────────────── */
+.tb{position:fixed;top:0;left:220px;right:0;height:60px;background:#fff;border-bottom:1px solid #E8E8E4;display:flex;align-items:center;padding:0 28px;gap:12px;z-index:50}
+.tb-title{font-size:15px;font-weight:700;letter-spacing:-.02em;color:#111}
 .tb-sp{flex:1}
-.tb-fetching{display:none;align-items:center;gap:6px;font-size:11px;color:var(--ink3)}
-.tb-fetching.on{display:flex}
-.fetch-dot{width:6px;height:6px;border-radius:50%;background:var(--yd);animation:fdot .7s ease-in-out infinite}
-@keyframes fdot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.75)}}
-.tb-upd{font-size:11px;color:var(--ink3)}
-.cd-pill{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--ink3);background:var(--surf2);border:1px solid var(--bdr);border-radius:20px;padding:3px 10px;font-variant-numeric:tabular-nums;cursor:default}
-.btn-ghost{display:flex;align-items:center;gap:5px;border:1px solid var(--bdr);color:var(--ink2);background:var(--surf);border-radius:var(--r);padding:6px 13px;font-size:11.5px;font-weight:600;transition:.12s}
-.btn-ghost:hover{background:var(--surf2);border-color:var(--bdr2);color:var(--ink)}
-.btn-dark{background:var(--ink);color:var(--y);border-radius:var(--r);padding:6px 15px;font-size:11.5px;font-weight:700;transition:.12s}
-.btn-dark:hover{background:var(--ink2)}
-.btn-icon{border:1px solid var(--bdr);background:var(--surf);color:var(--ink3);border-radius:var(--r);padding:7px 10px;font-size:13px;transition:.12s}
-.btn-icon:hover{background:var(--surf2);color:var(--ink)}
+.tb-upd{font-size:11px;color:#ccc}
+.tb-cd{display:flex;align-items:center;gap:4px;font-size:11px;color:#bbb;font-variant-numeric:tabular-nums}
+.btn-run{display:flex;align-items:center;gap:6px;background:#F5F5F2;border:1px solid #E0E0DC;color:#555;border-radius:7px;padding:6px 13px;font-size:11.5px;font-weight:600;transition:.12s}
+.btn-run:hover{background:#EAEAE6;color:#111}
+.btn-run:disabled{opacity:.45;cursor:default}
+.btn-refresh{background:#111;color:#fff;border-radius:7px;padding:6px 13px;font-size:11.5px;font-weight:700;transition:.12s}
+.btn-refresh:hover{background:#333}
 
-/* refresh strip */
-.rstrip{position:fixed;top:var(--th);left:var(--sw);right:0;height:2px;z-index:49}
-.rstrip-fill{height:100%;background:var(--y);width:0;transition:none}
-.rstrip-fill.go{transition:width 30s linear;width:100%}
+.prog{position:fixed;top:60px;left:220px;right:0;height:2px;z-index:49;overflow:hidden}
+.prog-fill{height:100%;background:#F3E400;width:0;transition:none}
 
-/* ── MAIN SHELL ─────────────────────────────────────────────────────────── */
-.main{margin-left:var(--sw);margin-top:var(--th);flex:1;min-width:0}
-.page-view{display:none;padding:22px 24px;flex-direction:column;gap:16px}
-.page-view.active{display:flex}
+/* ── MAIN ────────────────────────────────────────────────────────── */
+.main{margin-left:220px;margin-top:60px;flex:1;min-width:0}
+.pv{display:none;flex-direction:column}
+.pv.active{display:flex}
 
-/* ── COMPONENTS ─────────────────────────────────────────────────────────── */
-/* stat grid */
-.stat-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
-.stat{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--rlg);padding:17px 18px;display:flex;flex-direction:column;gap:2px;box-shadow:var(--sh)}
-.stat.ac{border-top:2.5px solid var(--y)}
-.sl{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3)}
-.sv{font-size:34px;font-weight:800;line-height:1.1;color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:-.03em}
-.stat.ac .sv{color:var(--yd)}
-[data-theme="dark"] .stat.ac .sv{color:var(--y)}
-.ss{font-size:10px;color:var(--ink3);margin-top:2px}
+/* ── STATS STRIP ─────────────────────────────────────────────────── */
+.stats{display:grid;grid-template-columns:repeat(6,1fr);background:#fff;border-bottom:1px solid #E8E8E4}
+.sc{padding:20px 22px;border-right:1px solid #E8E8E4}
+.sc:last-child{border-right:none}
+.sc-l{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#bbb;margin-bottom:5px}
+.sc-v{font-size:38px;font-weight:900;line-height:1;letter-spacing:-.04em;color:#111;font-variant-numeric:tabular-nums}
+.sc-v.hl{color:#C8BB00}
+.sc-s{font-size:10px;color:#ccc;margin-top:4px}
 
-/* cards */
-.card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--rlg);padding:18px 20px;box-shadow:var(--sh)}
-.card-title{font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:3px}
-.card-sub{font-size:10.5px;color:var(--ink3);margin-bottom:14px}
-canvas{max-height:148px}
+/* ── CONTENT ─────────────────────────────────────────────────────── */
+.content{padding:22px 26px;display:flex;flex-direction:column;gap:18px}
 
-/* chart grid */
-.chart-grid{display:grid;grid-template-columns:5fr 3fr 2fr;gap:10px}
+.sec-row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px}
+.sec-title{font-size:13px;font-weight:700;color:#111}
+.sec-action{font-size:11.5px;color:#bbb;cursor:pointer;transition:color .1s}
+.sec-action:hover{color:#111}
 
-/* section header */
-.sec-hd{display:flex;align-items:center;justify-content:space-between}
-.sec-title{font-size:15px;font-weight:800;letter-spacing:-.02em;color:var(--ink)}
-.sec-actions{display:flex;gap:8px}
+/* charts */
+.chart-row{display:grid;grid-template-columns:3fr 2fr;gap:14px}
+.cbox{background:#fff;border:1px solid #E8E8E4;border-radius:10px;padding:18px 20px}
+.cb-t{font-size:12px;font-weight:700;color:#111;margin-bottom:2px}
+.cb-s{font-size:10.5px;color:#bbb;margin-bottom:14px}
+canvas{max-height:140px}
 
 /* table */
-.tbl-wrap{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--rlg);overflow:hidden;box-shadow:var(--sh)}
+.tbl-wrap{background:#fff;border:1px solid #E8E8E4;border-radius:10px;overflow:hidden}
 .tbl-scroll{overflow-x:auto}
-table{width:100%;border-collapse:collapse;min-width:900px}
-thead th{padding:10px 14px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);background:var(--surf2);border-bottom:1px solid var(--bdr);white-space:nowrap}
-tbody tr{border-bottom:1px solid var(--bdr);transition:background .1s}
+table{width:100%;border-collapse:collapse;min-width:760px}
+thead th{padding:10px 14px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#bbb;background:#fff;border-bottom:1px solid #E8E8E4;white-space:nowrap}
+tbody tr{border-bottom:1px solid #F0F0EC;transition:background .08s}
 tbody tr:last-child{border-bottom:none}
-tbody tr:hover{background:var(--surf2)}
+tbody tr:hover{background:#FAFAF8}
 td{padding:11px 14px;vertical-align:middle}
-.co-name{font-weight:700;font-size:13px}
-.co-dom{font-size:10px;color:var(--ink3);font-family:monospace;margin-top:2px}
-.co-li{font-size:10px;color:var(--bld);font-weight:600;margin-top:2px;display:block}
-.isp-tag{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;background:var(--warnbg);color:var(--warn);border:1px solid rgba(146,64,14,.2);border-radius:4px;padding:2px 6px;margin-top:3px}
-.sc-wrap{display:flex;align-items:center;gap:8px}
-.sc-track{width:52px;height:4px;background:var(--bdr);border-radius:2px;overflow:hidden;flex-shrink:0}
-.sc-fill{height:100%;border-radius:2px;transition:width .5s cubic-bezier(.4,0,.2,1)}
-.f-hot{background:var(--ink)}
-.f-warm{background:var(--bld)}
-.f-cold{background:var(--bdr2)}
-.sc-num{font-size:13px;font-weight:800;min-width:26px;font-variant-numeric:tabular-nums}
-.sc-num.hot{color:var(--ink)}.sc-num.warm{color:var(--bld)}.sc-num.cold{color:var(--ink3)}
-.cell{font-size:12px;color:var(--ink2)}
-.cell-sm{font-size:11px;color:var(--ink3)}
-.tag{display:inline-block;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600}
-.tag-ok{background:var(--okbg);color:var(--ok)}
-.tag-warn{background:var(--warnbg);color:var(--warn)}
-.tag-err{background:var(--errbg);color:var(--err)}
-.tag-gray{background:var(--surf2);color:var(--ink3)}
-.enrich-btn{background:var(--ink);color:var(--y);border-radius:var(--r);padding:5px 12px;font-size:10px;font-weight:700;white-space:nowrap;transition:.12s;font-family:var(--font)}
-.enrich-btn:hover:not(:disabled){background:var(--ink2)}
-.enrich-btn:disabled{background:var(--bdr);color:var(--ink3);cursor:default}
-.enrich-btn.done{background:var(--okbg);color:var(--ok)}
-.empty-state{text-align:center;padding:50px 24px;color:var(--ink3);font-size:12.5px}
-.empty-state strong{color:var(--ink2)}
+.co-name{font-weight:700;font-size:13px;color:#111;line-height:1.2}
+.co-dom{font-size:10.5px;color:#bbb;font-family:monospace;margin-top:2px}
+.co-li{font-size:10px;color:#5AAAD4;display:block;margin-top:2px}
+.isp-tag{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;background:#fffbeb;border:1px solid #f0c040;color:#9a7a00;border-radius:4px;padding:1px 5px;margin-top:3px}
+.sc-wrap{display:flex;align-items:center;gap:7px}
+.sc-bar{width:40px;height:3px;background:#eee;border-radius:2px;overflow:hidden;flex-shrink:0}
+.sc-fill{height:100%;border-radius:2px}
+.hot .sc-fill{background:#111}.warm .sc-fill{background:#9BCBEB}.cold .sc-fill{background:#ddd}
+.sc-num{font-size:14px;font-weight:800;font-variant-numeric:tabular-nums}
+.hot .sc-num{color:#111}.warm .sc-num{color:#5AAAD4}.cold .sc-num{color:#ccc}
+.cell{font-size:12px;color:#555}
+.cell-sm{font-size:11px;color:#aaa}
+.tag-ok{display:inline-block;background:#f0fdf4;color:#166534;font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px}
+.tag-no{display:inline-block;background:#F5F5F2;color:#bbb;font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px}
+.tag-isp{display:inline-block;background:#fffbeb;color:#9a7a00;font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px}
+.e-btn{background:#111;color:#F3E400;border-radius:6px;padding:5px 11px;font-size:10.5px;font-weight:700;white-space:nowrap;transition:.12s;font-family:inherit}
+.e-btn:hover:not(:disabled){background:#333}
+.e-btn:disabled{background:#F5F5F2;color:#ccc;cursor:default}
+.e-btn.done{background:#f0fdf4;color:#166534}
+.empty{text-align:center;padding:44px;color:#bbb;font-size:12px}
 
-/* bottom grid */
-.bot-grid{display:grid;grid-template-columns:3fr 2fr;gap:10px}
-.feed-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bdr);gap:10px}
+/* bottom */
+.bot-row{display:grid;grid-template-columns:2fr 1fr;gap:14px}
+.box{background:#fff;border:1px solid #E8E8E4;border-radius:10px;overflow:hidden}
+.box-hd{padding:12px 16px;border-bottom:1px solid #E8E8E4;display:flex;align-items:center;justify-content:space-between}
+.box-hd .bh-t{font-size:12px;font-weight:700;color:#111}
+.box-hd small{font-size:10.5px;color:#bbb}
+.feed-row{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-bottom:1px solid #F0F0EC;gap:10px}
 .feed-row:last-child{border-bottom:none}
-.feed-path{font-family:monospace;font-size:11px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.feed-time{font-size:10px;color:var(--ink3);white-space:nowrap}
-.jrow{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bdr)}
-.jrow:last-child{border-bottom:none}
-.jrow-left{display:flex;align-items:center;gap:9px}
-.jdot{width:8px;height:8px;border-radius:50%}
-.jdot.ok{background:var(--ok)}.jdot.pend{background:var(--warn)}.jdot.err{background:var(--err)}
-.jlabel{font-size:12.5px;font-weight:500;color:var(--ink2)}
-.jnum{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums}
-.jnum.ok{color:var(--ok)}.jnum.pend{color:var(--warn)}.jnum.err{color:var(--err)}
+.feed-path{font-family:monospace;font-size:11.5px;color:#333;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.feed-t{font-size:10px;color:#bbb;white-space:nowrap}
+.job-row{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;border-bottom:1px solid #F0F0EC}
+.job-row:last-child{border-bottom:none}
+.jr-l{display:flex;align-items:center;gap:7px}
+.jdot{width:7px;height:7px;border-radius:50%}
+.jdot.ok{background:#22c55e}.jdot.q{background:#f59e0b}.jdot.err{background:#ef4444}
+.jr-label{font-size:12px;color:#555;text-transform:capitalize}
+.jr-num{font-size:20px;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-.03em}
+.jr-num.ok{color:#22c55e}.jr-num.q{color:#f59e0b}.jr-num.err{color:#ef4444}.jr-num.g{color:#111}
 
-/* notice */
-.notice{background:var(--ink);color:#fff;border-radius:var(--rlg);padding:14px 18px;display:flex;align-items:center;gap:14px;font-size:12px;line-height:1.5}
-.notice strong{color:var(--y)}
-.notice code{background:rgba(255,255,255,.1);padding:1px 5px;border-radius:3px;font-size:11px}
-.nbtn{border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.5);border-radius:5px;padding:4px 10px;font-size:10px;font-weight:600;white-space:nowrap;flex-shrink:0}
-.nbtn:hover{border-color:rgba(255,255,255,.3);color:#fff}
+/* ── COMPANIES PAGE ── */
+.pg-stats{display:grid;background:#fff;border-bottom:1px solid #E8E8E4}
+.pg-stats.c3{grid-template-columns:repeat(3,1fr)}
+.pg-stats.c4{grid-template-columns:repeat(4,1fr)}
+.pg-sc{padding:20px 24px;border-right:1px solid #E8E8E4}
+.pg-sc:last-child{border-right:none}
 
-/* ── PAGE-SPECIFIC ──────────────────────────────────────────────────────── */
-/* Page Visits */
-.visits-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.visit-full-row{display:flex;align-items:center;padding:9px 14px;border-bottom:1px solid var(--bdr);gap:12px;transition:background .1s}
-.visit-full-row:hover{background:var(--surf2)}
-.visit-full-row:last-child{border-bottom:none}
-.vpath{font-family:monospace;font-size:12px;font-weight:500;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.vsid{font-size:10px;color:var(--ink3);font-family:monospace;white-space:nowrap}
-.vtime{font-size:10px;color:var(--ink3);white-space:nowrap;min-width:60px;text-align:right}
+/* ── VISITS PAGE ── */
+.vis-pair{display:grid;grid-template-columns:3fr 2fr;gap:14px}
+.vis-row{display:flex;align-items:center;padding:8px 14px;border-bottom:1px solid #F0F0EC;gap:10px}
+.vis-row:last-child{border-bottom:none}
+.vis-row:hover{background:#FAFAF8}
+.vpath{font-family:monospace;font-size:11.5px;color:#333;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vsid{font-size:10px;color:#ddd;font-family:monospace;flex-shrink:0;white-space:nowrap}
+.vt{font-size:10px;color:#bbb;white-space:nowrap;text-align:right;min-width:55px}
 
-/* Job Queue page */
-.jobs-grid{display:grid;grid-template-columns:2fr 1fr;gap:10px}
-.job-full-row{display:flex;align-items:flex-start;padding:12px 14px;border-bottom:1px solid var(--bdr);gap:12px}
-.job-full-row:last-child{border-bottom:none}
-.jf-type{font-size:11px;font-weight:700;color:var(--ink);font-family:monospace}
-.jf-id{font-size:9px;color:var(--ink3);font-family:monospace;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px}
-.jf-err{font-size:10px;color:var(--err);margin-top:4px}
-.jf-time{font-size:10px;color:var(--ink3);white-space:nowrap;margin-left:auto;text-align:right;flex-shrink:0}
+/* ── JOB QUEUE PAGE ── */
+.jobs-pair{display:grid;grid-template-columns:2fr 1fr;gap:14px}
+.jf-row{display:flex;align-items:center;padding:11px 16px;border-bottom:1px solid #F0F0EC;gap:10px}
+.jf-row:last-child{border-bottom:none}
+.jf-label{font-size:12px;color:#333;text-transform:capitalize;flex:1}
+.jf-num{font-size:22px;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-.04em}
+.jf-num.ok{color:#22c55e}.jf-num.q{color:#f59e0b}.jf-num.err{color:#ef4444}.jf-num.g{color:#111}
 
-/* stat-2col */
-.stat-grid-2{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.stat-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+/* ── SETTINGS ── */
+.set-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.set-card{background:#fff;border:1px solid #E8E8E4;border-radius:10px;padding:18px 20px}
+.set-hd{font-size:12.5px;font-weight:700;color:#111;margin-bottom:14px}
+.set-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid #F0F0EC}
+.set-row:last-child{border-bottom:none}
+.sr-name{font-size:12.5px;font-weight:500;color:#333}
+.sr-meta{font-size:10.5px;color:#bbb;margin-top:2px}
+.tag-g{background:#f0fdf4;color:#166534;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.tag-a{background:#fffbeb;color:#9a7a00;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.rule-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #F0F0EC;font-size:12px;color:#555}
+.rule-row:last-child{border-bottom:none}
 
-/* ── TOAST ──────────────────────────────────────────────────────────────── */
-#toast{position:fixed;bottom:22px;right:22px;background:var(--ink);color:#fff;padding:11px 18px;border-radius:8px;font-size:12px;font-weight:500;transform:translateY(80px);opacity:0;transition:transform .25s cubic-bezier(.4,0,.2,1),opacity .25s;z-index:999;max-width:300px;pointer-events:none;box-shadow:var(--shm)}
+/* ── NOTICE ── */
+.notice{background:#111;color:#fff;padding:11px 20px;display:flex;align-items:center;gap:12px;font-size:11.5px;flex-shrink:0}
+.notice strong{color:#F3E400}
+.notice code{background:rgba(255,255,255,.1);padding:1px 5px;border-radius:3px;font-size:10.5px;font-family:monospace}
+.n-close{color:rgba(255,255,255,.35);font-size:18px;line-height:1;cursor:pointer;margin-left:auto;flex-shrink:0}
+.n-close:hover{color:#fff}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:20px;right:20px;background:#111;color:#fff;padding:10px 16px;border-radius:8px;font-size:12px;font-weight:500;transform:translateY(80px);opacity:0;transition:.2s;z-index:999;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.12)}
 #toast.show{transform:translateY(0);opacity:1}
 
-/* ── RESPONSIVE ─────────────────────────────────────────────────────────── */
-@media(max-width:1300px){.stat-grid{grid-template-columns:repeat(3,1fr)}.chart-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:1000px){.stat-grid{grid-template-columns:repeat(2,1fr)}.chart-grid,.bot-grid,.jobs-grid,.visits-grid{grid-template-columns:1fr}}
+@media(max-width:1200px){.stats{grid-template-columns:repeat(3,1fr)}.chart-row,.bot-row,.vis-pair,.jobs-pair{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 
-<!-- ══ SIDEBAR ══════════════════════════════════════════════════════════ -->
+<!-- SIDEBAR -->
 <aside class="sb">
-
-  <!-- Logo -->
   <div class="sb-logo">
     <div class="logo-mark">
-      <!-- UpSpring arrow: white on yellow -->
-      <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
-        <path d="M10 16V5" stroke="#0C0C0A" stroke-width="2.5" stroke-linecap="round"/>
-        <path d="M4.5 10.5L10 5L15.5 10.5" stroke="#0C0C0A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M7 11.5V3" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+        <path d="M3 6.5L7 2.5L11 6.5" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </div>
-    <div class="logo-text">
-      <div class="lt-name">UPSPRING</div>
-      <div class="lt-sub">Visitor Intelligence</div>
-    </div>
+    <span class="logo-name">UpSpring</span>
   </div>
 
   <nav class="sb-nav">
-
-    <span class="sb-sec">Analytics</span>
+    <span class="nav-sec">Analytics</span>
 
     <button class="nav-item active" data-page="dashboard">
-      <span class="ni-icon">
-        <svg viewBox="0 0 16 16" fill="none"><rect x="1.5" y="1.5" width="5" height="5" rx="1" fill="currentColor"/><rect x="9.5" y="1.5" width="5" height="5" rx="1" fill="currentColor" opacity=".5"/><rect x="1.5" y="9.5" width="5" height="5" rx="1" fill="currentColor" opacity=".5"/><rect x="9.5" y="9.5" width="5" height="5" rx="1" fill="currentColor"/></svg>
-      </span>
-      <span class="ni-label">Dashboard</span>
-      <span class="ni-badge live">Live</span>
+      <svg class="ni-ico" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" fill="currentColor"/><rect x="8" y="1" width="5" height="5" rx="1" fill="currentColor" opacity=".5"/><rect x="1" y="8" width="5" height="5" rx="1" fill="currentColor" opacity=".5"/><rect x="8" y="8" width="5" height="5" rx="1" fill="currentColor"/></svg>
+      Dashboard
+      <span class="ni-badge" id="nb-sess">—</span>
     </button>
 
     <button class="nav-item" data-page="companies">
-      <span class="ni-icon">
-        <svg viewBox="0 0 16 16" fill="none"><path d="M2 14V6l6-4 6 4v8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><rect x="5.5" y="9" width="2" height="5" rx=".5" fill="currentColor"/><rect x="8.5" y="9" width="2" height="5" rx=".5" fill="currentColor"/><path d="M2 14h12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-      </span>
-      <span class="ni-label">Companies</span>
-      <span class="ni-badge count-badge" id="nb-co">—</span>
+      <svg class="ni-ico" viewBox="0 0 14 14" fill="none"><path d="M2 13V6.5L7 2l5 4.5V13" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><rect x="5" y="9" width="4" height="4" rx=".5" fill="currentColor" opacity=".5"/></svg>
+      Companies
+      <span class="ni-badge" id="nb-co">—</span>
     </button>
 
     <button class="nav-item" data-page="visits">
-      <span class="ni-icon">
-        <svg viewBox="0 0 16 16" fill="none"><path d="M1.5 8C1.5 8 4 3 8 3s6.5 5 6.5 5-2.5 5-6.5 5-6.5-5-6.5-5Z" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8" r="2" fill="currentColor"/></svg>
-      </span>
-      <span class="ni-label">Page Visits</span>
-      <span class="ni-badge count-badge" id="nb-visits">—</span>
+      <svg class="ni-ico" viewBox="0 0 14 14" fill="none"><path d="M1 7s2.5-5 6-5 6 5 6 5-2.5 5-6 5-6-5-6-5Z" stroke="currentColor" stroke-width="1.3"/><circle cx="7" cy="7" r="2" fill="currentColor"/></svg>
+      Page Visits
+      <span class="ni-badge" id="nb-vis">—</span>
     </button>
 
-    <div class="sb-divider"></div>
-    <span class="sb-sec">System</span>
+    <div class="sb-div"></div>
+    <span class="nav-sec">System</span>
 
     <button class="nav-item" data-page="jobs">
-      <span class="ni-icon">
-        <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3"/><path d="M8 5v3.5l2.5 1.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </span>
-      <span class="ni-label">Job Queue</span>
-      <span class="ni-badge count-badge" id="nb-jobs">—</span>
+      <svg class="ni-ico" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.3"/><path d="M7 4.5V7.5l2 1.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Job Queue
+      <span class="ni-badge" id="nb-jobs">—</span>
     </button>
 
     <button class="nav-item" data-page="settings">
-      <span class="ni-icon">
-        <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M8 1.5v1M8 13.5v1M1.5 8h1M13.5 8h1M3.4 3.4l.7.7M11.9 11.9l.7.7M12.6 3.4l-.7.7M4.1 11.9l-.7.7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-      </span>
-      <span class="ni-label">Settings</span>
+      <svg class="ni-ico" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="2" stroke="currentColor" stroke-width="1.3"/><path d="M7 1.5v1.5M7 11v1.5M1.5 7H3M11 7h1.5M3.3 3.3l1 1M9.7 9.7l1 1M10.7 3.3l-1 1M4.3 9.7l-1 1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      Settings
     </button>
-
   </nav>
 
   <div class="sb-foot">
-    <div class="sb-site">
-      <div class="site-dot"></div>
+    <div class="site-pill">
+      <div class="pulse"></div>
       <div>
-        <div class="site-label">kshitij-tawny.vercel.app</div>
-        <div class="site-meta">Tracker active · collecting</div>
+        <div class="site-url">kshitij-tawny.vercel.app</div>
+        <div class="site-st">Tracking active</div>
       </div>
     </div>
   </div>
 </aside>
 
-<!-- ══ TOPBAR ════════════════════════════════════════════════════════════ -->
+<!-- TOPBAR -->
 <header class="tb">
-  <span class="tb-page" id="tb-title">Dashboard</span>
-  <span class="tb-sep">/</span>
-  <span class="tb-sub" id="tb-sub">Overview</span>
+  <span class="tb-title" id="tb-title">Dashboard</span>
   <div class="tb-sp"></div>
-  <div class="tb-fetching" id="tb-fetch"><div class="fetch-dot"></div>Updating…</div>
   <span class="tb-upd" id="tb-upd"></span>
-  <div class="cd-pill" id="cd-pill" title="Next auto-refresh">
-    <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.3"/><path d="M6 3.5V6.5l2 1.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-    <span id="cd-num">—</span>
-  </div>
-  <button class="btn-ghost" id="run-jobs-btn" onclick="triggerJobs()">▶ Run Jobs</button>
-  <button class="btn-dark" onclick="manualRefresh()">↻ Refresh</button>
-  <button class="btn-icon" onclick="toggleTheme()" title="Toggle theme">◑</button>
+  <div class="tb-cd"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.3"/><path d="M6 3.5V6.5l1.5 1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg><span id="cd-num">—</span></div>
+  <button class="btn-run" id="run-btn" onclick="runJobs()">
+    <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M2.5 1.5L7 4.5L2.5 7.5V1.5Z" fill="currentColor"/></svg>
+    Run Jobs
+  </button>
+  <button class="btn-refresh" onclick="manualRefresh()">Refresh</button>
 </header>
+<div class="prog"><div class="prog-fill" id="prog"></div></div>
 
-<div class="rstrip"><div class="rstrip-fill" id="rstrip"></div></div>
-
-<!-- ══ PAGES ════════════════════════════════════════════════════════════ -->
+<!-- PAGES -->
 <main class="main">
 
-<!-- ─ DASHBOARD ─────────────────────────────────────────────────────── -->
-<div class="page-view active" id="page-dashboard">
-
-  <div class="notice" id="apollo-notice" style="display:none">
-    <span>🔑 <strong>Apollo enrichment not configured.</strong> Add <code>APOLLO_API_KEY</code> to Supabase Edge Function secrets to unlock company data — industry, headcount, revenue, LinkedIn.</span>
-    <button class="nbtn" onclick="this.closest('.notice').style.display='none'">Dismiss</button>
+<!-- DASHBOARD -->
+<div class="pv active" id="page-dashboard">
+  <div id="notice" style="display:none" class="notice">
+    <span>Add <strong>APOLLO_API_KEY</strong> to Supabase Edge Function secrets to enable company enrichment — industry, headcount, LinkedIn.</span>
+    <span class="n-close" onclick="this.closest('.notice').style.display='none'">×</span>
   </div>
 
-  <div class="stat-grid" id="stats">
-    <div class="stat"><div class="sl">Total Sessions</div><div class="sv">—</div><div class="ss">all time</div></div>
-    <div class="stat"><div class="sl">Identified</div><div class="sv">—</div><div class="ss">IP → company</div></div>
-    <div class="stat ac"><div class="sl">Hot Leads</div><div class="sv">—</div><div class="ss">ICP score ≥ 70</div></div>
-    <div class="stat"><div class="sl">Companies</div><div class="sv">—</div><div class="ss">unique orgs</div></div>
-    <div class="stat"><div class="sl">Pending</div><div class="sv">—</div><div class="ss">awaiting lookup</div></div>
-    <div class="stat"><div class="sl">Unmatched</div><div class="sv">—</div><div class="ss">ISP / cloud IP</div></div>
+  <div class="stats" id="stats-strip">
+    <div class="sc"><div class="sc-l">Sessions</div><div class="sc-v" id="s-tot">—</div><div class="sc-s">all time</div></div>
+    <div class="sc"><div class="sc-l">Identified</div><div class="sc-v" id="s-id">—</div><div class="sc-s">IP resolved</div></div>
+    <div class="sc"><div class="sc-l">Hot Leads</div><div class="sc-v hl" id="s-hot">—</div><div class="sc-s">score ≥ 70</div></div>
+    <div class="sc"><div class="sc-l">Companies</div><div class="sc-v" id="s-co">—</div><div class="sc-s">unique orgs</div></div>
+    <div class="sc"><div class="sc-l">Pending</div><div class="sc-v" id="s-pend">—</div><div class="sc-s">in queue</div></div>
+    <div class="sc"><div class="sc-l">Unmatched</div><div class="sc-v" id="s-unm">—</div><div class="sc-s">ISP / cloud</div></div>
   </div>
 
-  <div class="chart-grid">
-    <div class="card">
-      <div class="card-title">Sessions — Last 7 Days</div>
-      <div class="card-sub">Unique visitor sessions per calendar day</div>
-      <canvas id="cSess"></canvas>
-    </div>
-    <div class="card">
-      <div class="card-title">ICP Score Distribution</div>
-      <div class="card-sub">Companies by engagement tier</div>
-      <canvas id="cScore"></canvas>
-    </div>
-    <div class="card">
-      <div class="card-title">Job Pipeline</div>
-      <div class="card-sub">Queue breakdown</div>
-      <canvas id="cJob"></canvas>
-    </div>
-  </div>
-
-  <div class="card" style="padding-bottom:14px">
-    <div class="card-title">Top Pages Visited</div>
-    <canvas id="cPages" style="max-height:112px"></canvas>
-  </div>
-
-  <div class="sec-hd">
-    <div class="sec-title">Identified Companies</div>
-    <div class="sec-actions">
-      <button class="btn-ghost" onclick="triggerJobs()">▶ Process Queue</button>
-      <button class="btn-dark" onclick="manualRefresh()">↻ Refresh</button>
-    </div>
-  </div>
-  <div class="tbl-wrap"><div class="tbl-scroll"><table>
-    <thead><tr><th>Company</th><th>ICP Score</th><th>Industry</th><th>Size</th><th>Revenue</th><th>Location</th><th>Sessions</th><th>Last Seen</th><th>Summary</th><th>Action</th></tr></thead>
-    <tbody id="co-tbody-dash"></tbody>
-  </table></div></div>
-
-  <div class="bot-grid">
-    <div class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-        <span class="card-title" style="margin:0">Recent Page Visits</span>
-        <span style="font-size:10px;color:var(--ink3)">last 20 events</span>
+  <div class="content">
+    <div class="chart-row">
+      <div class="cbox">
+        <div class="cb-t">Sessions — Last 7 Days</div>
+        <div class="cb-s">Daily visitor sessions</div>
+        <canvas id="cSess"></canvas>
       </div>
-      <div id="feed-dash"></div>
-    </div>
-    <div class="card">
-      <div class="card-title" style="margin-bottom:14px">Job Queue</div>
-      <div id="jobs-dash"></div>
-    </div>
-  </div>
-
-</div><!-- /dashboard -->
-
-
-<!-- ─ COMPANIES ─────────────────────────────────────────────────────── -->
-<div class="page-view" id="page-companies">
-
-  <div class="stat-grid-3">
-    <div class="stat ac"><div class="sl">Hot Leads</div><div class="sv" id="cp-hot">—</div><div class="ss">ICP score ≥ 70</div></div>
-    <div class="stat"><div class="sl">Total Companies</div><div class="sv" id="cp-total">—</div><div class="ss">unique orgs identified</div></div>
-    <div class="stat"><div class="sl">ISP / Cloud</div><div class="sv" id="cp-isp">—</div><div class="ss">unverifiable IPs</div></div>
-  </div>
-
-  <div class="sec-hd">
-    <div class="sec-title">All Companies</div>
-    <div class="sec-actions">
-      <button class="btn-ghost" onclick="triggerJobs()">▶ Process Queue</button>
-      <button class="btn-dark" onclick="manualRefresh()">↻ Refresh</button>
-    </div>
-  </div>
-  <div class="tbl-wrap"><div class="tbl-scroll"><table>
-    <thead><tr><th>Company</th><th>ICP Score</th><th>Industry</th><th>Employees</th><th>Revenue</th><th>Technologies</th><th>Location</th><th>Sessions</th><th>Enriched</th><th>Last Seen</th><th>Action</th></tr></thead>
-    <tbody id="co-tbody-full"></tbody>
-  </table></div></div>
-
-</div><!-- /companies -->
-
-
-<!-- ─ PAGE VISITS ───────────────────────────────────────────────────── -->
-<div class="page-view" id="page-visits">
-
-  <div class="stat-grid-2">
-    <div class="stat"><div class="sl">Total Visits</div><div class="sv" id="pv-total">—</div><div class="ss">all recorded events</div></div>
-    <div class="stat"><div class="sl">Unique Paths</div><div class="sv" id="pv-paths">—</div><div class="ss">distinct URLs</div></div>
-    <div class="stat"><div class="sl">Top Page</div><div class="sv" style="font-size:18px;margin-top:4px" id="pv-top">—</div><div class="ss">most visited</div></div>
-    <div class="stat ac"><div class="sl">Today</div><div class="sv" id="pv-today">—</div><div class="ss">visits so far</div></div>
-  </div>
-
-  <div class="visits-grid">
-    <div class="card" style="padding:0">
-      <div style="padding:14px 18px;border-bottom:1px solid var(--bdr)">
-        <div class="card-title">Recent Page Visits</div>
-        <div class="card-sub" style="margin-bottom:0">All tracked page events, newest first</div>
+      <div class="cbox">
+        <div class="cb-t">ICP Score Distribution</div>
+        <div class="cb-s">Companies by engagement tier</div>
+        <canvas id="cScore"></canvas>
       </div>
-      <div id="visits-list" style="max-height:440px;overflow-y:auto"></div>
     </div>
-    <div class="card">
-      <div class="card-title" style="margin-bottom:14px">Pages by Visit Count</div>
-      <canvas id="cVisitPages" style="max-height:300px"></canvas>
+
+    <div>
+      <div class="sec-row">
+        <span class="sec-title">Identified Companies</span>
+        <span class="sec-action" onclick="goTo('companies')">See all →</span>
+      </div>
+      <div class="tbl-wrap"><div class="tbl-scroll"><table>
+        <thead><tr><th>Company</th><th>Score</th><th>Industry</th><th>Size</th><th>Location</th><th>Sessions</th><th>Last Seen</th><th>Summary</th><th></th></tr></thead>
+        <tbody id="co-dash"></tbody>
+      </table></div></div>
     </div>
-  </div>
 
-</div><!-- /visits -->
-
-
-<!-- ─ JOB QUEUE ─────────────────────────────────────────────────────── -->
-<div class="page-view" id="page-jobs">
-
-  <div class="stat-grid-2">
-    <div class="stat ac"><div class="sl">Succeeded</div><div class="sv" id="jq-ok">—</div><div class="ss">completed successfully</div></div>
-    <div class="stat"><div class="sl">Queued</div><div class="sv" id="jq-q">—</div><div class="ss">waiting to run</div></div>
-    <div class="stat"><div class="sl">Running</div><div class="sv" id="jq-run">—</div><div class="ss">in progress</div></div>
-    <div class="stat"><div class="sl">Failed</div><div class="sv" id="jq-fail" style="color:var(--err)">—</div><div class="ss">needs attention</div></div>
-  </div>
-
-  <div class="sec-hd">
-    <div class="sec-title">Job History</div>
-    <div class="sec-actions">
-      <button class="btn-ghost" onclick="triggerJobs()">▶ Run Processor</button>
-      <button class="btn-dark" onclick="manualRefresh()">↻ Refresh</button>
+    <div class="bot-row">
+      <div class="box">
+        <div class="box-hd"><span class="bh-t">Recent Page Visits</span><small>last 20</small></div>
+        <div id="feed-dash"></div>
+      </div>
+      <div class="box">
+        <div class="box-hd"><span class="bh-t">Job Pipeline</span></div>
+        <div id="jobs-dash"></div>
+      </div>
     </div>
   </div>
-  <div class="jobs-grid">
-    <div class="tbl-wrap"><div class="tbl-scroll"><table style="min-width:500px">
-      <thead><tr><th>Type</th><th>Status</th><th>Attempt</th><th>Error</th><th>Created</th></tr></thead>
-      <tbody id="jobs-tbody"></tbody>
+</div>
+
+<!-- COMPANIES -->
+<div class="pv" id="page-companies">
+  <div class="pg-stats c3">
+    <div class="pg-sc"><div class="sc-l">Hot Leads</div><div class="sc-v hl" id="cp-hot">—</div><div class="sc-s">score ≥ 70</div></div>
+    <div class="pg-sc"><div class="sc-l">Total Companies</div><div class="sc-v" id="cp-total">—</div><div class="sc-s">unique orgs</div></div>
+    <div class="pg-sc"><div class="sc-l">ISP / Cloud</div><div class="sc-v" id="cp-isp">—</div><div class="sc-s">unverifiable</div></div>
+  </div>
+  <div class="content">
+    <div class="tbl-wrap"><div class="tbl-scroll"><table>
+      <thead><tr><th>Company</th><th>Score</th><th>Industry</th><th>Employees</th><th>Revenue</th><th>Location</th><th>Enriched</th><th>Sessions</th><th>Last Seen</th><th></th></tr></thead>
+      <tbody id="co-full"></tbody>
     </table></div></div>
-    <div class="card">
-      <div class="card-title" style="margin-bottom:14px">Job Type Breakdown</div>
-      <canvas id="cJobType" style="max-height:200px"></canvas>
-    </div>
   </div>
+</div>
 
-</div><!-- /jobs -->
-
-
-<!-- ─ SETTINGS ──────────────────────────────────────────────────────── -->
-<div class="page-view" id="page-settings">
-  <div class="sec-title" style="margin-bottom:16px">Settings & Configuration</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-    <div class="card">
-      <div class="card-title" style="margin-bottom:12px">Pipeline Configuration</div>
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--bdr)">
-          <div><div style="font-weight:600;font-size:13px">Supabase Project</div><div class="cell-sm" style="margin-top:2px">sgaaeuqsmuydftxbftpw</div></div>
-          <span class="tag tag-ok">Connected</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--bdr)">
-          <div><div style="font-weight:600;font-size:13px">Tracker Script</div><div class="cell-sm" style="margin-top:2px">kshitij-tawny.vercel.app/tracker.js</div></div>
-          <span class="tag tag-ok">Active</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--bdr)">
-          <div><div style="font-weight:600;font-size:13px">IP Resolution</div><div class="cell-sm" style="margin-top:2px">Reverse DNS + ip2asn + IPinfo (3 layers)</div></div>
-          <span class="tag tag-ok">Active</span>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0">
-          <div><div style="font-weight:600;font-size:13px">Apollo Enrichment</div><div class="cell-sm" style="margin-top:2px">Set APOLLO_API_KEY in Supabase secrets</div></div>
-          <span class="tag tag-warn" id="apollo-status-tag">Not Set</span>
-        </div>
+<!-- PAGE VISITS -->
+<div class="pv" id="page-visits">
+  <div class="pg-stats c4">
+    <div class="pg-sc"><div class="sc-l">Total Visits</div><div class="sc-v" id="pv-tot">—</div><div class="sc-s">all events</div></div>
+    <div class="pg-sc"><div class="sc-l">Unique Paths</div><div class="sc-v" id="pv-paths">—</div><div class="sc-s">distinct URLs</div></div>
+    <div class="pg-sc"><div class="sc-l">Top Page</div><div class="sc-v" style="font-size:16px;padding-top:8px" id="pv-top">—</div><div class="sc-s">most visited</div></div>
+    <div class="pg-sc"><div class="sc-l">Today</div><div class="sc-v" id="pv-today">—</div><div class="sc-s">visits so far</div></div>
+  </div>
+  <div class="content">
+    <div class="vis-pair">
+      <div class="box">
+        <div class="box-hd"><span class="bh-t">All Page Visits</span><small>newest first</small></div>
+        <div id="vis-list" style="max-height:400px;overflow-y:auto"></div>
       </div>
-    </div>
-    <div class="card">
-      <div class="card-title" style="margin-bottom:12px">ICP Scoring Rules</div>
-      <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;color:var(--ink2)">
-        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bdr)"><span>Page visit (each)</span><span style="font-weight:700;color:var(--ink)">+8 pts</span></div>
-        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bdr)"><span>High-value page (/work, /services…)</span><span style="font-weight:700;color:var(--ink)">+15 pts</span></div>
-        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bdr)"><span>Built environment industry match</span><span style="font-weight:700;color:var(--ink)">+25 pts</span></div>
-        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bdr)"><span>Company size 50–2,000 employees</span><span style="font-weight:700;color:var(--ink)">+15 pts</span></div>
-        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bdr)"><span>ISP / cloud IP detected</span><span style="font-weight:700;color:var(--err)">cap 20</span></div>
-        <div style="display:flex;justify-content:space-between;padding:7px 0"><span><strong>Hot lead threshold</strong></span><span style="font-weight:700;color:var(--yd)">≥ 70</span></div>
+      <div class="cbox" style="align-self:start">
+        <div class="cb-t">Top Pages</div>
+        <div class="cb-s">By visit count</div>
+        <canvas id="cVisitPages" style="max-height:280px"></canvas>
       </div>
     </div>
   </div>
-</div><!-- /settings -->
+</div>
+
+<!-- JOB QUEUE -->
+<div class="pv" id="page-jobs">
+  <div class="pg-stats c4">
+    <div class="pg-sc"><div class="sc-l">Succeeded</div><div class="sc-v" id="jq-ok">—</div><div class="sc-s">completed</div></div>
+    <div class="pg-sc"><div class="sc-l">Queued</div><div class="sc-v" id="jq-q">—</div><div class="sc-s">waiting</div></div>
+    <div class="pg-sc"><div class="sc-l">Running</div><div class="sc-v" id="jq-run">—</div><div class="sc-s">in progress</div></div>
+    <div class="pg-sc"><div class="sc-l">Failed</div><div class="sc-v" style="color:#ef4444" id="jq-fail">—</div><div class="sc-s">needs attention</div></div>
+  </div>
+  <div class="content">
+    <div class="jobs-pair">
+      <div class="box">
+        <div class="box-hd"><span class="bh-t">Job Status Breakdown</span></div>
+        <div id="jobs-full"></div>
+      </div>
+      <div class="cbox" style="align-self:start">
+        <div class="cb-t">Pipeline Mix</div>
+        <div class="cb-s">Jobs by status</div>
+        <canvas id="cJobType" style="max-height:200px"></canvas>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="btn-run" onclick="runJobs()">
+        <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M2.5 1.5L7 4.5L2.5 7.5V1.5Z" fill="currentColor"/></svg>
+        Run Processor Now
+      </button>
+      <span style="font-size:11px;color:#bbb">Auto-runs every 60 seconds</span>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div class="pv" id="page-settings">
+  <div class="content" style="padding-top:26px">
+    <div class="set-grid">
+      <div class="set-card">
+        <div class="set-hd">Pipeline Configuration</div>
+        <div class="set-row"><div><div class="sr-name">Supabase Project</div><div class="sr-meta">sgaaeuqsmuydftxbftpw</div></div><span class="tag-g">Connected</span></div>
+        <div class="set-row"><div><div class="sr-name">Tracker Script</div><div class="sr-meta">kshitij-tawny.vercel.app/tracker.js</div></div><span class="tag-g">Active</span></div>
+        <div class="set-row"><div><div class="sr-name">IP Resolution</div><div class="sr-meta">Reverse DNS · ip2asn · IPinfo (3 layers)</div></div><span class="tag-g">Active</span></div>
+        <div class="set-row"><div><div class="sr-name">Apollo Enrichment</div><div class="sr-meta">Set APOLLO_API_KEY in Supabase secrets</div></div><span id="apollo-tag" class="tag-a">Not set</span></div>
+      </div>
+      <div class="set-card">
+        <div class="set-hd">ICP Scoring Rules</div>
+        <div class="rule-row"><span>Each page visit</span><strong>+8 pts</strong></div>
+        <div class="rule-row"><span>High-value page (/work, /services…)</span><strong>+15 pts</strong></div>
+        <div class="rule-row"><span>Built environment industry match</span><strong>+25 pts</strong></div>
+        <div class="rule-row"><span>Company size 50–2,000 employees</span><strong>+15 pts</strong></div>
+        <div class="rule-row"><span>ISP / cloud IP detected</span><strong style="color:#ef4444">cap 20</strong></div>
+        <div class="rule-row"><span>Hot lead threshold</span><strong style="color:#C8BB00">≥ 70 pts</strong></div>
+      </div>
+    </div>
+  </div>
+</div>
 
 </main>
-
 <div id="toast"></div>
 
-<!-- ══ JS ═══════════════════════════════════════════════════════════════ -->
 <script>
-const DASH_API = 'https://sgaaeuqsmuydftxbftpw.supabase.co/functions/v1/get-dashboard';
+const API      = 'https://sgaaeuqsmuydftxbftpw.supabase.co/functions/v1/get-dashboard';
 const JOBS_API = 'https://sgaaeuqsmuydftxbftpw.supabase.co/functions/v1/process-jobs';
-const ENRICH_API = 'https://sgaaeuqsmuydftxbftpw.supabase.co/functions/v1/enqueue-apollo';
-const REFRESH_MS = 30000;
-const JOB_AUTO_MS = 60000;
+const ENR_API  = 'https://sgaaeuqsmuydftxbftpw.supabase.co/functions/v1/enqueue-apollo';
+const REFRESH  = 30000, JOB_TICK = 60000;
 
-let charts = {};
-let cdSec = REFRESH_MS / 1000;
-let cdTimer, refreshTimer, jobTimer;
-let lastData = null;
+let charts={}, cd=30, cdTimer, state=null;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function rel(ts){if(!ts)return'—';const s=Math.floor((Date.now()-new Date(ts))/1000);if(s<60)return s+'s ago';if(s<3600)return Math.floor(s/60)+'m ago';if(s<86400)return Math.floor(s/3600)+'h ago';return Math.floor(s/86400)+'d ago'}
+function sc(n){return n>=70?'hot':n>=40?'warm':'cold'}
+function toast(m,d=3200){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),d)}
 
-/* ── utils ── */
-const $  = id => document.getElementById(id);
-const esc = s => String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-function rel(ts) {
-  if (!ts) return '—';
-  const s = Math.floor((Date.now() - new Date(ts)) / 1000);
-  if (s < 60) return s + 's ago';
-  if (s < 3600) return Math.floor(s/60) + 'm ago';
-  if (s < 86400) return Math.floor(s/3600) + 'h ago';
-  return Math.floor(s/86400) + 'd ago';
+/* router */
+const TITLES={dashboard:'Dashboard',companies:'Companies',visits:'Page Visits',jobs:'Job Queue',settings:'Settings'};
+function goTo(p){
+  document.querySelectorAll('.pv').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(e=>e.classList.remove('active'));
+  const pg=$('page-'+p);if(pg)pg.classList.add('active');
+  const btn=document.querySelector(`.nav-item[data-page="${p}"]`);if(btn)btn.classList.add('active');
+  $('tb-title').textContent=TITLES[p]||p;
+  if(state)renderPage(p,state);
 }
-function scoreClass(n) { return n >= 70 ? 'hot' : n >= 40 ? 'warm' : 'cold'; }
-function toast(msg, dur=3500) {
-  const t = $('toast'); t.textContent = msg; t.classList.add('show');
-  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), dur);
-}
+document.querySelectorAll('.nav-item[data-page]').forEach(b=>b.addEventListener('click',()=>goTo(b.dataset.page)));
 
-/* ── router ── */
-const PAGE_META = {
-  dashboard: ['Dashboard','Overview'],
-  companies: ['Companies','All identified organisations'],
-  visits:    ['Page Visits','All tracked page events'],
-  jobs:      ['Job Queue','Processing pipeline status'],
-  settings:  ['Settings','Configuration & scoring rules'],
-};
-function goTo(pageId) {
-  document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-  const pg = $('page-' + pageId);
-  if (pg) pg.classList.add('active');
-  const btn = document.querySelector(`.nav-item[data-page="${pageId}"]`);
-  if (btn) btn.classList.add('active');
-  const [title, sub] = PAGE_META[pageId] || ['Dashboard','Overview'];
-  $('tb-title').textContent = title;
-  $('tb-sub').textContent = sub;
-  if (lastData) renderPage(pageId, lastData);
-}
-document.querySelectorAll('.nav-item[data-page]').forEach(btn => {
-  btn.addEventListener('click', () => goTo(btn.dataset.page));
-});
+/* progress */
+function pStart(){const e=$('prog');e.style.transition='none';e.style.width='0';requestAnimationFrame(()=>requestAnimationFrame(()=>{e.style.transition=`width ${REFRESH/1000}s linear`;e.style.width='100%'}))}
+function pReset(){const e=$('prog');e.style.transition='none';e.style.width='0'}
+function startCd(){clearInterval(cdTimer);cd=REFRESH/1000;cdTimer=setInterval(()=>{cd--;$('cd-num').textContent=cd>0?cd+'s':'…';if(cd<=0)clearInterval(cdTimer)},1000)}
 
-/* ── strip + countdown ── */
-function stripStart() {
-  const el = $('rstrip');
-  el.style.transition = 'none'; el.style.width = '0';
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    el.style.transition = `width ${REFRESH_MS/1000}s linear`; el.style.width = '100%';
-  }));
-}
-function stripReset() { const el=$('rstrip'); el.style.transition='none'; el.style.width='0'; }
-function startCd() {
-  clearInterval(cdTimer); cdSec = REFRESH_MS / 1000;
-  cdTimer = setInterval(() => {
-    cdSec--;
-    $('cd-num').textContent = cdSec > 0 ? cdSec + 's' : 'now';
-    if (cdSec <= 0) clearInterval(cdTimer);
-  }, 1000);
-}
-
-/* ── chart helpers ── */
-function ct() {
-  const dk = document.documentElement.dataset.theme === 'dark' ||
-    (!document.documentElement.dataset.theme && matchMedia('(prefers-color-scheme:dark)').matches);
-  return {
-    grid: dk ? 'rgba(255,255,255,.05)' : 'rgba(0,0,0,.055)',
-    tick: dk ? '#5C5C58' : '#8C8C86',
-    line: dk ? '#F3E400' : '#0C0C0A',
-    area: dk ? 'rgba(243,228,0,.06)' : 'rgba(12,12,10,.05)',
-    donut: dk ? ['#F3E400','#9BCBEB','#0C0C0A','#991B1B'] : ['#0C0C0A','#9BCBEB','#F3E400','#991B1B'],
-    scoreBars: dk ? ['#3A3A36','#9BCBEB','#F3E400','#E8E8E2'] : ['#C4C4BE','#9BCBEB','#F3E400','#0C0C0A'],
-    surf: dk ? '#161614' : '#FFFFFF',
-  };
-}
-const TOOLTIP_OPTS = {
-  backgroundColor: '#0C0C0A', titleColor: '#fff', bodyColor: '#8C8C86',
-  borderColor: 'rgba(255,255,255,.08)', borderWidth: 1,
-  padding: 10, cornerRadius: 6, displayColors: false,
-};
-function mkChart(id, type, data, opts) {
-  if (charts[id]) charts[id].destroy();
-  charts[id] = new Chart($(id), { type, data, options: { responsive: true, plugins: { legend: { display: false }, tooltip: TOOLTIP_OPTS }, ...opts } });
-  return charts[id];
-}
-
-/* ── load data ── */
-async function loadData(silent = false) {
-  if (!silent) { $('tb-fetch').classList.add('on'); $('tb-upd').style.display = 'none'; }
-  try {
-    const r = await fetch(DASH_API);
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    const d = await r.json();
-    lastData = d;
-    if (!d.apollo_configured) { $('apollo-notice').style.display = 'flex'; $('apollo-status-tag').textContent = 'Not Set'; $('apollo-status-tag').className = 'tag tag-warn'; }
-    else { $('apollo-status-tag').textContent = 'Active'; $('apollo-status-tag').className = 'tag tag-ok'; }
+/* load */
+async function load(){
+  try{
+    const r=await fetch(API);if(!r.ok)throw 0;
+    const d=await r.json();state=d;
+    const apollo=d.apollo_configured;
+    $('notice').style.display=apollo?'none':'flex';
+    if($('apollo-tag')){$('apollo-tag').className=apollo?'tag-g':'tag-a';$('apollo-tag').textContent=apollo?'Active':'Not set'}
     renderAll(d);
-    $('tb-upd').textContent = 'Updated ' + new Date().toLocaleTimeString('en', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  } catch(e) {
-    $('tb-upd').textContent = 'Error — retrying…'; console.error(e);
-  } finally {
-    $('tb-fetch').classList.remove('on'); $('tb-upd').style.display = '';
-  }
+    $('tb-upd').textContent='Updated '+new Date().toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  }catch(e){console.error(e)}
+}
+async function manualRefresh(){pReset();await load();pStart();startCd()}
+
+/* render all */
+function renderAll(d){
+  const s=d.sessions||{},tot=Object.values(s).reduce((a,b)=>a+b,0);
+  $('s-tot').textContent=tot; $('s-id').textContent=s.resolved||0;
+  $('s-hot').textContent=d.hot_leads||0; $('s-co').textContent=(d.companies||[]).length;
+  $('s-pend').textContent=s.pending||0; $('s-unm').textContent=s.unmatched||0;
+  $('nb-sess').textContent=tot||'—'; $('nb-co').textContent=(d.companies||[]).length||'—';
+  $('nb-vis').textContent=(d.recent_visits||[]).length||'—';
+  $('nb-jobs').textContent=Object.values(d.jobs||{}).reduce((a,b)=>a+b,0)||'—';
+  buildCharts(d);
+  renderCoRows('co-dash',d,false);
+  renderFeed(d);
+  renderJobsSummary(d);
+  const active=document.querySelector('.pv.active')?.id?.replace('page-','');
+  if(active&&active!=='dashboard'&&active!=='settings')renderPage(active,d);
+}
+function renderPage(p,d){
+  if(p==='companies')renderCompanies(d);
+  if(p==='visits')renderVisits(d);
+  if(p==='jobs')renderJobs(d);
 }
 
-/* ── render all ── */
-function renderAll(d) {
-  renderStats(d);
-  buildDashCharts(d);
-  renderCoTable('co-tbody-dash', d, false);
-  renderFeedDash(d);
-  const activePage = document.querySelector('.page-view.active')?.id?.replace('page-','');
-  if (activePage && activePage !== 'dashboard' && activePage !== 'settings') renderPage(activePage, d);
-  // update badges
-  $('nb-co').textContent = (d.companies||[]).length || '—';
-  $('nb-jobs').textContent = Object.values(d.jobs||{}).reduce((a,b)=>a+b,0) || '—';
-  $('nb-visits').textContent = (d.recent_visits||[]).length || '—';
-}
-
-function renderPage(page, d) {
-  if (page === 'companies') renderCompaniesPage(d);
-  if (page === 'visits') renderVisitsPage(d);
-  if (page === 'jobs') renderJobsPage(d);
-}
-
-/* ── stats ── */
-function renderStats(d) {
-  const s = d.sessions||{}; const total = Object.values(s).reduce((a,b)=>a+b,0);
-  $('stats').innerHTML = `
-    <div class="stat"><div class="sl">Total Sessions</div><div class="sv">${total}</div><div class="ss">all time</div></div>
-    <div class="stat"><div class="sl">Identified</div><div class="sv">${s.resolved||0}</div><div class="ss">IP → company</div></div>
-    <div class="stat ac"><div class="sl">Hot Leads</div><div class="sv">${d.hot_leads||0}</div><div class="ss">ICP score ≥ 70</div></div>
-    <div class="stat"><div class="sl">Companies</div><div class="sv">${(d.companies||[]).length}</div><div class="ss">unique orgs</div></div>
-    <div class="stat"><div class="sl">Pending</div><div class="sv">${s.pending||0}</div><div class="ss">awaiting lookup</div></div>
-    <div class="stat"><div class="sl">Unmatched</div><div class="sv">${s.unmatched||0}</div><div class="ss">ISP / cloud IP</div></div>`;
-}
-
-/* ── company row builder ── */
-function coRow(c, extended = false) {
-  const sc = c.score||0, cl = scoreClass(sc);
-  const geo = c.geo ? [c.geo.city,c.geo.country].filter(Boolean).join(', ') : '—';
-  const li = c.linkedin_url ? `<a class="co-li" href="https://${c.linkedin_url}" target="_blank" rel="noopener">LinkedIn ↗</a>` : '';
-  const isp = c.is_isp ? `<div class="isp-tag">⚠ ISP / Cloud</div>` : '';
-  const btn = c.is_isp
-    ? `<button class="enrich-btn" disabled>N/A</button>`
-    : c.enriched_at
-      ? `<button class="enrich-btn done" disabled>✓ Enriched</button>`
-      : `<button class="enrich-btn" onclick="doEnrich('${c.id}',this)">Enrich</button>`;
-  const tech = c.technologies ? Object.values(c.technologies).flat().slice(0,3).join(', ') : '—';
-  const extra = extended ? `<td><span class="cell-sm">${esc(tech).slice(0,40)+(tech.length>40?'…':'')}</span></td>` : '';
-  return `<tr>
+/* co row */
+function coRow(c,ext){
+  const s=c.score||0,cl=sc(s);
+  const geo=c.geo?[c.geo.city,c.geo.country].filter(Boolean).join(', '):'—';
+  const isp=c.is_isp?`<div class="isp-tag">ISP</div>`:'';
+  const li=c.linkedin_url?`<a class="co-li" href="https://${c.linkedin_url}" target="_blank" rel="noopener">LinkedIn ↗</a>`:'';
+  const btn=c.is_isp?`<button class="e-btn" disabled>N/A</button>`:
+    c.enriched_at?`<button class="e-btn done" disabled>✓ Done</button>`:
+    `<button class="e-btn" onclick="doEnrich('${c.id}',this)">Enrich</button>`;
+  const revTd=ext?`<td><span class="cell-sm">${esc(c.annual_revenue||'—')}</span></td>`:'';
+  const enrTd=ext?`<td>${c.enriched_at?`<span class="tag-ok">Yes</span>`:`<span class="tag-no">No</span>`}</td>`:'';
+  const sumTd=!ext?`<td><span class="cell-sm" style="max-width:130px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.alert_summary||c.short_description||'—')}</span></td>`:'';
+  return`<tr>
     <td><div class="co-name">${esc(c.name||'Unknown')}</div><div class="co-dom">${esc(c.domain||'')}</div>${isp}${li}</td>
-    <td><div class="sc-wrap"><div class="sc-track"><div class="sc-fill f-${cl}" style="width:${sc}%"></div></div><span class="sc-num ${cl}">${sc}</span></div></td>
-    <td><span class="cell" title="${esc(c.industry||'')}">${c.industry?esc(c.industry).slice(0,20)+(c.industry.length>20?'…':''):'—'}</span></td>
-    <td><span class="cell">${c.employee_range||'—'}</span></td>
-    <td><span class="cell-sm">${esc(c.annual_revenue||'—')}</span></td>
-    ${extra}
+    <td><div class="sc-wrap ${cl}"><div class="sc-bar"><div class="sc-fill" style="width:${s}%"></div></div><span class="sc-num">${s}</span></div></td>
+    <td><span class="cell" title="${esc(c.industry||'')}">${c.industry?esc(c.industry).slice(0,22):'—'}</span></td>
+    <td><span class="cell">${esc(c.employee_range||'—')}</span></td>
+    ${revTd}
     <td><span class="cell-sm">${esc(geo)}</span></td>
+    ${enrTd}
     <td style="font-weight:700;font-variant-numeric:tabular-nums">${c.session_count||0}</td>
-    ${extended ? `<td>${c.enriched_at?`<span class="tag tag-ok">✓</span>`:`<span class="tag tag-gray">No</span>`}</td>` : ''}
     <td><span class="cell-sm">${rel(c.last_seen_at)}</span></td>
-    ${extended ? '' : `<td><span class="cell-sm" style="max-width:140px;display:block">${esc(c.alert_summary||c.short_description||'—')}</span></td>`}
+    ${sumTd}
     <td>${btn}</td></tr>`;
 }
-
-function renderCoTable(tbodyId, d, extended) {
-  const cos = [...(d.companies||[])].sort((a,b)=>(b.score||0)-(a.score||0));
-  const tb = $(tbodyId);
-  if (!cos.length) { tb.innerHTML = `<tr><td colspan="12" class="empty-state">No companies identified yet — browse the site and click <strong>Process Queue</strong>.</td></tr>`; return; }
-  tb.innerHTML = cos.map(c => coRow(c, extended)).join('');
+function renderCoRows(id,d,ext){
+  const cos=[...(d.companies||[])].sort((a,b)=>(b.score||0)-(a.score||0));
+  const tb=$(id);if(!tb)return;
+  tb.innerHTML=cos.length?cos.map(c=>coRow(c,ext)).join(''):`<tr><td colspan="10" class="empty">No companies identified yet — visit the site then click Run Jobs</td></tr>`;
 }
 
-/* ── dashboard feed + jobs ── */
-function renderFeedDash(d) {
-  const visits = d.recent_visits||[];
-  $('feed-dash').innerHTML = visits.length
-    ? visits.map(v=>`<div class="feed-row"><span class="feed-path">${esc(v.path)}</span><span class="feed-time">${rel(v.occurred_at)}</span></div>`).join('')
-    : `<div class="empty-state">No visits yet.</div>`;
-  const jb = d.jobs||{};
-  const ORDER = ['queued','running','succeeded','failed'];
-  const LABELS = {queued:'Queued',running:'Running',succeeded:'Succeeded',failed:'Failed'};
-  const DOT = {queued:'pend',running:'pend',succeeded:'ok',failed:'err'};
-  $('jobs-dash').innerHTML = Object.entries(jb).sort((a,b)=>ORDER.indexOf(a[0])-ORDER.indexOf(b[0])).map(([k,v])=>`
-    <div class="jrow"><div class="jrow-left"><div class="jdot ${DOT[k]||'pend'}"></div><span class="jlabel">${LABELS[k]||k}</span></div><span class="jnum ${DOT[k]||'pend'}">${v}</span></div>`).join('')
-    || `<div class="empty-state">No jobs yet.</div>`;
+/* feed */
+function renderFeed(d){
+  $('feed-dash').innerHTML=(d.recent_visits||[]).length
+    ?(d.recent_visits||[]).map(v=>`<div class="feed-row"><span class="feed-path">${esc(v.path)}</span><span class="feed-t">${rel(v.occurred_at)}</span></div>`).join('')
+    :`<div class="empty">No visits yet</div>`;
 }
 
-/* ── dashboard charts ── */
-function buildDashCharts(d) {
-  const C = ct();
-  const gridOpts = (h) => ({
-    y:{beginAtZero:true,grid:{color:C.grid,drawTicks:false},border:{display:false},ticks:{color:C.tick,font:{size:10},maxTicksLimit:4,padding:6}},
-    x:{grid:{display:false},border:{display:false},ticks:{color:C.tick,font:{size:10},padding:4}}
-  });
-  // sessions line
-  const days = Object.keys(d.daily_sessions||{});
-  const dc = Object.values(d.daily_sessions||{});
-  mkChart('cSess','line',{
-    labels:days.map(d=>new Date(d).toLocaleDateString('en',{weekday:'short'})),
-    datasets:[{data:dc,borderColor:C.line,backgroundColor:C.area,borderWidth:2,pointBackgroundColor:C.line,pointRadius:4,pointHoverRadius:6,fill:true,tension:.35}]
-  },{scales:gridOpts()});
-  // score buckets
-  const sb = d.score_buckets||{};
-  mkChart('cScore','bar',{
-    labels:['0–25','26–50','51–75','76–100'],
-    datasets:[{data:[sb['0-25']||0,sb['26-50']||0,sb['51-75']||0,sb['76-100']||0],backgroundColor:C.scoreBars,borderRadius:4,borderSkipped:false}]
-  },{scales:gridOpts()});
-  // job doughnut
-  const jb = d.jobs||{};
-  const jk = Object.keys(jb), jv = Object.values(jb);
-  const jc = jk.map(k=>k==='succeeded'?C.donut[0]:k==='queued'?C.donut[1]:k==='running'?C.donut[2]:C.donut[3]);
-  mkChart('cJob','doughnut',{labels:jk,datasets:[{data:jv,backgroundColor:jc,borderWidth:2,borderColor:C.surf}]},
-    {cutout:'65%',plugins:{legend:{display:true,position:'bottom',labels:{color:C.tick,font:{size:9.5},boxWidth:8,padding:8,usePointStyle:true}},tooltip:TOOLTIP_OPTS}});
-  // top pages bar
-  const tp = d.top_pages||[];
-  mkChart('cPages','bar',{
-    labels:tp.map(p=>p.path),
-    datasets:[{data:tp.map(p=>p.count),backgroundColor:C.line,borderRadius:3,barThickness:11}]
-  },{indexAxis:'y',scales:{
-    x:{beginAtZero:true,grid:{color:C.grid,drawTicks:false},border:{display:false},ticks:{color:C.tick,font:{size:10}}},
-    y:{grid:{display:false},border:{display:false},ticks:{color:C.tick,font:{size:10,family:'monospace'},padding:6}}
-  }});
+/* jobs summary */
+const JMETA={succeeded:{dot:'ok',nc:'ok'},queued:{dot:'q',nc:'q'},running:{dot:'q',nc:'q'},failed:{dot:'err',nc:'err'},dead_letter:{dot:'err',nc:'err'}};
+const JORD=['succeeded','queued','running','failed','dead_letter'];
+function renderJobsSummary(d){
+  const j=d.jobs||{};
+  $('jobs-dash').innerHTML=Object.entries(j).sort((a,b)=>JORD.indexOf(a[0])-JORD.indexOf(b[0])).map(([k,v])=>{
+    const m=JMETA[k]||{dot:'q',nc:'g'};
+    return`<div class="job-row"><div class="jr-l"><div class="jdot ${m.dot}"></div><span class="jr-label">${k.replace('_',' ')}</span></div><span class="jr-num ${m.nc}">${v}</span></div>`;
+  }).join('')||`<div class="empty">No jobs yet</div>`;
 }
 
-/* ── Companies page ── */
-function renderCompaniesPage(d) {
-  const cos = d.companies||[];
-  $('cp-hot').textContent = d.hot_leads||0;
-  $('cp-total').textContent = cos.length;
-  $('cp-isp').textContent = cos.filter(c=>c.is_isp).length;
-  renderCoTable('co-tbody-full', d, true);
+/* charts */
+const TIP={backgroundColor:'#111',titleColor:'#fff',bodyColor:'#aaa',borderColor:'rgba(0,0,0,.06)',borderWidth:1,padding:10,cornerRadius:6,displayColors:false};
+const GX={grid:{display:false},border:{display:false},ticks:{color:'#bbb',font:{size:10},padding:4}};
+const GY={beginAtZero:true,grid:{color:'rgba(0,0,0,.04)',drawTicks:false},border:{display:false},ticks:{color:'#bbb',font:{size:10},maxTicksLimit:4,padding:6}};
+
+function buildCharts(d){
+  if(charts.cSess)charts.cSess.destroy();
+  const days=Object.keys(d.daily_sessions||{}),vals=Object.values(d.daily_sessions||{});
+  charts.cSess=new Chart($('cSess'),{type:'line',
+    data:{labels:days.map(d=>new Date(d).toLocaleDateString('en',{weekday:'short'})),
+      datasets:[{data:vals,borderColor:'#111',backgroundColor:'rgba(12,12,10,.04)',borderWidth:2,pointBackgroundColor:'#111',pointRadius:4,pointHoverRadius:6,fill:true,tension:.4}]},
+    options:{responsive:true,plugins:{legend:{display:false},tooltip:TIP},scales:{x:GX,y:GY}}});
+
+  if(charts.cScore)charts.cScore.destroy();
+  const sb=d.score_buckets||{};
+  charts.cScore=new Chart($('cScore'),{type:'bar',
+    data:{labels:['0–25','26–50','51–75','76–100'],
+      datasets:[{data:[sb['0-25']||0,sb['26-50']||0,sb['51-75']||0,sb['76-100']||0],
+        backgroundColor:['#E0E0DC','#9BCBEB','#F3E400','#111'],borderRadius:5,borderSkipped:false}]},
+    options:{responsive:true,plugins:{legend:{display:false},tooltip:TIP},scales:{x:GX,y:GY}}});
 }
 
-/* ── Visits page ── */
-function renderVisitsPage(d) {
-  const visits = d.recent_visits||[];
-  const tp = d.top_pages||[];
-  const today = new Date().toISOString().slice(0,10);
-  $('pv-total').textContent = visits.length;
-  const paths = [...new Set(visits.map(v=>v.path))];
-  $('pv-paths').textContent = paths.length;
-  $('pv-top').textContent = tp[0]?.path||'—';
-  $('pv-today').textContent = visits.filter(v=>(v.occurred_at||'').startsWith(today)).length;
-
-  $('visits-list').innerHTML = visits.length
-    ? visits.map(v=>`<div class="visit-full-row"><span class="vpath">${esc(v.path)}</span><span class="vsid">${(v.session_id||'').slice(0,8)}…</span><span class="vtime">${rel(v.occurred_at)}</span></div>`).join('')
-    : `<div class="empty-state">No page visits recorded yet.</div>`;
-
-  // visit pages chart (vertical bar)
-  const C = ct();
-  if (charts['cVisitPages']) charts['cVisitPages'].destroy();
-  charts['cVisitPages'] = new Chart($('cVisitPages'),{type:'bar',
-    data:{labels:tp.map(p=>p.path),datasets:[{data:tp.map(p=>p.count),backgroundColor:C.line,borderRadius:4}]},
-    options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false},tooltip:TOOLTIP_OPTS},
-      scales:{
-        x:{beginAtZero:true,grid:{color:C.grid,drawTicks:false},border:{display:false},ticks:{color:C.tick,font:{size:10}}},
-        y:{grid:{display:false},border:{display:false},ticks:{color:C.tick,font:{size:10,family:'monospace'}}}
-      }}
-  });
+/* page renders */
+function renderCompanies(d){
+  const cos=d.companies||[];
+  $('cp-hot').textContent=d.hot_leads||0;
+  $('cp-total').textContent=cos.length;
+  $('cp-isp').textContent=cos.filter(c=>c.is_isp).length;
+  renderCoRows('co-full',d,true);
+}
+function renderVisits(d){
+  const v=d.recent_visits||[],tp=d.top_pages||[],today=new Date().toISOString().slice(0,10);
+  $('pv-tot').textContent=v.length;
+  $('pv-paths').textContent=[...new Set(v.map(x=>x.path))].length;
+  $('pv-top').textContent=tp[0]?.path||'—';
+  $('pv-today').textContent=v.filter(x=>(x.occurred_at||'').startsWith(today)).length;
+  $('vis-list').innerHTML=v.length
+    ?v.map(r=>`<div class="vis-row"><span class="vpath">${esc(r.path)}</span><span class="vsid">${(r.session_id||'').slice(0,8)}</span><span class="vt">${rel(r.occurred_at)}</span></div>`).join('')
+    :`<div class="empty">No visits recorded</div>`;
+  if(charts.cVP)charts.cVP.destroy();
+  charts.cVP=new Chart($('cVisitPages'),{type:'bar',
+    data:{labels:tp.map(p=>p.path),datasets:[{data:tp.map(p=>p.count),backgroundColor:'#111',borderRadius:3}]},
+    options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false},tooltip:TIP},
+      scales:{x:{...GY,grid:{color:'rgba(0,0,0,.04)',drawTicks:false}},y:{...GX,ticks:{color:'#555',font:{size:10,family:'monospace'}}}}}});
+}
+function renderJobs(d){
+  const j=d.jobs||{};
+  $('jq-ok').textContent=j.succeeded||0; $('jq-q').textContent=j.queued||0;
+  $('jq-run').textContent=j.running||0; $('jq-fail').textContent=(j.failed||0)+(j.dead_letter||0);
+  $('jobs-full').innerHTML=Object.entries(j).sort((a,b)=>JORD.indexOf(a[0])-JORD.indexOf(b[0])).map(([k,v])=>{
+    const m=JMETA[k]||{dot:'q',nc:'g'};
+    return`<div class="jf-row"><div class="jdot ${m.dot}"></div><span class="jf-label">${k.replace('_',' ')}</span><span class="jf-num ${m.nc}">${v}</span></div>`;
+  }).join('')||`<div class="empty">No jobs yet</div>`;
+  if(charts.cJT)charts.cJT.destroy();
+  charts.cJT=new Chart($('cJobType'),{type:'doughnut',
+    data:{labels:Object.keys(j),datasets:[{data:Object.values(j),backgroundColor:['#111','#F3E400','#9BCBEB','#ef4444'],borderWidth:3,borderColor:'#fff'}]},
+    options:{cutout:'62%',responsive:true,plugins:{legend:{display:true,position:'bottom',labels:{color:'#aaa',font:{size:10},boxWidth:8,padding:10,usePointStyle:true}},tooltip:TIP}}});
 }
 
-/* ── Jobs page ── */
-function renderJobsPage(d) {
-  const jb = d.jobs||{};
-  $('jq-ok').textContent = jb.succeeded||0;
-  $('jq-q').textContent = jb.queued||0;
-  $('jq-run').textContent = jb.running||0;
-  $('jq-fail').textContent = (jb.failed||0)+(jb.dead_letter||0);
-  // simple table from job stats
-  const STATUS_CLS = {queued:'tag-warn',running:'tag-warn',succeeded:'tag-ok',failed:'tag-err',dead_letter:'tag-err'};
-  const rows = Object.entries(jb).map(([status,count])=>
-    `<tr><td><span class="cell" style="font-family:monospace">${status}</span></td><td><span class="tag ${STATUS_CLS[status]||'tag-gray'}">${status}</span></td><td><span class="cell" style="font-weight:700">${count}</span></td><td>—</td><td>—</td></tr>`).join('');
-  const tb = $('jobs-tbody');
-  tb.innerHTML = rows||`<tr><td colspan="5" class="empty-state">No jobs recorded.</td></tr>`;
-  // job type pie
-  const C = ct();
-  if (charts['cJobType']) charts['cJobType'].destroy();
-  charts['cJobType'] = new Chart($('cJobType'),{type:'doughnut',
-    data:{labels:Object.keys(jb),datasets:[{data:Object.values(jb),backgroundColor:C.donut,borderWidth:2,borderColor:C.surf}]},
-    options:{cutout:'60%',responsive:true,plugins:{legend:{display:true,position:'bottom',labels:{color:C.tick,font:{size:10},boxWidth:8,padding:8,usePointStyle:true}},tooltip:TOOLTIP_OPTS}}
-  });
+/* enrich */
+async function doEnrich(id,btn){
+  btn.disabled=true;btn.textContent='Queuing…';
+  try{
+    const r=await fetch(ENR_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({company_id:id})});
+    const d=await r.json();
+    if(d.error){toast('Apollo: '+d.error,5000);btn.disabled=false;btn.textContent='Enrich';}
+    else{toast('Queued!');btn.textContent='Working…';setTimeout(async()=>{await fetch(JOBS_API,{method:'POST'});setTimeout(()=>load(),1500)},500);}
+  }catch{toast('Error — check APOLLO_API_KEY',5000);btn.disabled=false;btn.textContent='Enrich';}
 }
 
-/* ── jobs trigger ── */
-async function triggerJobs() {
-  const btn = $('run-jobs-btn'); btn.disabled=true; btn.textContent='Running…';
-  toast('Processing job queue…');
-  try {
-    const r = await fetch(JOBS_API,{method:'POST'});
-    const d = await r.json();
-    const n = d.processed||0;
-    toast(`${n} job${n!==1?'s':''} processed${n>0?' — refreshing…':''}`);
-    if (n>0) setTimeout(()=>loadData(true),1200);
-  } catch(e) { toast('Job processor error'); }
-  finally { btn.disabled=false; btn.textContent='▶ Run Jobs'; }
-}
-async function silentJobs() {
-  try { const r=await fetch(JOBS_API,{method:'POST'}); const d=await r.json(); if((d.processed||0)>0) setTimeout(()=>loadData(true),1200); } catch{}
+/* job trigger */
+async function runJobs(){
+  const btn=$('run-btn');btn.disabled=true;btn.textContent='Running…';toast('Processing queue…');
+  try{
+    const r=await fetch(JOBS_API,{method:'POST'});const d=await r.json();
+    const n=d.processed||0;toast(`${n} job${n!==1?'s':''} processed`);
+    if(n>0)setTimeout(()=>load(),1200);
+  }catch{toast('Processor error');}
+  finally{btn.disabled=false;btn.innerHTML='<svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M2.5 1.5L7 4.5L2.5 7.5V1.5Z" fill="currentColor"/></svg>Run Jobs';}
 }
 
-/* ── enrich ── */
-async function doEnrich(id, btn) {
-  btn.disabled=true; btn.textContent='Queuing…';
-  try {
-    const r = await fetch(ENRICH_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({company_id:id})});
-    const d = await r.json();
-    if (d.error) { toast('Apollo: '+d.error,5000); btn.disabled=false; btn.textContent='Enrich'; }
-    else { toast('Queued — processing now…'); btn.textContent='Processing…'; setTimeout(async()=>{await fetch(JOBS_API,{method:'POST'});setTimeout(()=>loadData(true),1500);},500); }
-  } catch { toast('Error — is APOLLO_API_KEY configured?',5000); btn.disabled=false; btn.textContent='Enrich'; }
-}
-
-/* ── refresh ── */
-function manualRefresh() { stripReset(); loadData(false).then(()=>{stripStart();startCd();}); }
-
-/* ── theme ── */
-function toggleTheme(){
-  const r=document.documentElement; const cur=r.dataset.theme||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
-  r.dataset.theme=cur==='dark'?'light':'dark'; setTimeout(()=>loadData(true),80);
-}
-
-/* ── boot ── */
-(async function(){
-  await loadData(false);
-  stripStart(); startCd();
-  refreshTimer = setInterval(()=>{ stripReset(); loadData(true).then(()=>{stripStart();startCd();}); }, REFRESH_MS);
-  jobTimer = setInterval(silentJobs, JOB_AUTO_MS);
+/* boot */
+(async()=>{
+  await load();pStart();startCd();
+  setInterval(()=>{pReset();load().then(()=>{pStart();startCd()})},REFRESH);
+  setInterval(async()=>{try{const r=await fetch(JOBS_API,{method:'POST'});const d=await r.json();if((d.processed||0)>0)setTimeout(()=>load(),1200)}catch{}},JOB_TICK);
 })();
 </script>
 </body>
