@@ -236,21 +236,74 @@ td{padding:10px 14px;vertical-align:middle}
 .dp-enrich-btn.done{background:#f0fdf4;color:#166534}
 .dp-li{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;color:#5AAAD4;margin-top:8px}
 .dp-li svg{width:11px;height:11px}
-/* ── RETURNING STRIP ─────────────────────────────────────────────── */
-.ret-strip{background:#111;padding:0 24px;display:flex;align-items:center;gap:0;overflow-x:auto;scrollbar-width:none;flex-shrink:0;border-bottom:1px solid #222}
-.ret-strip::-webkit-scrollbar{display:none}
-.ret-strip-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#555;white-space:nowrap;padding:10px 12px 10px 0;border-right:1px solid #222;margin-right:12px;flex-shrink:0}
-.ret-chip{display:flex;align-items:center;gap:7px;padding:7px 12px;border-radius:6px;cursor:pointer;transition:background .1s;flex-shrink:0;margin:6px 4px}
-.ret-chip:hover{background:#1c1c1c}
-.ret-init{width:26px;height:26px;border-radius:6px;background:var(--y);color:#111;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.ret-init.warm{background:var(--bl);color:#1a3a55}
-.ret-init.cold{background:#333;color:#999}
-.ret-info{display:flex;flex-direction:column;gap:1px}
-.ret-name{font-size:11.5px;font-weight:700;color:#eee;white-space:nowrap}
-.ret-meta{font-size:9.5px;color:#666;white-space:nowrap}
-.ret-badge{font-size:9px;font-weight:700;background:#1a1a1a;border:1px solid #F3E400;color:#F3E400;border-radius:4px;padding:1px 5px;flex-shrink:0}
-.ret-badge.warm{border-color:#9BCBEB;color:#9BCBEB}
-.ret-empty{font-size:11px;color:#444;padding:11px 0}
+/* ── COMPANIES PAGE ──────────────────────────────────────────── */
+.cp-topbar{background:var(--surf);border-bottom:1px solid var(--bdr);padding:0 24px;display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+.cp-kpi{display:flex;align-items:center;gap:8px;padding:16px 0;border-right:1px solid var(--bdr);padding-right:24px;position:relative}
+.cp-kpi:first-child::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#F3E400;border-radius:0 2px 2px 0;display:none}
+.cp-kv{font-size:24px;font-weight:900;letter-spacing:-.04em;color:#111;font-variant-numeric:tabular-nums}
+.cp-kl{font-size:10px;color:#bbb;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+.cp-kt{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.cp-kt.hot{background:#F3E400}
+.cp-spacer{flex:1}
+.cp-filters{display:flex;align-items:center;gap:10px;padding:12px 0}
+.cp-filter-tabs{display:flex;gap:2px;background:#F4F4F1;border-radius:7px;padding:3px}
+.cp-tab{font-size:11px;font-weight:600;color:#999;padding:5px 12px;border-radius:5px;border:none;background:none;cursor:pointer;transition:.12s;white-space:nowrap}
+.cp-tab.active,.cp-tab:hover{background:var(--surf);color:#111;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.cp-content{padding:20px 24px}
+.cp-list-wrap{background:var(--surf);border:1px solid var(--bdr);border-radius:12px;overflow:hidden}
+.cp-table{width:100%;border-collapse:collapse;min-width:680px}
+.cp-table thead th{padding:10px 16px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#bbb;border-bottom:1px solid var(--bdr);white-space:nowrap;background:var(--surf)}
+.cp-table tbody tr{border-bottom:1px solid #F2F2EE;transition:background .08s;cursor:pointer}
+.cp-table tbody tr:last-child{border-bottom:none}
+.cp-table tbody tr:hover{background:#FAFAF8}
+.cp-table td{padding:12px 16px;vertical-align:middle}
+.cp-co-wrap{display:flex;align-items:center;gap:11px}
+.cp-av{width:36px;height:36px;border-radius:9px;font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.cp-av.hot{background:#111;color:#F3E400}
+.cp-av.warm{background:#EBF5FB;color:#5AAAD4}
+.cp-av.cold{background:#F4F4F1;color:#bbb}
+.cp-cn{font-weight:700;font-size:13px;color:#111;line-height:1.2}
+.cp-cd{font-size:10px;color:#ccc;font-family:monospace;margin-top:2px}
+.cp-score-pill{font-size:11px;font-weight:800;font-variant-numeric:tabular-nums;padding:4px 10px;border-radius:20px;white-space:nowrap}
+.cp-score-pill.hot{background:#111;color:#F3E400}
+.cp-score-pill.warm{background:#EBF5FB;color:#5AAAD4}
+.cp-score-pill.cold{background:#F4F4F1;color:#bbb}
+.cp-cell{font-size:12px;color:#555}
+.cp-cell-sm{font-size:11px;color:#aaa}
+.cp-status{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;border-radius:5px;padding:3px 8px}
+.cp-status.s-hot{background:#FEF9C3;color:#78350f}
+.cp-status.s-enr{background:#F0FDF4;color:#166534}
+.cp-status.s-isp{background:#FEF3C7;color:#92400e}
+.cp-status.s-def{background:#F4F4F1;color:#999}
+.cp-enrich-btn{background:#111;color:#F3E400;border-radius:6px;padding:5px 12px;font-size:10.5px;font-weight:700;transition:.12s;white-space:nowrap}
+.cp-enrich-btn:hover:not(:disabled){background:#333}
+.cp-enrich-btn:disabled{background:#F4F4F1;color:#ccc;cursor:default}
+.cp-enrich-btn.done{background:#f0fdf4;color:#166534}
+
+/* ── RETURNING STRIP (card, inside content) ───────────────────── */
+.ret-card{background:var(--surf);border:1px solid var(--bdr);border-radius:10px;overflow:hidden}
+.ret-card-hd{padding:12px 16px 10px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between}
+.ret-card-t{font-size:12px;font-weight:700;color:#111;display:flex;align-items:center;gap:7px}
+.ret-pulse{width:7px;height:7px;border-radius:50%;background:#22c55e;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+.ret-card-s{font-size:10.5px;color:#bbb}
+.ret-scroll{display:flex;gap:0;overflow-x:auto;scrollbar-width:none;padding:0}
+.ret-scroll::-webkit-scrollbar{display:none}
+.ret-chip{display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;transition:background .1s;flex-shrink:0;border-right:1px solid var(--bdr)}
+.ret-chip:last-child{border-right:none}
+.ret-chip:hover{background:#FAFAF7}
+.ret-init{width:34px;height:34px;border-radius:8px;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ret-init.hot{background:#111;color:#F3E400}
+.ret-init.warm{background:#EBF5FB;color:#5AAAD4}
+.ret-init.cold{background:#F4F4F1;color:#999}
+.ret-info{display:flex;flex-direction:column;gap:2px}
+.ret-name{font-size:12px;font-weight:700;color:#111;white-space:nowrap}
+.ret-meta{font-size:10px;color:#bbb;white-space:nowrap}
+.ret-badge{font-size:9px;font-weight:800;border-radius:5px;padding:2px 6px;flex-shrink:0;align-self:flex-start}
+.ret-badge.hot{background:#111;color:#F3E400}
+.ret-badge.warm{background:#EBF5FB;color:#5AAAD4}
+.ret-badge.cold{background:#F4F4F1;color:#999}
+.ret-empty{font-size:12px;color:#bbb;padding:20px 16px;text-align:center}
 
 /* ── JOURNEY DRAWER ──────────────────────────────────────────────── */
 .jd-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:110;opacity:0;pointer-events:none;transition:opacity .2s;backdrop-filter:blur(3px)}
@@ -443,12 +496,6 @@ td{padding:10px 14px;vertical-align:middle}
 <!-- PAGES -->
 <main class="main">
 
-<!-- Returning Companies Strip -->
-<div class="ret-strip" id="ret-strip">
-  <div class="ret-strip-lbl">🔁 Returning</div>
-  <div id="ret-chips" style="display:flex;align-items:center"><div class="ret-empty">No returning companies yet</div></div>
-</div>
-
 <!-- Company Journey Drawer -->
 <div class="jd-overlay" id="jd-overlay" onclick="closeJourney()"></div>
 <div class="jd" id="jd">
@@ -518,6 +565,15 @@ td{padding:10px 14px;vertical-align:middle}
       </table></div></div>
     </div>
 
+    <!-- Returning Companies Card -->
+    <div class="ret-card" id="ret-card" style="display:none">
+      <div class="ret-card-hd">
+        <div class="ret-card-t"><div class="ret-pulse"></div> Returning Companies</div>
+        <div class="ret-card-s" id="ret-card-s">—</div>
+      </div>
+      <div class="ret-scroll" id="ret-chips"></div>
+    </div>
+
     <div class="bot-row">
       <div class="box">
         <div class="box-hd"><span class="bh-t">Recent Page Visits</span><span class="bh-s">last 5</span></div>
@@ -534,23 +590,48 @@ td{padding:10px 14px;vertical-align:middle}
 
 <!-- ══ COMPANIES ══════════════════════════════════════════════════════ -->
 <div class="pv" id="page-companies">
-  <div class="pg-stats c4">
-    <div class="pg-sc ac"><div class="ss-l">Hot Leads</div><div class="ss-v hl" id="cp-hot">—</div><div class="ss-s">score ≥ 70</div></div>
-    <div class="pg-sc"><div class="ss-l">Total Companies</div><div class="ss-v" id="cp-total">—</div><div class="ss-s">unique orgs</div></div>
-    <div class="pg-sc"><div class="ss-l">Enriched</div><div class="ss-v" id="cp-enr">—</div><div class="ss-s">with Apollo data</div></div>
-    <div class="pg-sc"><div class="ss-l">ISP / Cloud</div><div class="ss-v" id="cp-isp">—</div><div class="ss-s">unverifiable</div></div>
-  </div>
-  <div class="content">
-    <div class="sec-hd" style="margin-bottom:6px">
-      <span class="sec-t">All Companies</span>
-      <div style="display:flex;gap:8px">
-        <button class="btn-run" onclick="runJobs()">
-          <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M2.5 1.5L7 4.5L2.5 7.5V1.5Z" fill="currentColor"/></svg>
-          Process Queue
-        </button>
+
+  <!-- Stat bar -->
+  <div class="cp-topbar">
+    <div class="cp-kpi"><div class="cp-kv" id="cp-hot">—</div><div class="cp-kl">Hot Leads</div><div class="cp-kt hot"></div></div>
+    <div class="cp-kpi"><div class="cp-kv" id="cp-total">—</div><div class="cp-kl">Companies</div></div>
+    <div class="cp-kpi"><div class="cp-kv" id="cp-enr">—</div><div class="cp-kl">Enriched</div></div>
+    <div class="cp-kpi"><div class="cp-kv" id="cp-isp">—</div><div class="cp-kl">ISP / Cloud</div></div>
+    <div class="cp-spacer"></div>
+    <div class="cp-filters">
+      <div class="cp-filter-tabs" id="cp-tabs">
+        <button class="cp-tab active" data-f="all">All</button>
+        <button class="cp-tab" data-f="hot">🔥 Hot</button>
+        <button class="cp-tab" data-f="warm">Warm</button>
+        <button class="cp-tab" data-f="enriched">Enriched</button>
+        <button class="cp-tab" data-f="isp">ISP</button>
       </div>
+      <button class="btn-run" onclick="runJobs()" style="flex-shrink:0">
+        <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M2.5 1.5L7 4.5L2.5 7.5V1.5Z" fill="currentColor"/></svg>
+        Process Queue
+      </button>
     </div>
-    <div class="co-cards" id="co-cards"></div>
+  </div>
+
+  <!-- Company list -->
+  <div class="cp-content">
+    <div class="cp-list-wrap">
+      <table class="cp-table">
+        <thead>
+          <tr>
+            <th>Company</th>
+            <th>Score</th>
+            <th>Industry</th>
+            <th>Employees</th>
+            <th>Sessions</th>
+            <th>Last Seen</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="cp-tbody"></tbody>
+      </table>
+    </div>
   </div>
 </div>
 
@@ -803,13 +884,51 @@ function coCard(c){
     </div>
   </div>`;
 }
+let cpFilter='all';
 function renderCompanies(d){
-  const cos=[...(d.companies||[])].sort((a,b)=>(b.score||0)-(a.score||0));
+  const allCos=[...(d.companies||[])].sort((a,b)=>(b.score||0)-(a.score||0));
   $('cp-hot').textContent=d.hot_leads||0;
-  $('cp-total').textContent=cos.length;
-  $('cp-enr').textContent=cos.filter(c=>c.enriched_at&&!c.is_isp).length;
-  $('cp-isp').textContent=cos.filter(c=>c.is_isp).length;
-  $('co-cards').innerHTML=cos.length?cos.map(c=>coCard(c)).join(''):`<div class="empty" style="grid-column:1/-1">No companies identified yet — visit the site then click Run Jobs</div>`;
+  $('cp-total').textContent=allCos.filter(c=>!c.is_isp).length;
+  $('cp-enr').textContent=allCos.filter(c=>c.enriched_at&&!c.is_isp).length;
+  $('cp-isp').textContent=allCos.filter(c=>c.is_isp).length;
+  const cos=allCos.filter(c=>{
+    if(cpFilter==='hot')return(c.score||0)>=70&&!c.is_isp;
+    if(cpFilter==='warm')return(c.score||0)>=40&&(c.score||0)<70&&!c.is_isp;
+    if(cpFilter==='enriched')return c.enriched_at&&!c.is_isp;
+    if(cpFilter==='isp')return c.is_isp;
+    return true;
+  });
+  const tb=$('cp-tbody');if(!tb)return;
+  tb.innerHTML=cos.length?cos.map(c=>cpRow(c)).join(''):`<tr><td colspan="8" class="empty">No companies match this filter</td></tr>`;
+  // wire filter tabs
+  document.querySelectorAll('.cp-tab').forEach(btn=>{
+    btn.onclick=()=>{cpFilter=btn.dataset.f;document.querySelectorAll('.cp-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderCompanies(d)};
+  });
+}
+function cpRow(c){
+  const s=c.score||0,cl=sc(s);
+  const init=(c.name||'?')[0].toUpperCase();
+  let statusHtml='';
+  if(c.is_isp) statusHtml=`<span class="cp-status s-isp">ISP / Cloud</span>`;
+  else if(s>=70) statusHtml=`<span class="cp-status s-hot">🔥 Hot Lead</span>`;
+  else if(c.enriched_at) statusHtml=`<span class="cp-status s-enr">✓ Enriched</span>`;
+  else statusHtml=`<span class="cp-status s-def">Identified</span>`;
+  const btn=c.is_isp?`<button class="cp-enrich-btn" disabled>N/A</button>`:
+    c.enriched_at?`<button class="cp-enrich-btn done" disabled>✓ Done</button>`:
+    `<button class="cp-enrich-btn" onclick="event.stopPropagation();doEnrich('${c.id}',this)">Enrich</button>`;
+  return`<tr onclick="openJourney('${c.id}')">
+    <td><div class="cp-co-wrap">
+      <div class="cp-av ${cl}">${esc(init)}</div>
+      <div><div class="cp-cn">${esc(c.name||'Unknown')}</div><div class="cp-cd">${esc(c.domain||'')}</div></div>
+    </div></td>
+    <td><span class="cp-score-pill ${cl}">${s}</span></td>
+    <td><span class="cp-cell">${c.industry?esc(c.industry).slice(0,22):'—'}</span></td>
+    <td><span class="cp-cell-sm">${esc(c.employee_range||'—')}</span></td>
+    <td><span style="font-weight:700;font-size:13px;font-variant-numeric:tabular-nums">${c.session_count||0}</span></td>
+    <td><span class="cp-cell-sm">${rel(c.last_seen_at)}</span></td>
+    <td>${statusHtml}</td>
+    <td>${btn}</td>
+  </tr>`;
 }
 
 /* ── DETAIL PANEL ── */
@@ -1070,19 +1189,20 @@ async function runJobs(){
 /* ── RETURNING COMPANIES STRIP ── */
 function renderReturning(d){
   const cos=(d.companies||[]).filter(c=>!c.is_isp&&(c.session_count||0)>1)
-    .sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,10);
-  const el=$('ret-chips');if(!el)return;
-  if(!cos.length){el.innerHTML='<div class="ret-empty">No returning companies yet</div>';return;}
+    .sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,12);
+  const card=$('ret-card'),el=$('ret-chips');if(!card||!el)return;
+  if(!cos.length){card.style.display='none';return;}
+  card.style.display='';
+  $('ret-card-s').textContent=cos.length+' compan'+(cos.length===1?'y':'ies')+' returned';
   el.innerHTML=cos.map(c=>{
     const s=c.score||0,cl=sc(s);
     const visits=c.session_count||0;
-    const last=rel(c.last_seen_at);
     const init=(c.name||'?')[0].toUpperCase();
     return`<div class="ret-chip" onclick="openJourney('${c.id}')">
   <div class="ret-init ${cl}">${esc(init)}</div>
   <div class="ret-info">
     <div class="ret-name">${esc(c.name||'Unknown')}</div>
-    <div class="ret-meta">${visits} visits · ${last}</div>
+    <div class="ret-meta">${visits} visits · ${rel(c.last_seen_at)}</div>
   </div>
   <div class="ret-badge ${cl}">${s}</div>
 </div>`;
