@@ -32,7 +32,6 @@ svg{display:block;flex-shrink:0}
 .sb{width:var(--sw);background:var(--surf);border-right:1px solid var(--bdr);position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;z-index:60;transition:transform .22s cubic-bezier(.4,0,.2,1)}
 body.sb-closed .sb{transform:translateX(-100%)}
 body.sb-closed .tb{left:0}
-body.sb-closed .prog{left:0}
 body.sb-closed .main{margin-left:0}
 
 .sb-logo{height:var(--th);padding:0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bdr);flex-shrink:0}
@@ -78,8 +77,6 @@ body.sb-closed .tb-open{display:flex}
 .btn-refresh{background:#111;color:#fff;border-radius:7px;padding:6px 14px;font-size:11.5px;font-weight:700;transition:.12s}
 .btn-refresh:hover{background:#333}
 
-.prog{position:fixed;top:var(--th);left:var(--sw);right:0;height:2px;z-index:49;transition:left .22s cubic-bezier(.4,0,.2,1)}
-.prog-fill{height:100%;background:var(--y);width:0;transition:none}
 
 /* ── MAIN ────────────────────────────────────────────────────────── */
 .main{margin-left:var(--sw);margin-top:var(--th);flex:1;min-width:0;transition:margin-left .22s cubic-bezier(.4,0,.2,1)}
@@ -141,6 +138,21 @@ td{padding:10px 14px;vertical-align:middle}
 .e-btn:disabled{background:#F4F4F1;color:#ccc;cursor:default}
 .e-btn.done{background:#f0fdf4;color:#166534}
 .empty{text-align:center;padding:44px;color:#ccc;font-size:12px}
+
+/* ── JOB MINI STATS ──────────────────────────────────────────────── */
+.jms-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid #F0F0EB}
+.jms-row:last-child{border-bottom:none}
+.jms-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-right:6px}
+.jms-label{font-size:11.5px;color:#777;flex:1;text-transform:capitalize}
+.jms-num{font-size:20px;font-weight:900;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.jms-num.ok{color:#22c55e}.jms-num.q{color:#f59e0b}.jms-num.err{color:#ef4444}.jms-num.g{color:#111}
+
+/* ── SCORE VIZ ───────────────────────────────────────────────────── */
+.sc-wrap{display:flex;align-items:center;gap:6px}
+.sc-dots{display:flex;gap:2px;flex-shrink:0}
+.sc-dot{width:5px;height:5px;border-radius:50%}
+.sc-num{font-size:13px;font-weight:800;font-variant-numeric:tabular-nums;min-width:26px}
+.hot .sc-num{color:#111}.warm .sc-num{color:#5AAAD4}.cold .sc-num{color:#ccc}
 
 /* ── BOTTOM ROW ──────────────────────────────────────────────────── */
 .bot-row{display:grid;grid-template-columns:3fr 2fr;gap:12px}
@@ -288,14 +300,8 @@ td{padding:10px 14px;vertical-align:middle}
     <div class="logo-inner">
       <!-- UpSpring logo: diagonal arrow mark + UPSPRING wordmark -->
       <div class="logo-svg-wrap">
-        <svg width="22" height="20" viewBox="0 0 22 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- Arrow shape matching UpSpring brand mark -->
-          <path d="M0 20L8.5 0H13L4.5 20H0Z" fill="#111"/>
-          <path d="M8 20L16.5 0H21L22 0L13.5 20H8Z" fill="#111"/>
-          <path d="M14 0H22V6H14V0Z" fill="#111"/>
-        </svg>
+        <img src="data:image/avif;base64,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" style="height:22px;width:auto;display:block"/>
       </div>
-      <span class="logo-word">UPSPRING</span>
     </div>
     <button class="sb-collapse" onclick="toggleSidebar()" title="Collapse sidebar">
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -361,7 +367,6 @@ td{padding:10px 14px;vertical-align:middle}
   </button>
   <button class="btn-refresh" onclick="manualRefresh()">Refresh</button>
 </header>
-<div class="prog"><div class="prog-fill" id="prog"></div></div>
 
 <!-- PAGES -->
 <main class="main">
@@ -394,10 +399,10 @@ td{padding:10px 14px;vertical-align:middle}
         <div class="cb-s">Companies by tier</div>
         <canvas id="cScore"></canvas>
       </div>
-      <div class="cbox">
+      <div class="cbox" id="job-mini-box">
         <div class="cb-t">Job Pipeline</div>
-        <div class="cb-s">Queue status</div>
-        <canvas id="cJobMini" style="max-height:120px"></canvas>
+        <div class="cb-s" id="job-mini-s">Queue status</div>
+        <div id="job-mini-stats" style="display:flex;flex-direction:column;gap:4px;margin-top:8px"></div>
       </div>
     </div>
 
@@ -575,9 +580,6 @@ function goTo(p){
 }
 document.querySelectorAll('.nav-item[data-page]').forEach(b=>b.addEventListener('click',()=>goTo(b.dataset.page)));
 
-/* progress */
-function pStart(){const e=$('prog');e.style.transition='none';e.style.width='0';requestAnimationFrame(()=>requestAnimationFrame(()=>{e.style.transition=`width ${REFRESH/1000}s linear`;e.style.width='100%'}))}
-function pReset(){const e=$('prog');e.style.transition='none';e.style.width='0'}
 function startCd(){clearInterval(cdTimer);cd=REFRESH/1000;cdTimer=setInterval(()=>{cd--;$('cd-num').textContent=cd>0?cd+'s':'…';if(cd<=0)clearInterval(cdTimer)},1000)}
 
 /* load */
@@ -591,7 +593,7 @@ async function load(){
     $('tb-upd').textContent='Updated '+new Date().toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
   }catch(e){console.error(e)}
 }
-async function manualRefresh(){pReset();await load();pStart();startCd()}
+async function manualRefresh(){await load();startCd()}
 
 /* render all */
 function renderAll(d){
@@ -615,6 +617,14 @@ function renderPage(p,d){
   if(p==='jobs')renderJobs(d);
 }
 
+/* ── SCORE VIZ ── */
+function scoreViz(s,cl){
+  const filled=Math.round(s/10);
+  const dotColor=cl==='hot'?'#111':cl==='warm'?'#9BCBEB':'#ddd';
+  const dots=Array.from({length:10},(_,i)=>`<div class="sc-dot" style="background:${i<filled?dotColor:'#eee'}"></div>`).join('');
+  return`<div class="sc-dots">${dots}</div>`;
+}
+
 /* ── COMPANY TABLE (dashboard) ── */
 function coRow(c){
   const s=c.score||0,cl=sc(s);
@@ -625,7 +635,7 @@ function coRow(c){
     `<button class="e-btn" onclick="event.stopPropagation();doEnrich('${c.id}',this)">Enrich</button>`;
   return`<tr onclick="openDetail('${c.id}')" style="cursor:pointer">
     <td><div class="co-name">${esc(c.name||'Unknown')}</div><div class="co-dom">${esc(c.domain||'')}</div>${isp}</td>
-    <td><div class="sc-wrap ${cl}"><div class="sc-bar"><div class="sc-fill" style="width:${s}%"></div></div><span class="sc-num">${s}</span></div></td>
+    <td><div class="sc-wrap ${cl}">${scoreViz(s,cl)}<span class="sc-num">${s}</span></div></td>
     <td><span class="cell">${c.industry?esc(c.industry).slice(0,20):'—'}</span></td>
     <td><span class="cell">${esc(c.employee_range||'—')}</span></td>
     <td><span class="cell-sm">${esc(geo)}</span></td>
@@ -746,8 +756,9 @@ function closeDetail(){
 
 /* ── FEED ── */
 function renderFeed(d){
-  $('feed-dash').innerHTML=(d.recent_visits||[]).length
-    ?(d.recent_visits||[]).map(v=>`<div class="feed-row"><span class="feed-path">${esc(v.path)}</span><span class="feed-t">${rel(v.occurred_at)}</span></div>`).join('')
+  const v=(d.recent_visits||[]).slice(0,5);
+  $('feed-dash').innerHTML=v.length
+    ?v.map(r=>`<div class="feed-row"><span class="feed-path">${esc(r.path)}</span><span class="feed-t">${rel(r.occurred_at)}</span></div>`).join('')
     :`<div class="empty">No visits yet</div>`;
 }
 
@@ -763,20 +774,25 @@ function renderJobsSummary(d){
 }
 
 /* ── CHARTS ── */
-const TIP={backgroundColor:'#111',titleColor:'#fff',bodyColor:'#aaa',borderColor:'rgba(0,0,0,.08)',borderWidth:1,padding:10,cornerRadius:6,displayColors:false};
+const TIP={backgroundColor:'#111',titleColor:'#fff',bodyColor:'rgba(255,255,255,.6)',borderColor:'rgba(255,255,255,.08)',borderWidth:1,padding:10,cornerRadius:6,displayColors:false,callbacks:{title:items=>items[0].label}};
 const GX={grid:{display:false},border:{display:false},ticks:{color:'#ccc',font:{size:10},padding:4}};
-const GY={beginAtZero:true,grid:{color:'rgba(0,0,0,.04)',drawTicks:false},border:{display:false},ticks:{color:'#ccc',font:{size:10},maxTicksLimit:5,padding:6}};
+const GY={beginAtZero:true,grid:{color:'rgba(0,0,0,.05)',drawTicks:false},border:{display:false},ticks:{color:'#ccc',font:{size:10},maxTicksLimit:4,padding:8}};
 
 function buildCharts(d){
-  /* sessions */
+  /* sessions area */
   if(charts.cSess)charts.cSess.destroy();
   const days=Object.keys(d.daily_sessions||{}),vals=Object.values(d.daily_sessions||{});
-  charts.cSess=new Chart($('cSess'),{type:'line',
+  const cvs=$('cSess'),ctx=cvs.getContext('2d');
+  const grad=ctx.createLinearGradient(0,0,0,140);
+  grad.addColorStop(0,'rgba(243,228,0,.18)');grad.addColorStop(1,'rgba(243,228,0,0)');
+  charts.cSess=new Chart(cvs,{type:'line',
     data:{labels:days.map(x=>new Date(x).toLocaleDateString('en',{weekday:'short'})),
-      datasets:[{data:vals,borderColor:'#111',backgroundColor:'rgba(12,12,10,.05)',borderWidth:2,
-        pointBackgroundColor:vals.map((v,i)=>i===vals.length-1?'#F3E400':'#111'),
-        pointRadius:vals.map((v,i)=>i===vals.length-1?6:4),
-        pointHoverRadius:7,fill:true,tension:.4}]},
+      datasets:[{data:vals,borderColor:'#111',backgroundColor:grad,borderWidth:2,
+        pointBackgroundColor:vals.map((v,i)=>i===vals.length-1?'#F3E400':'#fff'),
+        pointBorderColor:vals.map((v,i)=>i===vals.length-1?'#F3E400':'#111'),
+        pointBorderWidth:vals.map((v,i)=>i===vals.length-1?0:1.5),
+        pointRadius:vals.map((v,i)=>i===vals.length-1?7:3.5),
+        pointHoverRadius:8,fill:true,tension:.45}]},
     options:{responsive:true,plugins:{legend:{display:false},tooltip:TIP},scales:{x:GX,y:GY}}});
 
   /* score bars */
@@ -787,18 +803,34 @@ function buildCharts(d){
   charts.cScore=new Chart($('cScore'),{type:'bar',
     data:{labels:['0–25','26–50','51–75','76–100'],
       datasets:[{data:sbVals,
-        backgroundColor:sbVals.map((v,i)=>i===3?'#111':i===2?'#F3E400':i===1?'#9BCBEB':'#E0E0DB'),
-        borderRadius:5,borderSkipped:false}]},
-    options:{responsive:true,plugins:{legend:{display:false},tooltip:TIP},scales:{x:GX,y:{...GY,max:maxSb+1}}}});
+        backgroundColor:['#E5E5DF','#9BCBEB','#F3E400','#111'],
+        borderRadius:6,borderSkipped:false}]},
+    options:{responsive:true,plugins:{legend:{display:false},tooltip:{...TIP,callbacks:{title:items=>items[0].label+' pts',label:ctx=>ctx.parsed.y+' companies'}}},scales:{x:GX,y:{...GY,max:maxSb+2}}}});
 
-  /* job mini doughnut */
-  if(charts.cJobMini)charts.cJobMini.destroy();
-  const j=d.jobs||{};const jk=Object.keys(j),jv=Object.values(j);
-  if(jk.length){
-    charts.cJobMini=new Chart($('cJobMini'),{type:'doughnut',
-      data:{labels:jk,datasets:[{data:jv,backgroundColor:['#111','#F3E400','#9BCBEB','#ef4444'],borderWidth:3,borderColor:'#fff'}]},
-      options:{cutout:'65%',responsive:true,plugins:{legend:{display:true,position:'bottom',labels:{color:'#bbb',font:{size:9.5},boxWidth:7,padding:8,usePointStyle:true}},tooltip:TIP}}});
-  }
+  /* job mini — stat rows instead of doughnut */
+  renderJobMini(d);
+}
+
+function renderJobMini(d){
+  const j=d.jobs||{};
+  const JMINI=[
+    {k:'succeeded',lbl:'Succeeded',nc:'ok',dot:'#22c55e'},
+    {k:'queued',lbl:'Queued',nc:'q',dot:'#f59e0b'},
+    {k:'running',lbl:'Running',nc:'q',dot:'#f59e0b'},
+    {k:'failed',lbl:'Failed',nc:'err',dot:'#ef4444'},
+    {k:'dead_letter',lbl:'Dead Letter',nc:'err',dot:'#ef4444'},
+  ];
+  const rows=JMINI.filter(m=>j[m.k]!=null);
+  $('job-mini-stats').innerHTML=rows.map(m=>`
+    <div class="jms-row">
+      <div style="display:flex;align-items:center;gap:6px;flex:1">
+        <div class="jms-dot" style="background:${m.dot}"></div>
+        <span class="jms-label">${m.lbl}</span>
+      </div>
+      <span class="jms-num ${m.nc}">${j[m.k]||0}</span>
+    </div>`).join('')||'<div class="empty">No jobs</div>';
+  const total=Object.values(j).reduce((a,b)=>a+b,0);
+  $('job-mini-s').textContent=total?`${total} total job${total!==1?'s':''}  ·  ${rows.length} statuses`:'Queue empty';
 }
 
 /* ── VISITS PAGE ── */
@@ -874,8 +906,8 @@ async function runJobs(){
 
 /* ── BOOT ── */
 (async()=>{
-  await load();pStart();startCd();
-  setInterval(()=>{pReset();load().then(()=>{pStart();startCd()})},REFRESH);
+  await load();startCd();
+  setInterval(()=>{load().then(startCd)},REFRESH);
   setInterval(async()=>{try{const r=await fetch(JOBS_API,{method:'POST'});const d=await r.json();if((d.processed||0)>0)setTimeout(()=>load(),1200)}catch{}},JOB_TICK);
 })();
 </script>
