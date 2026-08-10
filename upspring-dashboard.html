@@ -421,10 +421,22 @@ td{padding:10px 14px;vertical-align:middle}
       </div>
     </div>
 
-    <div class="cbox" style="padding:18px 22px">
-      <div class="cb-t" style="margin-bottom:2px">Identification Pipeline</div>
-      <div class="cb-s" style="margin-bottom:16px">Visitor → Identified → Company → Hot Lead</div>
-      <div id="funnel-steps" style="display:flex;align-items:stretch;gap:0;width:100%"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+
+      <!-- LEFT: SVG Funnel -->
+      <div class="cbox" style="padding:18px 22px">
+        <div class="cb-t" style="margin-bottom:2px">Identification Funnel</div>
+        <div class="cb-s" style="margin-bottom:14px">Conversion through each stage</div>
+        <div id="funnel-svg-wrap"></div>
+      </div>
+
+      <!-- RIGHT: Top Companies by Intent -->
+      <div class="cbox" style="padding:18px 22px">
+        <div class="cb-t" style="margin-bottom:2px">Top Intent Companies</div>
+        <div class="cb-s" style="margin-bottom:14px">Ranked by ICP score + visit depth</div>
+        <div id="intent-list" style="display:flex;flex-direction:column;gap:8px"></div>
+      </div>
+
     </div>
 
     <div>
@@ -842,30 +854,60 @@ function buildCharts(d){
   renderJobMini(d);
 
   /* funnel / ladder chart */
-  /* funnel pipeline */
-  if($('funnel-steps')){
-    const s2=d.sessions||{},tot=Object.values(s2).reduce((a,b)=>a+b,0)||1;
-    const identified=(s2.resolved||0);
+  /* SVG funnel */
+  if($('funnel-svg-wrap')){
+    const s2=d.sessions||{},tot=Math.max(Object.values(s2).reduce((a,b)=>a+b,0),1);
+    const identified=s2.resolved||0;
     const companies=(d.companies||[]).length;
     const hot=d.hot_leads||0;
     const steps=[
-      {lbl:'Sessions',icon:'👁',val:tot,bg:'#F4F4F1',ink:'#555',sub:'Total visits'},
-      {lbl:'Identified',icon:'🔍',val:identified,bg:'#9BCBEB',ink:'#1a3a55',sub:'IP resolved'},
-      {lbl:'Companies',icon:'🏢',val:companies,bg:'#111',ink:'#fff',sub:'Unique orgs'},
-      {lbl:'Hot Leads',icon:'🔥',val:hot,bg:'#F3E400',ink:'#111',sub:'Score ≥ 70'},
+      {lbl:'Sessions',val:tot,color:'#E0E0DB',ink:'#444'},
+      {lbl:'Identified',val:identified,color:'#9BCBEB',ink:'#1a3a55'},
+      {lbl:'Companies',val:companies,color:'#222',ink:'#fff'},
+      {lbl:'Hot Leads',val:hot,color:'#F3E400',ink:'#111'},
     ];
-    const pct=(v,prev)=>prev>0?Math.round(v/prev*100)+'%':'—';
-    $('funnel-steps').innerHTML=steps.map((s,i)=>{
+    const maxW=100,minW=40,h=52,gap=6,totalH=steps.length*(h+gap)-gap;
+    const pct=(v,p)=>p>0?Math.round(v/p*100)+'%':'—';
+    let svg=`<svg viewBox="0 0 280 ${totalH}" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block">`;
+    steps.forEach((s,i)=>{
+      const ratio=tot>0?Math.max(s.val/tot,0.07):0.07;
+      const w=minW+(maxW-minW)*ratio;
+      const x=(maxW-w)/2;
+      const y=i*(h+gap);
       const conv=i===0?'100%':pct(s.val,steps[i-1].val);
-      const arrow=i<steps.length-1?`<div style="display:flex;align-items:center;justify-content:center;width:28px;flex-shrink:0;font-size:16px;color:#bbb">›</div>`:'';
-      return`<div style="flex:1;background:${s.bg};border-radius:10px;padding:14px 14px 12px;display:flex;flex-direction:column;gap:4px;min-width:0">
-  <div style="font-size:18px;line-height:1">${s.icon}</div>
-  <div style="font-size:22px;font-weight:700;letter-spacing:-.5px;color:${s.ink};line-height:1.1">${s.val.toLocaleString()}</div>
-  <div style="font-size:11px;font-weight:600;color:${s.ink};opacity:.85">${s.lbl}</div>
-  <div style="font-size:10px;color:${s.ink};opacity:.55;margin-top:2px">${s.sub}</div>
-  <div style="margin-top:6px;font-size:10px;font-weight:700;background:rgba(255,255,255,.18);color:${s.ink};border-radius:20px;padding:2px 7px;align-self:flex-start;border:1px solid rgba(0,0,0,.06)">${conv} ${i===0?'':'conv.'}</div>
-</div>${arrow}`;
-    }).join('');
+      svg+=`<rect x="${x}%" y="${y}" width="${w}%" height="${h}" rx="7" fill="${s.color}"/>`;
+      svg+=`<text x="50%" y="${y+20}" text-anchor="middle" font-size="16" font-weight="700" fill="${s.ink}" font-family="system-ui">${s.val.toLocaleString()}</text>`;
+      svg+=`<text x="50%" y="${y+34}" text-anchor="middle" font-size="9.5" fill="${s.ink}" opacity=".7" font-family="system-ui">${s.lbl}</text>`;
+      if(i>0){
+        svg+=`<text x="${(x/100*280)+4}" y="${y+28}" font-size="9" fill="#aaa" font-family="system-ui">${conv}</text>`;
+      }
+    });
+    svg+='</svg>';
+    $('funnel-svg-wrap').innerHTML=svg;
+  }
+
+  /* intent list */
+  if($('intent-list')){
+    const cos=(d.companies||[]).slice().sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,5);
+    const maxScore=cos.length?Math.max(...cos.map(c=>c.score||0),1):1;
+    const tier=s=>s>=70?['#F3E400','#111','HOT']:s>=40?['#9BCBEB','#1a3a55','WARM']:['#E0E0DB','#555','COOL'];
+    $('intent-list').innerHTML=cos.length?cos.map(c=>{
+      const [bg,ink,lbl]=tier(c.score||0);
+      const pct=Math.round((c.score||0)/maxScore*100);
+      const init=(c.company_name||'?').charAt(0).toUpperCase();
+      return`<div style="display:flex;align-items:center;gap:10px">
+  <div style="width:28px;height:28px;border-radius:50%;background:${bg};color:${ink};font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0">${init}</div>
+  <div style="flex:1;min-width:0">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px">
+      <span style="font-size:12px;font-weight:600;color:#222;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px">${c.company_name||'Unknown'}</span>
+      <span style="font-size:10px;font-weight:700;background:${bg};color:${ink};border-radius:4px;padding:1px 6px;margin-left:6px;flex-shrink:0">${lbl} ${c.score||0}</span>
+    </div>
+    <div style="height:5px;background:#F0F0EC;border-radius:99px;overflow:hidden">
+      <div style="height:100%;width:${pct}%;background:${bg==='#F3E400'?'#d4b800':bg==='#9BCBEB'?'#5a9ab5':'#333'};border-radius:99px;transition:width .5s"></div>
+    </div>
+  </div>
+</div>`;
+    }).join(''):`<div style="color:#bbb;font-size:12px;padding:8px 0">No companies identified yet</div>`;
   }
 }
 
