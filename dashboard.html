@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Visitor Intel — Kshitij</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f1117; color: #e2e8f0; min-height: 100vh; }
+    header { background: #1a1d27; border-bottom: 1px solid #2d3148; padding: 18px 28px; display: flex; align-items: center; justify-content: space-between; }
+    header h1 { font-size: 18px; font-weight: 600; color: #fff; }
+    header h1 span { color: #6366f1; }
+    .badge { font-size: 11px; background: #22c55e22; color: #22c55e; border: 1px solid #22c55e44; padding: 3px 10px; border-radius: 20px; }
+    .badge.warn { background: #f59e0b22; color: #f59e0b; border-color: #f59e0b44; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 28px; }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; margin-bottom: 28px; }
+    .stat-card { background: #1a1d27; border: 1px solid #2d3148; border-radius: 10px; padding: 18px 20px; }
+    .stat-card .label { font-size: 12px; color: #94a3b8; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 6px; }
+    .stat-card .value { font-size: 28px; font-weight: 700; color: #fff; }
+    .stat-card .sub { font-size: 12px; color: #64748b; margin-top: 4px; }
+    table { width: 100%; border-collapse: collapse; background: #1a1d27; border: 1px solid #2d3148; border-radius: 10px; overflow: hidden; }
+    thead th { text-align: left; padding: 12px 16px; font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: .06em; border-bottom: 1px solid #2d3148; }
+    tbody tr { border-bottom: 1px solid #1e2235; transition: background .1s; }
+    tbody tr:hover { background: #1e2235; }
+    tbody tr:last-child { border-bottom: none; }
+    td { padding: 13px 16px; font-size: 13px; vertical-align: middle; }
+    .company-name { font-weight: 600; color: #e2e8f0; }
+    .company-domain { font-size: 11px; color: #64748b; margin-top: 2px; }
+    .score-bar-wrap { display: flex; align-items: center; gap: 10px; }
+    .score-bar-bg { width: 80px; height: 6px; background: #2d3148; border-radius: 3px; overflow: hidden; }
+    .score-bar { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #6366f1, #8b5cf6); transition: width .4s; }
+    .score-bar.high { background: linear-gradient(90deg, #22c55e, #16a34a); }
+    .score-bar.med { background: linear-gradient(90deg, #f59e0b, #d97706); }
+    .score-num { font-size: 13px; font-weight: 700; color: #fff; min-width: 28px; }
+    .geo { font-size: 12px; color: #94a3b8; }
+    .pill { display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+    .pill.resolved { background: #22c55e22; color: #22c55e; }
+    .pill.unmatched { background: #64748b22; color: #94a3b8; }
+    .pill.pending { background: #f59e0b22; color: #f59e0b; }
+    .summary { font-size: 12px; color: #94a3b8; }
+    .section-title { font-size: 14px; font-weight: 600; color: #e2e8f0; margin-bottom: 14px; }
+    .refresh-row { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+    .refresh-row span { font-size: 12px; color: #64748b; }
+    button { background: #6366f1; color: #fff; border: none; border-radius: 7px; padding: 7px 16px; font-size: 12px; cursor: pointer; font-weight: 600; }
+    button:hover { background: #5254cc; }
+    .empty { text-align: center; padding: 60px; color: #64748b; font-size: 14px; }
+    .recent { margin-top: 28px; }
+    .recent-list { background: #1a1d27; border: 1px solid #2d3148; border-radius: 10px; overflow: hidden; }
+    .recent-item { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; border-bottom: 1px solid #1e2235; font-size: 12px; }
+    .recent-item:last-child { border-bottom: none; }
+    .recent-path { color: #c7d2fe; font-family: monospace; }
+    .recent-time { color: #64748b; }
+    .jobs-row { display: flex; gap: 14px; margin-bottom: 28px; flex-wrap: wrap; }
+    .job-badge { font-size: 12px; padding: 4px 12px; border-radius: 6px; font-weight: 600; }
+    .job-badge.queued { background: #f59e0b22; color: #f59e0b; }
+    .job-badge.running { background: #3b82f622; color: #60a5fa; }
+    .job-badge.succeeded { background: #22c55e22; color: #22c55e; }
+    .job-badge.failed { background: #ef444422; color: #f87171; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Visitor <span>Intel</span> — Kshitij POC</h1>
+    <span class="badge" id="status-badge">Loading...</span>
+  </header>
+
+  <div class="container">
+    <div class="stats" id="stats"></div>
+    <div class="jobs-row" id="jobs-row"></div>
+
+    <div class="refresh-row">
+      <div class="section-title">Identified Companies</div>
+      <button onclick="load()">Refresh</button>
+      <span id="last-refresh"></span>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Company</th>
+          <th>Score</th>
+          <th>Location</th>
+          <th>Status</th>
+          <th>Last seen</th>
+          <th>Summary</th>
+        </tr>
+      </thead>
+      <tbody id="table-body"></tbody>
+    </table>
+
+    <div class="recent">
+      <div class="section-title" style="margin-top:28px;margin-bottom:14px">Recent Page Visits</div>
+      <div class="recent-list" id="recent-list"></div>
+    </div>
+  </div>
+
+  <script>
+    const API = 'https://sgaaeuqsmuydftxbftpw.supabase.co/functions/v1/get-dashboard';
+    const PROCESS = 'https://sgaaeuqsmuydftxbftpw.supabase.co/functions/v1/process-jobs';
+
+    function relTime(ts) {
+      if (!ts) return '—';
+      const d = Math.floor((Date.now() - new Date(ts)) / 1000);
+      if (d < 60) return d + 's ago';
+      if (d < 3600) return Math.floor(d / 60) + 'm ago';
+      if (d < 86400) return Math.floor(d / 3600) + 'h ago';
+      return Math.floor(d / 86400) + 'd ago';
+    }
+
+    function scoreBar(score) {
+      const cls = score >= 60 ? 'high' : score >= 30 ? 'med' : '';
+      return `<div class="score-bar-wrap">
+        <div class="score-bar-bg"><div class="score-bar ${cls}" style="width:${score}%"></div></div>
+        <span class="score-num">${score}</span>
+      </div>`;
+    }
+
+    async function load() {
+      try {
+        const r = await fetch(API);
+        const data = await r.json();
+
+        document.getElementById('status-badge').textContent = 'Live';
+        document.getElementById('last-refresh').textContent = 'Updated ' + new Date().toLocaleTimeString();
+
+        const sess = data.sessions || {};
+        const total = Object.values(sess).reduce((a, b) => a + b, 0);
+        const resolved = sess.resolved || 0;
+        const pending = sess.pending || 0;
+        const unmatched = sess.unmatched || 0;
+
+        document.getElementById('stats').innerHTML = `
+          <div class="stat-card"><div class="label">Total Sessions</div><div class="value">${total}</div><div class="sub">all time</div></div>
+          <div class="stat-card"><div class="label">Identified</div><div class="value">${resolved}</div><div class="sub">IP → company resolved</div></div>
+          <div class="stat-card"><div class="label">Pending</div><div class="value">${pending}</div><div class="sub">awaiting lookup</div></div>
+          <div class="stat-card"><div class="label">Unmatched</div><div class="value">${unmatched}</div><div class="sub">ISP / consumer IP</div></div>
+          <div class="stat-card"><div class="label">Companies</div><div class="value">${(data.companies || []).length}</div><div class="sub">unique orgs seen</div></div>
+        `;
+
+        const jobs = data.jobs || {};
+        document.getElementById('jobs-row').innerHTML = Object.entries(jobs)
+          .map(([s, c]) => `<span class="job-badge ${s}">${s}: ${c}</span>`).join('') ||
+          '<span style="color:#64748b;font-size:12px">No jobs yet</span>';
+
+        const tbody = document.getElementById('table-body');
+        if (!data.companies?.length) {
+          tbody.innerHTML = '<tr><td colspan="6"><div class="empty">No companies identified yet — visit some pages on the site and run the job processor.</div></td></tr>';
+        } else {
+          tbody.innerHTML = data.companies.map(c => {
+            const geo = c.geo ? [c.geo.city, c.geo.country].filter(Boolean).join(', ') : '—';
+            return `<tr>
+              <td><div class="company-name">${escHtml(c.name || '—')}</div><div class="company-domain">${escHtml(c.domain || '')}</div></td>
+              <td>${scoreBar(c.score || 0)}</td>
+              <td><span class="geo">${escHtml(geo)}</span></td>
+              <td><span class="pill resolved">resolved</span></td>
+              <td><span class="geo">${relTime(c.last_seen_at)}</span></td>
+              <td><span class="summary">${escHtml(c.alert_summary || '—')}</span></td>
+            </tr>`;
+          }).join('');
+        }
+
+        const rl = document.getElementById('recent-list');
+        if (!data.recent_visits?.length) {
+          rl.innerHTML = '<div class="empty" style="padding:24px">No page visits recorded yet.</div>';
+        } else {
+          rl.innerHTML = data.recent_visits.map(v =>
+            `<div class="recent-item"><span class="recent-path">${escHtml(v.path)}</span><span class="recent-time">${relTime(v.occurred_at)}</span></div>`
+          ).join('');
+        }
+      } catch (e) {
+        document.getElementById('status-badge').textContent = 'Error';
+        document.getElementById('status-badge').className = 'badge warn';
+        console.error(e);
+      }
+    }
+
+    function escHtml(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    async function triggerJobs() {
+      await fetch(PROCESS, { method: 'POST' });
+      setTimeout(load, 1500);
+    }
+
+    load();
+    setInterval(load, 30000);
+  </script>
+</body>
+</html>
