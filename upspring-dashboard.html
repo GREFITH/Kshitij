@@ -423,8 +423,8 @@ td{padding:10px 14px;vertical-align:middle}
 
     <div class="cbox" style="padding:18px 22px">
       <div class="cb-t" style="margin-bottom:2px">Identification Pipeline</div>
-      <div class="cb-s" style="margin-bottom:14px">Sessions → Identified → Companies → Hot Leads</div>
-      <canvas id="cFunnel" style="max-height:90px"></canvas>
+      <div class="cb-s" style="margin-bottom:16px">Visitor → Identified → Company → Hot Lead</div>
+      <div id="funnel-steps" style="display:flex;align-items:stretch;gap:0;width:100%"></div>
     </div>
 
     <div>
@@ -842,20 +842,30 @@ function buildCharts(d){
   renderJobMini(d);
 
   /* funnel / ladder chart */
-  if(charts.cFunnel)charts.cFunnel.destroy();
-  if($('cFunnel')){
-    const s2=d.sessions||{},tot2=Object.values(s2).reduce((a,b)=>a+b,0);
-    const identified=(s2.resolved||0)+(s2.unmatched||0);
-    const fVals=[tot2,identified,(d.companies||[]).length,d.hot_leads||0];
-    const fLabels=['Sessions','Identified','Companies','Hot Leads'];
-    const fColors=['#E0E0DB','#9BCBEB','#111','#F3E400'];
-    charts.cFunnel=new Chart($('cFunnel'),{type:'bar',
-      data:{labels:fLabels,datasets:[{data:fVals,backgroundColor:fColors,borderRadius:5,borderSkipped:false,barThickness:18}]},
-      options:{indexAxis:'y',responsive:true,
-        plugins:{legend:{display:false},tooltip:{...TIP,callbacks:{label:ctx=>ctx.parsed.x+' '+ctx.label.toLowerCase()}}},
-        scales:{
-          x:{...GY,grid:{color:'rgba(0,0,0,.04)',drawTicks:false},ticks:{color:'#ccc',font:{size:10}}},
-          y:{...GX,ticks:{color:'#555',font:{size:10.5,weight:'600'},padding:4}}}}});
+  /* funnel pipeline */
+  if($('funnel-steps')){
+    const s2=d.sessions||{},tot=Object.values(s2).reduce((a,b)=>a+b,0)||1;
+    const identified=(s2.resolved||0);
+    const companies=(d.companies||[]).length;
+    const hot=d.hot_leads||0;
+    const steps=[
+      {lbl:'Sessions',icon:'👁',val:tot,bg:'#F4F4F1',ink:'#555',sub:'Total visits'},
+      {lbl:'Identified',icon:'🔍',val:identified,bg:'#9BCBEB',ink:'#1a3a55',sub:'IP resolved'},
+      {lbl:'Companies',icon:'🏢',val:companies,bg:'#111',ink:'#fff',sub:'Unique orgs'},
+      {lbl:'Hot Leads',icon:'🔥',val:hot,bg:'#F3E400',ink:'#111',sub:'Score ≥ 70'},
+    ];
+    const pct=(v,prev)=>prev>0?Math.round(v/prev*100)+'%':'—';
+    $('funnel-steps').innerHTML=steps.map((s,i)=>{
+      const conv=i===0?'100%':pct(s.val,steps[i-1].val);
+      const arrow=i<steps.length-1?`<div style="display:flex;align-items:center;justify-content:center;width:28px;flex-shrink:0;font-size:16px;color:#bbb">›</div>`:'';
+      return`<div style="flex:1;background:${s.bg};border-radius:10px;padding:14px 14px 12px;display:flex;flex-direction:column;gap:4px;min-width:0">
+  <div style="font-size:18px;line-height:1">${s.icon}</div>
+  <div style="font-size:22px;font-weight:700;letter-spacing:-.5px;color:${s.ink};line-height:1.1">${s.val.toLocaleString()}</div>
+  <div style="font-size:11px;font-weight:600;color:${s.ink};opacity:.85">${s.lbl}</div>
+  <div style="font-size:10px;color:${s.ink};opacity:.55;margin-top:2px">${s.sub}</div>
+  <div style="margin-top:6px;font-size:10px;font-weight:700;background:rgba(255,255,255,.18);color:${s.ink};border-radius:20px;padding:2px 7px;align-self:flex-start;border:1px solid rgba(0,0,0,.06)">${conv} ${i===0?'':'conv.'}</div>
+</div>${arrow}`;
+    }).join('');
   }
 }
 
