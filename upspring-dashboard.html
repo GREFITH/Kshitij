@@ -9,179 +9,275 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-font-smoothing:antialiased}
-body{font-family:'Inter',system-ui,sans-serif;background:#F5F5F2;color:#111;font-size:13px;line-height:1.5;display:flex;min-height:100vh}
+body{font-family:'Inter',system-ui,sans-serif;background:#F4F4F1;color:#111;font-size:13px;line-height:1.5;display:flex;min-height:100vh;overflow-x:hidden}
 a{color:inherit;text-decoration:none}
 button{font-family:inherit;cursor:pointer;border:none;background:none}
 svg{display:block;flex-shrink:0}
 
+/* ── CSS VARS ─────────────────────────────────────────────────────── */
+:root{
+  --sw:232px;
+  --th:60px;
+  --bdr:#E8E8E3;
+  --surf:#fff;
+  --bg:#F4F4F1;
+  --ink:#111;
+  --muted:#888;
+  --dim:#bbb;
+  --y:#F3E400;
+  --bl:#9BCBEB;
+}
+
 /* ── SIDEBAR ─────────────────────────────────────────────────────── */
-.sb{width:220px;background:#fff;border-right:1px solid #E8E8E4;position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;z-index:60}
+.sb{width:var(--sw);background:var(--surf);border-right:1px solid var(--bdr);position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;z-index:60;transition:transform .22s cubic-bezier(.4,0,.2,1)}
+body.sb-closed .sb{transform:translateX(-100%)}
+body.sb-closed .tb{left:0}
+body.sb-closed .prog{left:0}
+body.sb-closed .main{margin-left:0}
 
-.sb-logo{height:60px;padding:0 18px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #E8E8E4;flex-shrink:0}
-.logo-mark{width:28px;height:28px;background:#F3E400;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.logo-name{font-size:15px;font-weight:800;letter-spacing:-.03em;color:#111}
+.sb-logo{height:var(--th);padding:0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bdr);flex-shrink:0}
+/* Real UpSpring logo: arrow mark + wordmark */
+.logo-inner{display:flex;align-items:center;gap:8px}
+.logo-svg-wrap{flex-shrink:0}
+.logo-word{font-size:14px;font-weight:800;letter-spacing:.04em;color:#111}
 
-.sb-nav{flex:1;padding:12px 10px;display:flex;flex-direction:column;gap:1px;overflow-y:auto}
-.nav-sec{font-size:9.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#ccc;padding:10px 8px 4px}
-.nav-item{display:flex;align-items:center;gap:9px;padding:7.5px 8px;border-radius:6px;color:#777;font-size:12.5px;font-weight:500;cursor:pointer;width:100%;text-align:left;transition:background .1s,color .1s;position:relative}
-.nav-item:hover{background:#F5F5F2;color:#111}
-.nav-item.active{color:#111;font-weight:600;background:#FAFAF8}
-.nav-item.active::before{content:'';position:absolute;left:-2px;top:50%;transform:translateY(-50%);width:3px;height:16px;background:#F3E400;border-radius:2px}
-.nav-item .ni-ico{width:15px;height:15px;flex-shrink:0;opacity:.45}
+.sb-collapse{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:5px;color:#bbb;transition:background .1s,color .1s;flex-shrink:0}
+.sb-collapse:hover{background:#F4F4F1;color:#111}
+
+.sb-nav{flex:1;padding:10px 10px;display:flex;flex-direction:column;gap:1px;overflow-y:auto}
+.nav-sec{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#ccc;padding:12px 8px 4px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 8px;border-radius:6px;color:#888;font-size:12.5px;font-weight:500;cursor:pointer;width:100%;text-align:left;transition:background .1s,color .1s;position:relative}
+.nav-item:hover{background:#F4F4F1;color:#111}
+.nav-item.active{color:#111;font-weight:600;background:#F4F4F1}
+.nav-item.active::before{content:'';position:absolute;left:-2px;top:50%;transform:translateY(-50%);width:3px;height:18px;background:var(--y);border-radius:2px}
+.ni-ico{width:15px;height:15px;flex-shrink:0;opacity:.4}
 .nav-item.active .ni-ico{opacity:1}
-.ni-badge{margin-left:auto;font-size:10px;font-weight:700;background:#F0F0EC;color:#999;border-radius:20px;padding:1px 6px;font-variant-numeric:tabular-nums}
-.nav-item.active .ni-badge{background:#F3E400;color:#111}
-.sb-div{height:1px;background:#E8E8E4;margin:6px 0}
+.ni-badge{margin-left:auto;font-size:10px;font-weight:700;background:#EEEEEA;color:#999;border-radius:20px;padding:1px 7px;font-variant-numeric:tabular-nums}
+.nav-item.active .ni-badge{background:var(--y);color:#111}
+.sb-div{height:1px;background:var(--bdr);margin:4px 0}
 
-.sb-foot{padding:10px;border-top:1px solid #E8E8E4;flex-shrink:0}
-.site-pill{display:flex;align-items:center;gap:8px;padding:8px 10px;background:#F5F5F2;border-radius:7px}
+.sb-foot{padding:10px;border-top:1px solid var(--bdr);flex-shrink:0}
+.site-pill{display:flex;align-items:center;gap:9px;padding:9px 11px;background:#F4F4F1;border-radius:8px}
 .pulse{width:6px;height:6px;border-radius:50%;background:#22c55e;flex-shrink:0;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
-.site-url{font-size:10.5px;font-weight:600;color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px}
+.site-url{font-size:10.5px;font-weight:600;color:#333;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:130px}
 .site-st{font-size:9.5px;color:#aaa;margin-top:1px}
 
 /* ── TOPBAR ──────────────────────────────────────────────────────── */
-.tb{position:fixed;top:0;left:220px;right:0;height:60px;background:#fff;border-bottom:1px solid #E8E8E4;display:flex;align-items:center;padding:0 28px;gap:12px;z-index:50}
-.tb-title{font-size:15px;font-weight:700;letter-spacing:-.02em;color:#111}
+.tb{position:fixed;top:0;left:var(--sw);right:0;height:var(--th);background:var(--surf);border-bottom:1px solid var(--bdr);display:flex;align-items:center;padding:0 22px 0 18px;gap:10px;z-index:50;transition:left .22s cubic-bezier(.4,0,.2,1)}
+.tb-open{width:32px;height:32px;display:none;align-items:center;justify-content:center;border-radius:6px;color:#888;border:1px solid var(--bdr);flex-shrink:0}
+.tb-open:hover{background:#F4F4F1;color:#111}
+body.sb-closed .tb-open{display:flex}
+.tb-title{font-size:14px;font-weight:700;letter-spacing:-.02em;color:#111}
 .tb-sp{flex:1}
 .tb-upd{font-size:11px;color:#ccc}
-.tb-cd{display:flex;align-items:center;gap:4px;font-size:11px;color:#bbb;font-variant-numeric:tabular-nums}
-.btn-run{display:flex;align-items:center;gap:6px;background:#F5F5F2;border:1px solid #E0E0DC;color:#555;border-radius:7px;padding:6px 13px;font-size:11.5px;font-weight:600;transition:.12s}
-.btn-run:hover{background:#EAEAE6;color:#111}
-.btn-run:disabled{opacity:.45;cursor:default}
-.btn-refresh{background:#111;color:#fff;border-radius:7px;padding:6px 13px;font-size:11.5px;font-weight:700;transition:.12s}
+.tb-cd{display:flex;align-items:center;gap:4px;font-size:11px;color:#bbb;font-variant-numeric:tabular-nums;background:#F4F4F1;border-radius:20px;padding:4px 10px;border:1px solid var(--bdr)}
+.btn-run{display:flex;align-items:center;gap:5px;background:#F4F4F1;border:1px solid var(--bdr);color:#555;border-radius:7px;padding:6px 13px;font-size:11.5px;font-weight:600;transition:.12s}
+.btn-run:hover{background:#EAEAE5;color:#111}
+.btn-run:disabled{opacity:.4;cursor:default}
+.btn-refresh{background:#111;color:#fff;border-radius:7px;padding:6px 14px;font-size:11.5px;font-weight:700;transition:.12s}
 .btn-refresh:hover{background:#333}
 
-.prog{position:fixed;top:60px;left:220px;right:0;height:2px;z-index:49;overflow:hidden}
-.prog-fill{height:100%;background:#F3E400;width:0;transition:none}
+.prog{position:fixed;top:var(--th);left:var(--sw);right:0;height:2px;z-index:49;transition:left .22s cubic-bezier(.4,0,.2,1)}
+.prog-fill{height:100%;background:var(--y);width:0;transition:none}
 
 /* ── MAIN ────────────────────────────────────────────────────────── */
-.main{margin-left:220px;margin-top:60px;flex:1;min-width:0}
+.main{margin-left:var(--sw);margin-top:var(--th);flex:1;min-width:0;transition:margin-left .22s cubic-bezier(.4,0,.2,1)}
 .pv{display:none;flex-direction:column}
 .pv.active{display:flex}
 
-/* ── STATS STRIP ─────────────────────────────────────────────────── */
-.stats{display:grid;grid-template-columns:repeat(6,1fr);background:#fff;border-bottom:1px solid #E8E8E4}
-.sc{padding:20px 22px;border-right:1px solid #E8E8E4}
-.sc:last-child{border-right:none}
-.sc-l{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#bbb;margin-bottom:5px}
-.sc-v{font-size:38px;font-weight:900;line-height:1;letter-spacing:-.04em;color:#111;font-variant-numeric:tabular-nums}
-.sc-v.hl{color:#C8BB00}
-.sc-s{font-size:10px;color:#ccc;margin-top:4px}
+/* ── STAT STRIP ──────────────────────────────────────────────────── */
+.stat-strip{display:grid;grid-template-columns:repeat(6,1fr);background:var(--surf);border-bottom:1px solid var(--bdr)}
+.ss-cell{padding:18px 20px;border-right:1px solid var(--bdr)}
+.ss-cell:last-child{border-right:none}
+.ss-l{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#bbb;margin-bottom:6px}
+.ss-v{font-size:36px;font-weight:900;line-height:1;letter-spacing:-.04em;color:#111;font-variant-numeric:tabular-nums}
+.ss-v.hl{color:#B8AE00}
+.ss-s{font-size:10px;color:#ccc;margin-top:5px}
+.ss-cell.ac{border-top:2.5px solid var(--y)}
 
-/* ── CONTENT ─────────────────────────────────────────────────────── */
-.content{padding:22px 26px;display:flex;flex-direction:column;gap:18px}
+/* ── PAGE CONTENT ────────────────────────────────────────────────── */
+.content{padding:20px 24px;display:flex;flex-direction:column;gap:16px}
 
-.sec-row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:10px}
-.sec-title{font-size:13px;font-weight:700;color:#111}
-.sec-action{font-size:11.5px;color:#bbb;cursor:pointer;transition:color .1s}
-.sec-action:hover{color:#111}
+/* section header */
+.sec-hd{display:flex;align-items:baseline;justify-content:space-between}
+.sec-t{font-size:13px;font-weight:700;color:#111}
+.sec-a{font-size:11.5px;color:#bbb;cursor:pointer;transition:color .1s}
+.sec-a:hover{color:#111}
 
-/* charts */
-.chart-row{display:grid;grid-template-columns:3fr 2fr;gap:14px}
-.cbox{background:#fff;border:1px solid #E8E8E4;border-radius:10px;padding:18px 20px}
+/* ── CHARTS ──────────────────────────────────────────────────────── */
+.chart-row{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px}
+.chart-row-2{display:grid;grid-template-columns:3fr 2fr;gap:12px}
+.cbox{background:var(--surf);border:1px solid var(--bdr);border-radius:10px;padding:16px 18px}
 .cb-t{font-size:12px;font-weight:700;color:#111;margin-bottom:2px}
 .cb-s{font-size:10.5px;color:#bbb;margin-bottom:14px}
 canvas{max-height:140px}
 
-/* table */
-.tbl-wrap{background:#fff;border:1px solid #E8E8E4;border-radius:10px;overflow:hidden}
+/* ── TABLE ───────────────────────────────────────────────────────── */
+.tbl-wrap{background:var(--surf);border:1px solid var(--bdr);border-radius:10px;overflow:hidden}
 .tbl-scroll{overflow-x:auto}
-table{width:100%;border-collapse:collapse;min-width:760px}
-thead th{padding:10px 14px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#bbb;background:#fff;border-bottom:1px solid #E8E8E4;white-space:nowrap}
-tbody tr{border-bottom:1px solid #F0F0EC;transition:background .08s}
+table{width:100%;border-collapse:collapse;min-width:700px}
+thead th{padding:9px 14px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#bbb;background:var(--surf);border-bottom:1px solid var(--bdr);white-space:nowrap}
+tbody tr{border-bottom:1px solid #F0F0EB;transition:background .08s}
 tbody tr:last-child{border-bottom:none}
-tbody tr:hover{background:#FAFAF8}
-td{padding:11px 14px;vertical-align:middle}
-.co-name{font-weight:700;font-size:13px;color:#111;line-height:1.2}
-.co-dom{font-size:10.5px;color:#bbb;font-family:monospace;margin-top:2px}
+tbody tr:hover{background:#FAFAF7}
+td{padding:10px 14px;vertical-align:middle}
+.co-name{font-weight:700;font-size:13px;line-height:1.2}
+.co-dom{font-size:10px;color:#bbb;font-family:monospace;margin-top:2px}
 .co-li{font-size:10px;color:#5AAAD4;display:block;margin-top:2px}
-.isp-tag{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;background:#fffbeb;border:1px solid #f0c040;color:#9a7a00;border-radius:4px;padding:1px 5px;margin-top:3px}
+.isp-tag{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;background:#fffbeb;border:1px solid #f0c040;color:#9a7a00;border-radius:3px;padding:1px 5px;margin-top:3px}
 .sc-wrap{display:flex;align-items:center;gap:7px}
 .sc-bar{width:40px;height:3px;background:#eee;border-radius:2px;overflow:hidden;flex-shrink:0}
 .sc-fill{height:100%;border-radius:2px}
-.hot .sc-fill{background:#111}.warm .sc-fill{background:#9BCBEB}.cold .sc-fill{background:#ddd}
-.sc-num{font-size:14px;font-weight:800;font-variant-numeric:tabular-nums}
+.hot .sc-fill{background:#111}.warm .sc-fill{background:var(--bl)}.cold .sc-fill{background:#ddd}
+.sc-num{font-size:13px;font-weight:800;font-variant-numeric:tabular-nums}
 .hot .sc-num{color:#111}.warm .sc-num{color:#5AAAD4}.cold .sc-num{color:#ccc}
 .cell{font-size:12px;color:#555}
 .cell-sm{font-size:11px;color:#aaa}
 .tag-ok{display:inline-block;background:#f0fdf4;color:#166534;font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px}
-.tag-no{display:inline-block;background:#F5F5F2;color:#bbb;font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px}
-.tag-isp{display:inline-block;background:#fffbeb;color:#9a7a00;font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px}
-.e-btn{background:#111;color:#F3E400;border-radius:6px;padding:5px 11px;font-size:10.5px;font-weight:700;white-space:nowrap;transition:.12s;font-family:inherit}
+.tag-no{display:inline-block;background:#F4F4F1;color:#bbb;font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px}
+.e-btn{background:#111;color:var(--y);border-radius:6px;padding:5px 12px;font-size:10.5px;font-weight:700;transition:.12s}
 .e-btn:hover:not(:disabled){background:#333}
-.e-btn:disabled{background:#F5F5F2;color:#ccc;cursor:default}
+.e-btn:disabled{background:#F4F4F1;color:#ccc;cursor:default}
 .e-btn.done{background:#f0fdf4;color:#166534}
-.empty{text-align:center;padding:44px;color:#bbb;font-size:12px}
+.empty{text-align:center;padding:44px;color:#ccc;font-size:12px}
 
-/* bottom */
-.bot-row{display:grid;grid-template-columns:2fr 1fr;gap:14px}
-.box{background:#fff;border:1px solid #E8E8E4;border-radius:10px;overflow:hidden}
-.box-hd{padding:12px 16px;border-bottom:1px solid #E8E8E4;display:flex;align-items:center;justify-content:space-between}
-.box-hd .bh-t{font-size:12px;font-weight:700;color:#111}
-.box-hd small{font-size:10.5px;color:#bbb}
-.feed-row{display:flex;align-items:center;justify-content:space-between;padding:8px 16px;border-bottom:1px solid #F0F0EC;gap:10px}
+/* ── BOTTOM ROW ──────────────────────────────────────────────────── */
+.bot-row{display:grid;grid-template-columns:3fr 2fr;gap:12px}
+.box{background:var(--surf);border:1px solid var(--bdr);border-radius:10px;overflow:hidden}
+.box-hd{padding:12px 16px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between}
+.bh-t{font-size:12px;font-weight:700}
+.bh-s{font-size:10.5px;color:#bbb}
+.feed-row{display:flex;align-items:center;padding:7px 16px;border-bottom:1px solid #F0F0EB;gap:10px}
 .feed-row:last-child{border-bottom:none}
 .feed-path{font-family:monospace;font-size:11.5px;color:#333;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .feed-t{font-size:10px;color:#bbb;white-space:nowrap}
-.job-row{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;border-bottom:1px solid #F0F0EC}
+.job-row{display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid #F0F0EB;gap:9px}
 .job-row:last-child{border-bottom:none}
-.jr-l{display:flex;align-items:center;gap:7px}
-.jdot{width:7px;height:7px;border-radius:50%}
+.jdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 .jdot.ok{background:#22c55e}.jdot.q{background:#f59e0b}.jdot.err{background:#ef4444}
-.jr-label{font-size:12px;color:#555;text-transform:capitalize}
+.jr-label{font-size:12px;color:#555;text-transform:capitalize;flex:1}
 .jr-num{font-size:20px;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-.03em}
 .jr-num.ok{color:#22c55e}.jr-num.q{color:#f59e0b}.jr-num.err{color:#ef4444}.jr-num.g{color:#111}
 
-/* ── COMPANIES PAGE ── */
-.pg-stats{display:grid;background:#fff;border-bottom:1px solid #E8E8E4}
+/* ── COMPANY CARDS ───────────────────────────────────────────────── */
+.co-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.co-card{background:var(--surf);border:1px solid var(--bdr);border-radius:10px;overflow:hidden;cursor:pointer;transition:box-shadow .15s,transform .12s;position:relative}
+.co-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.09);transform:translateY(-1px)}
+.co-card.enriched{border-top:2.5px solid #22c55e}
+.co-card.hot-lead{border-top:2.5px solid var(--y)}
+.co-card.isp{border-top:2.5px solid #f59e0b;opacity:.7}
+.cc-top{padding:14px 16px 10px;border-bottom:1px solid #F0F0EB}
+.cc-row{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.cc-name{font-weight:700;font-size:13.5px;line-height:1.2;flex:1}
+.cc-score-pill{font-size:11px;font-weight:800;font-variant-numeric:tabular-nums;padding:3px 8px;border-radius:20px;flex-shrink:0;margin-top:1px}
+.cc-score-pill.hot{background:#111;color:var(--y)}
+.cc-score-pill.warm{background:#EBF5FB;color:#5AAAD4}
+.cc-score-pill.cold{background:#F4F4F1;color:#999}
+.cc-dom{font-size:10px;color:#bbb;font-family:monospace;margin-top:3px}
+.cc-isp{display:inline-block;font-size:9px;font-weight:700;text-transform:uppercase;background:#fffbeb;border:1px solid #f0c040;color:#9a7a00;border-radius:3px;padding:1px 5px;margin-top:4px}
+.cc-body{padding:12px 16px;display:flex;flex-direction:column;gap:6px}
+.cc-meta{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:#888}
+.cc-meta strong{color:#111;font-weight:600}
+.cc-bar-wrap{margin-top:4px}
+.cc-bar{height:3px;background:#eee;border-radius:2px;overflow:hidden}
+.cc-bar-fill{height:100%;border-radius:2px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+.cc-bar-fill.hot{background:#111}.cc-bar-fill.warm{background:var(--bl)}.cc-bar-fill.cold{background:#ddd}
+.cc-foot{padding:10px 16px;border-top:1px solid #F0F0EB;display:flex;align-items:center;justify-content:space-between}
+.cc-ft-l{font-size:10.5px;color:#aaa}
+.cc-enrich{background:#111;color:var(--y);border-radius:5px;padding:4px 11px;font-size:10px;font-weight:700;transition:.12s}
+.cc-enrich:hover:not(:disabled){background:#333}
+.cc-enrich:disabled{background:#F4F4F1;color:#ccc;cursor:default}
+.cc-enrich.done{background:#f0fdf4;color:#166534}
+
+/* ── DETAIL PANEL ────────────────────────────────────────────────── */
+.detail-overlay{position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:100;opacity:0;pointer-events:none;transition:opacity .2s}
+.detail-overlay.open{opacity:1;pointer-events:all}
+.detail-panel{position:fixed;top:0;right:0;bottom:0;width:440px;background:var(--surf);z-index:101;transform:translateX(100%);transition:transform .25s cubic-bezier(.4,0,.2,1);overflow-y:auto;display:flex;flex-direction:column}
+.detail-panel.open{transform:translateX(0)}
+.dp-hd{padding:20px 22px 16px;border-bottom:1px solid var(--bdr);display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-shrink:0;position:sticky;top:0;background:var(--surf);z-index:1}
+.dp-name{font-size:17px;font-weight:800;letter-spacing:-.02em;line-height:1.2}
+.dp-dom{font-size:11px;color:#bbb;font-family:monospace;margin-top:3px}
+.dp-close{width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:6px;color:#bbb;transition:background .1s,color .1s;flex-shrink:0;font-size:18px;line-height:1}
+.dp-close:hover{background:#F4F4F1;color:#111}
+.dp-body{padding:0 22px 22px;flex:1}
+.dp-sec{margin-top:20px}
+.dp-sec-t{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#bbb;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--bdr)}
+.dp-row{display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px solid #F0F0EB;gap:10px;font-size:12px}
+.dp-row:last-child{border-bottom:none}
+.dp-key{color:#888;flex-shrink:0;max-width:130px}
+.dp-val{font-weight:500;color:#111;text-align:right;word-break:break-word}
+.dp-score-big{display:flex;align-items:center;gap:10px;margin:14px 0}
+.dp-score-num{font-size:40px;font-weight:900;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.dp-score-num.hot{color:#111}.dp-score-num.warm{color:#5AAAD4}.dp-score-num.cold{color:#ccc}
+.dp-score-label{font-size:11px;color:#aaa;margin-top:2px}
+.dp-score-track{flex:1;height:5px;background:#eee;border-radius:3px;overflow:hidden}
+.dp-score-fill{height:100%;border-radius:3px}
+.dp-score-fill.hot{background:#111}.dp-score-fill.warm{background:var(--bl)}.dp-score-fill.cold{background:#ddd}
+.visit-chip{display:inline-flex;align-items:center;gap:4px;background:#F4F4F1;border-radius:5px;padding:4px 9px;font-family:monospace;font-size:11px;color:#555;margin:3px 3px 3px 0}
+.dp-enrich-btn{background:#111;color:var(--y);border-radius:7px;padding:9px 20px;font-size:12px;font-weight:700;width:100%;margin-top:14px;transition:.12s;text-align:center}
+.dp-enrich-btn:hover:not(:disabled){background:#333}
+.dp-enrich-btn:disabled{background:#F4F4F1;color:#ccc;cursor:default}
+.dp-enrich-btn.done{background:#f0fdf4;color:#166534}
+.dp-li{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;color:#5AAAD4;margin-top:8px}
+.dp-li svg{width:11px;height:11px}
+
+/* ── STAT MINI STRIP ─────────────────────────────────────────────── */
+.pg-stats{display:grid;background:var(--surf);border-bottom:1px solid var(--bdr)}
 .pg-stats.c3{grid-template-columns:repeat(3,1fr)}
 .pg-stats.c4{grid-template-columns:repeat(4,1fr)}
-.pg-sc{padding:20px 24px;border-right:1px solid #E8E8E4}
+.pg-sc{padding:18px 22px;border-right:1px solid var(--bdr)}
 .pg-sc:last-child{border-right:none}
+.pg-sc.ac{border-top:2.5px solid var(--y)}
 
-/* ── VISITS PAGE ── */
-.vis-pair{display:grid;grid-template-columns:3fr 2fr;gap:14px}
-.vis-row{display:flex;align-items:center;padding:8px 14px;border-bottom:1px solid #F0F0EC;gap:10px}
+/* ── VISITS PAGE ─────────────────────────────────────────────────── */
+.vis-pair{display:grid;grid-template-columns:3fr 2fr;gap:12px}
+.vis-row{display:flex;align-items:center;padding:8px 16px;border-bottom:1px solid #F0F0EB;gap:10px;transition:background .08s;cursor:default}
 .vis-row:last-child{border-bottom:none}
-.vis-row:hover{background:#FAFAF8}
+.vis-row:hover{background:#FAFAF7}
 .vpath{font-family:monospace;font-size:11.5px;color:#333;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.vsid{font-size:10px;color:#ddd;font-family:monospace;flex-shrink:0;white-space:nowrap}
-.vt{font-size:10px;color:#bbb;white-space:nowrap;text-align:right;min-width:55px}
+.vsid{font-size:9.5px;color:#ccc;font-family:monospace;flex-shrink:0}
+.vt{font-size:10px;color:#bbb;white-space:nowrap;min-width:56px;text-align:right}
+.vis-path-card{background:var(--surf);border:1px solid var(--bdr);border-radius:8px;padding:11px 14px;display:flex;align-items:center;gap:10px}
+.vpc-path{font-family:monospace;font-size:11px;color:#333;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vpc-count{font-size:18px;font-weight:900;color:#111;font-variant-numeric:tabular-nums;flex-shrink:0}
+.vpc-bar-wrap{height:3px;background:#eee;border-radius:2px;overflow:hidden;margin-top:6px}
+.vpc-bar{height:100%;background:#111;border-radius:2px}
 
-/* ── JOB QUEUE PAGE ── */
-.jobs-pair{display:grid;grid-template-columns:2fr 1fr;gap:14px}
-.jf-row{display:flex;align-items:center;padding:11px 16px;border-bottom:1px solid #F0F0EC;gap:10px}
+/* ── JOB QUEUE ───────────────────────────────────────────────────── */
+.jobs-pair{display:grid;grid-template-columns:2fr 1fr;gap:12px}
+.jf-row{display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid #F0F0EB;gap:10px}
 .jf-row:last-child{border-bottom:none}
-.jf-label{font-size:12px;color:#333;text-transform:capitalize;flex:1}
-.jf-num{font-size:22px;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-.04em}
+.jf-label{font-size:12.5px;color:#555;text-transform:capitalize;flex:1}
+.jf-num{font-size:24px;font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:-.04em}
 .jf-num.ok{color:#22c55e}.jf-num.q{color:#f59e0b}.jf-num.err{color:#ef4444}.jf-num.g{color:#111}
 
-/* ── SETTINGS ── */
-.set-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.set-card{background:#fff;border:1px solid #E8E8E4;border-radius:10px;padding:18px 20px}
-.set-hd{font-size:12.5px;font-weight:700;color:#111;margin-bottom:14px}
-.set-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid #F0F0EC}
+/* ── SETTINGS ────────────────────────────────────────────────────── */
+.set-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.set-card{background:var(--surf);border:1px solid var(--bdr);border-radius:10px;padding:18px 20px}
+.set-hd{font-size:12.5px;font-weight:700;margin-bottom:14px}
+.set-row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid #F0F0EB}
 .set-row:last-child{border-bottom:none}
-.sr-name{font-size:12.5px;font-weight:500;color:#333}
-.sr-meta{font-size:10.5px;color:#bbb;margin-top:2px}
-.tag-g{background:#f0fdf4;color:#166534;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap}
-.tag-a{background:#fffbeb;color:#9a7a00;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap}
-.rule-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #F0F0EC;font-size:12px;color:#555}
+.sr-name{font-size:12.5px;font-weight:500}
+.sr-meta{font-size:10px;color:#bbb;margin-top:2px;font-family:monospace}
+.tag-g{background:#f0fdf4;color:#166534;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
+.tag-a{background:#fffbeb;color:#9a7a00;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
+.rule-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #F0F0EB;font-size:12px;color:#555}
 .rule-row:last-child{border-bottom:none}
 
-/* ── NOTICE ── */
-.notice{background:#111;color:#fff;padding:11px 20px;display:flex;align-items:center;gap:12px;font-size:11.5px;flex-shrink:0}
-.notice strong{color:#F3E400}
-.notice code{background:rgba(255,255,255,.1);padding:1px 5px;border-radius:3px;font-size:10.5px;font-family:monospace}
-.n-close{color:rgba(255,255,255,.35);font-size:18px;line-height:1;cursor:pointer;margin-left:auto;flex-shrink:0}
+/* ── NOTICE ──────────────────────────────────────────────────────── */
+.notice{background:#111;color:#fff;padding:10px 20px;display:flex;align-items:center;gap:12px;font-size:11.5px;flex-shrink:0}
+.notice strong{color:var(--y)}
+.notice code{background:rgba(255,255,255,.1);padding:1px 5px;border-radius:3px;font-size:10px;font-family:monospace}
+.n-close{color:rgba(255,255,255,.35);font-size:18px;cursor:pointer;margin-left:auto}
 .n-close:hover{color:#fff}
 
-/* ── TOAST ── */
-#toast{position:fixed;bottom:20px;right:20px;background:#111;color:#fff;padding:10px 16px;border-radius:8px;font-size:12px;font-weight:500;transform:translateY(80px);opacity:0;transition:.2s;z-index:999;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.12)}
+/* ── TOAST ───────────────────────────────────────────────────────── */
+#toast{position:fixed;bottom:20px;right:20px;background:#111;color:#fff;padding:10px 16px;border-radius:8px;font-size:12px;font-weight:500;transform:translateY(80px);opacity:0;transition:.2s;z-index:999;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.14)}
 #toast.show{transform:translateY(0);opacity:1}
 
-@media(max-width:1200px){.stats{grid-template-columns:repeat(3,1fr)}.chart-row,.bot-row,.vis-pair,.jobs-pair{grid-template-columns:1fr}}
+@media(max-width:1280px){.stat-strip{grid-template-columns:repeat(3,1fr)}.chart-row{grid-template-columns:1fr 1fr}.co-cards{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:960px){.chart-row,.chart-row-2,.bot-row,.vis-pair,.jobs-pair,.set-grid{grid-template-columns:1fr}.co-cards{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -189,45 +285,47 @@ td{padding:11px 14px;vertical-align:middle}
 <!-- SIDEBAR -->
 <aside class="sb">
   <div class="sb-logo">
-    <div class="logo-mark">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-        <path d="M7 11.5V3" stroke="#111" stroke-width="2" stroke-linecap="round"/>
-        <path d="M3 6.5L7 2.5L11 6.5" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
+    <div class="logo-inner">
+      <!-- UpSpring logo: diagonal arrow mark + UPSPRING wordmark -->
+      <div class="logo-svg-wrap">
+        <svg width="22" height="20" viewBox="0 0 22 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Arrow shape matching UpSpring brand mark -->
+          <path d="M0 20L8.5 0H13L4.5 20H0Z" fill="#111"/>
+          <path d="M8 20L16.5 0H21L22 0L13.5 20H8Z" fill="#111"/>
+          <path d="M14 0H22V6H14V0Z" fill="#111"/>
+        </svg>
+      </div>
+      <span class="logo-word">UPSPRING</span>
     </div>
-    <span class="logo-name">UpSpring</span>
+    <button class="sb-collapse" onclick="toggleSidebar()" title="Collapse sidebar">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7L9 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
   </div>
 
   <nav class="sb-nav">
     <span class="nav-sec">Analytics</span>
-
     <button class="nav-item active" data-page="dashboard">
       <svg class="ni-ico" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" fill="currentColor"/><rect x="8" y="1" width="5" height="5" rx="1" fill="currentColor" opacity=".5"/><rect x="1" y="8" width="5" height="5" rx="1" fill="currentColor" opacity=".5"/><rect x="8" y="8" width="5" height="5" rx="1" fill="currentColor"/></svg>
       Dashboard
       <span class="ni-badge" id="nb-sess">—</span>
     </button>
-
     <button class="nav-item" data-page="companies">
       <svg class="ni-ico" viewBox="0 0 14 14" fill="none"><path d="M2 13V6.5L7 2l5 4.5V13" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><rect x="5" y="9" width="4" height="4" rx=".5" fill="currentColor" opacity=".5"/></svg>
       Companies
       <span class="ni-badge" id="nb-co">—</span>
     </button>
-
     <button class="nav-item" data-page="visits">
       <svg class="ni-ico" viewBox="0 0 14 14" fill="none"><path d="M1 7s2.5-5 6-5 6 5 6 5-2.5 5-6 5-6-5-6-5Z" stroke="currentColor" stroke-width="1.3"/><circle cx="7" cy="7" r="2" fill="currentColor"/></svg>
       Page Visits
       <span class="ni-badge" id="nb-vis">—</span>
     </button>
-
     <div class="sb-div"></div>
     <span class="nav-sec">System</span>
-
     <button class="nav-item" data-page="jobs">
       <svg class="ni-ico" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.3"/><path d="M7 4.5V7.5l2 1.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
       Job Queue
       <span class="ni-badge" id="nb-jobs">—</span>
     </button>
-
     <button class="nav-item" data-page="settings">
       <svg class="ni-ico" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="2" stroke="currentColor" stroke-width="1.3"/><path d="M7 1.5v1.5M7 11v1.5M1.5 7H3M11 7h1.5M3.3 3.3l1 1M9.7 9.7l1 1M10.7 3.3l-1 1M4.3 9.7l-1 1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
       Settings
@@ -247,10 +345,16 @@ td{padding:11px 14px;vertical-align:middle}
 
 <!-- TOPBAR -->
 <header class="tb">
+  <button class="tb-open" onclick="toggleSidebar()" title="Open sidebar">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 2L10 7L5 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
   <span class="tb-title" id="tb-title">Dashboard</span>
   <div class="tb-sp"></div>
   <span class="tb-upd" id="tb-upd"></span>
-  <div class="tb-cd"><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.3"/><path d="M6 3.5V6.5l1.5 1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg><span id="cd-num">—</span></div>
+  <div class="tb-cd">
+    <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.3"/><path d="M6 3.5V6.5l1.5 1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+    <span id="cd-num">—</span>
+  </div>
   <button class="btn-run" id="run-btn" onclick="runJobs()">
     <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M2.5 1.5L7 4.5L2.5 7.5V1.5Z" fill="currentColor"/></svg>
     Run Jobs
@@ -262,40 +366,45 @@ td{padding:11px 14px;vertical-align:middle}
 <!-- PAGES -->
 <main class="main">
 
-<!-- DASHBOARD -->
+<!-- ══ DASHBOARD ══════════════════════════════════════════════════════ -->
 <div class="pv active" id="page-dashboard">
   <div id="notice" style="display:none" class="notice">
-    <span>Add <strong>APOLLO_API_KEY</strong> to Supabase Edge Function secrets to enable company enrichment — industry, headcount, LinkedIn.</span>
+    <span>Add <strong>APOLLO_API_KEY</strong> to Supabase Edge Function secrets to enable company enrichment.</span>
     <span class="n-close" onclick="this.closest('.notice').style.display='none'">×</span>
   </div>
 
-  <div class="stats" id="stats-strip">
-    <div class="sc"><div class="sc-l">Sessions</div><div class="sc-v" id="s-tot">—</div><div class="sc-s">all time</div></div>
-    <div class="sc"><div class="sc-l">Identified</div><div class="sc-v" id="s-id">—</div><div class="sc-s">IP resolved</div></div>
-    <div class="sc"><div class="sc-l">Hot Leads</div><div class="sc-v hl" id="s-hot">—</div><div class="sc-s">score ≥ 70</div></div>
-    <div class="sc"><div class="sc-l">Companies</div><div class="sc-v" id="s-co">—</div><div class="sc-s">unique orgs</div></div>
-    <div class="sc"><div class="sc-l">Pending</div><div class="sc-v" id="s-pend">—</div><div class="sc-s">in queue</div></div>
-    <div class="sc"><div class="sc-l">Unmatched</div><div class="sc-v" id="s-unm">—</div><div class="sc-s">ISP / cloud</div></div>
+  <div class="stat-strip" id="stats-strip">
+    <div class="ss-cell"><div class="ss-l">Sessions</div><div class="ss-v" id="s-tot">—</div><div class="ss-s">all time</div></div>
+    <div class="ss-cell"><div class="ss-l">Identified</div><div class="ss-v" id="s-id">—</div><div class="ss-s">IP resolved</div></div>
+    <div class="ss-cell ac"><div class="ss-l">Hot Leads</div><div class="ss-v hl" id="s-hot">—</div><div class="ss-s">score ≥ 70</div></div>
+    <div class="ss-cell"><div class="ss-l">Companies</div><div class="ss-v" id="s-co">—</div><div class="ss-s">unique orgs</div></div>
+    <div class="ss-cell"><div class="ss-l">Pending</div><div class="ss-v" id="s-pend">—</div><div class="ss-s">in queue</div></div>
+    <div class="ss-cell"><div class="ss-l">Unmatched</div><div class="ss-v" id="s-unm">—</div><div class="ss-s">ISP / cloud</div></div>
   </div>
 
   <div class="content">
     <div class="chart-row">
       <div class="cbox">
         <div class="cb-t">Sessions — Last 7 Days</div>
-        <div class="cb-s">Daily visitor sessions</div>
+        <div class="cb-s">Unique visitor sessions per day</div>
         <canvas id="cSess"></canvas>
       </div>
       <div class="cbox">
         <div class="cb-t">ICP Score Distribution</div>
-        <div class="cb-s">Companies by engagement tier</div>
+        <div class="cb-s">Companies by tier</div>
         <canvas id="cScore"></canvas>
+      </div>
+      <div class="cbox">
+        <div class="cb-t">Job Pipeline</div>
+        <div class="cb-s">Queue status</div>
+        <canvas id="cJobMini" style="max-height:120px"></canvas>
       </div>
     </div>
 
     <div>
-      <div class="sec-row">
-        <span class="sec-title">Identified Companies</span>
-        <span class="sec-action" onclick="goTo('companies')">See all →</span>
+      <div class="sec-hd" style="margin-bottom:10px">
+        <span class="sec-t">Identified Companies</span>
+        <span class="sec-a" onclick="goTo('companies')">See all →</span>
       </div>
       <div class="tbl-wrap"><div class="tbl-scroll"><table>
         <thead><tr><th>Company</th><th>Score</th><th>Industry</th><th>Size</th><th>Location</th><th>Sessions</th><th>Last Seen</th><th>Summary</th><th></th></tr></thead>
@@ -305,7 +414,7 @@ td{padding:11px 14px;vertical-align:middle}
 
     <div class="bot-row">
       <div class="box">
-        <div class="box-hd"><span class="bh-t">Recent Page Visits</span><small>last 20</small></div>
+        <div class="box-hd"><span class="bh-t">Recent Page Visits</span><span class="bh-s">last 20</span></div>
         <div id="feed-dash"></div>
       </div>
       <div class="box">
@@ -316,51 +425,64 @@ td{padding:11px 14px;vertical-align:middle}
   </div>
 </div>
 
-<!-- COMPANIES -->
+<!-- ══ COMPANIES ══════════════════════════════════════════════════════ -->
 <div class="pv" id="page-companies">
-  <div class="pg-stats c3">
-    <div class="pg-sc"><div class="sc-l">Hot Leads</div><div class="sc-v hl" id="cp-hot">—</div><div class="sc-s">score ≥ 70</div></div>
-    <div class="pg-sc"><div class="sc-l">Total Companies</div><div class="sc-v" id="cp-total">—</div><div class="sc-s">unique orgs</div></div>
-    <div class="pg-sc"><div class="sc-l">ISP / Cloud</div><div class="sc-v" id="cp-isp">—</div><div class="sc-s">unverifiable</div></div>
+  <div class="pg-stats c4">
+    <div class="pg-sc ac"><div class="ss-l">Hot Leads</div><div class="ss-v hl" id="cp-hot">—</div><div class="ss-s">score ≥ 70</div></div>
+    <div class="pg-sc"><div class="ss-l">Total Companies</div><div class="ss-v" id="cp-total">—</div><div class="ss-s">unique orgs</div></div>
+    <div class="pg-sc"><div class="ss-l">Enriched</div><div class="ss-v" id="cp-enr">—</div><div class="ss-s">with Apollo data</div></div>
+    <div class="pg-sc"><div class="ss-l">ISP / Cloud</div><div class="ss-v" id="cp-isp">—</div><div class="ss-s">unverifiable</div></div>
   </div>
   <div class="content">
-    <div class="tbl-wrap"><div class="tbl-scroll"><table>
-      <thead><tr><th>Company</th><th>Score</th><th>Industry</th><th>Employees</th><th>Revenue</th><th>Location</th><th>Enriched</th><th>Sessions</th><th>Last Seen</th><th></th></tr></thead>
-      <tbody id="co-full"></tbody>
-    </table></div></div>
+    <div class="sec-hd" style="margin-bottom:6px">
+      <span class="sec-t">All Companies</span>
+      <div style="display:flex;gap:8px">
+        <button class="btn-run" onclick="runJobs()">
+          <svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M2.5 1.5L7 4.5L2.5 7.5V1.5Z" fill="currentColor"/></svg>
+          Process Queue
+        </button>
+      </div>
+    </div>
+    <div class="co-cards" id="co-cards"></div>
   </div>
 </div>
 
-<!-- PAGE VISITS -->
+<!-- ══ PAGE VISITS ════════════════════════════════════════════════════ -->
 <div class="pv" id="page-visits">
   <div class="pg-stats c4">
-    <div class="pg-sc"><div class="sc-l">Total Visits</div><div class="sc-v" id="pv-tot">—</div><div class="sc-s">all events</div></div>
-    <div class="pg-sc"><div class="sc-l">Unique Paths</div><div class="sc-v" id="pv-paths">—</div><div class="sc-s">distinct URLs</div></div>
-    <div class="pg-sc"><div class="sc-l">Top Page</div><div class="sc-v" style="font-size:16px;padding-top:8px" id="pv-top">—</div><div class="sc-s">most visited</div></div>
-    <div class="pg-sc"><div class="sc-l">Today</div><div class="sc-v" id="pv-today">—</div><div class="sc-s">visits so far</div></div>
+    <div class="pg-sc"><div class="ss-l">Total Visits</div><div class="ss-v" id="pv-tot">—</div><div class="ss-s">all events</div></div>
+    <div class="pg-sc"><div class="ss-l">Unique Paths</div><div class="ss-v" id="pv-paths">—</div><div class="ss-s">distinct URLs</div></div>
+    <div class="pg-sc ac"><div class="ss-l">Top Page</div><div class="ss-v" style="font-size:16px;padding-top:8px" id="pv-top">—</div><div class="ss-s">most visited</div></div>
+    <div class="pg-sc"><div class="ss-l">Today</div><div class="ss-v" id="pv-today">—</div><div class="ss-s">visits so far</div></div>
   </div>
   <div class="content">
-    <div class="vis-pair">
+    <div class="chart-row-2">
       <div class="box">
-        <div class="box-hd"><span class="bh-t">All Page Visits</span><small>newest first</small></div>
+        <div class="box-hd"><span class="bh-t">All Page Visits</span><span class="bh-s">newest first</span></div>
         <div id="vis-list" style="max-height:400px;overflow-y:auto"></div>
       </div>
-      <div class="cbox" style="align-self:start">
-        <div class="cb-t">Top Pages</div>
-        <div class="cb-s">By visit count</div>
-        <canvas id="cVisitPages" style="max-height:280px"></canvas>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="cbox">
+          <div class="cb-t">Top Pages</div>
+          <div class="cb-s">By visit count</div>
+          <canvas id="cVisitPages" style="max-height:200px"></canvas>
+        </div>
+        <div>
+          <div class="sec-t" style="margin-bottom:10px">Pages Breakdown</div>
+          <div id="vis-cards" style="display:flex;flex-direction:column;gap:6px"></div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- JOB QUEUE -->
+<!-- ══ JOB QUEUE ══════════════════════════════════════════════════════ -->
 <div class="pv" id="page-jobs">
   <div class="pg-stats c4">
-    <div class="pg-sc"><div class="sc-l">Succeeded</div><div class="sc-v" id="jq-ok">—</div><div class="sc-s">completed</div></div>
-    <div class="pg-sc"><div class="sc-l">Queued</div><div class="sc-v" id="jq-q">—</div><div class="sc-s">waiting</div></div>
-    <div class="pg-sc"><div class="sc-l">Running</div><div class="sc-v" id="jq-run">—</div><div class="sc-s">in progress</div></div>
-    <div class="pg-sc"><div class="sc-l">Failed</div><div class="sc-v" style="color:#ef4444" id="jq-fail">—</div><div class="sc-s">needs attention</div></div>
+    <div class="pg-sc ac"><div class="ss-l">Succeeded</div><div class="ss-v" id="jq-ok">—</div><div class="ss-s">completed</div></div>
+    <div class="pg-sc"><div class="ss-l">Queued</div><div class="ss-v" id="jq-q">—</div><div class="ss-s">waiting</div></div>
+    <div class="pg-sc"><div class="ss-l">Running</div><div class="ss-v" id="jq-run">—</div><div class="ss-s">in progress</div></div>
+    <div class="pg-sc"><div class="ss-l">Failed</div><div class="ss-v" style="color:#ef4444" id="jq-fail">—</div><div class="ss-s">needs attention</div></div>
   </div>
   <div class="content">
     <div class="jobs-pair">
@@ -371,7 +493,7 @@ td{padding:11px 14px;vertical-align:middle}
       <div class="cbox" style="align-self:start">
         <div class="cb-t">Pipeline Mix</div>
         <div class="cb-s">Jobs by status</div>
-        <canvas id="cJobType" style="max-height:200px"></canvas>
+        <canvas id="cJobType" style="max-height:180px"></canvas>
       </div>
     </div>
     <div style="display:flex;align-items:center;gap:12px">
@@ -384,9 +506,9 @@ td{padding:11px 14px;vertical-align:middle}
   </div>
 </div>
 
-<!-- SETTINGS -->
+<!-- ══ SETTINGS ═══════════════════════════════════════════════════════ -->
 <div class="pv" id="page-settings">
-  <div class="content" style="padding-top:26px">
+  <div class="content" style="padding-top:24px">
     <div class="set-grid">
       <div class="set-card">
         <div class="set-hd">Pipeline Configuration</div>
@@ -402,13 +524,27 @@ td{padding:11px 14px;vertical-align:middle}
         <div class="rule-row"><span>Built environment industry match</span><strong>+25 pts</strong></div>
         <div class="rule-row"><span>Company size 50–2,000 employees</span><strong>+15 pts</strong></div>
         <div class="rule-row"><span>ISP / cloud IP detected</span><strong style="color:#ef4444">cap 20</strong></div>
-        <div class="rule-row"><span>Hot lead threshold</span><strong style="color:#C8BB00">≥ 70 pts</strong></div>
+        <div class="rule-row"><span>Hot lead threshold</span><strong style="color:#B8AE00">≥ 70 pts</strong></div>
       </div>
     </div>
   </div>
 </div>
 
 </main>
+
+<!-- COMPANY DETAIL PANEL -->
+<div class="detail-overlay" id="dp-overlay" onclick="closeDetail()"></div>
+<div class="detail-panel" id="dp">
+  <div class="dp-hd">
+    <div>
+      <div class="dp-name" id="dp-name">—</div>
+      <div class="dp-dom" id="dp-dom"></div>
+    </div>
+    <button class="dp-close" onclick="closeDetail()">×</button>
+  </div>
+  <div class="dp-body" id="dp-body"></div>
+</div>
+
 <div id="toast"></div>
 
 <script>
@@ -423,6 +559,9 @@ const esc=s=>String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&g
 function rel(ts){if(!ts)return'—';const s=Math.floor((Date.now()-new Date(ts))/1000);if(s<60)return s+'s ago';if(s<3600)return Math.floor(s/60)+'m ago';if(s<86400)return Math.floor(s/3600)+'h ago';return Math.floor(s/86400)+'d ago'}
 function sc(n){return n>=70?'hot':n>=40?'warm':'cold'}
 function toast(m,d=3200){const t=$('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),d)}
+
+/* sidebar toggle */
+function toggleSidebar(){document.body.classList.toggle('sb-closed')}
 
 /* router */
 const TITLES={dashboard:'Dashboard',companies:'Companies',visits:'Page Visits',jobs:'Job Queue',settings:'Settings'};
@@ -446,9 +585,8 @@ async function load(){
   try{
     const r=await fetch(API);if(!r.ok)throw 0;
     const d=await r.json();state=d;
-    const apollo=d.apollo_configured;
-    $('notice').style.display=apollo?'none':'flex';
-    if($('apollo-tag')){$('apollo-tag').className=apollo?'tag-g':'tag-a';$('apollo-tag').textContent=apollo?'Active':'Not set'}
+    $('notice').style.display=d.apollo_configured?'none':'flex';
+    if($('apollo-tag')){$('apollo-tag').className=d.apollo_configured?'tag-g':'tag-a';$('apollo-tag').textContent=d.apollo_configured?'Active':'Not set'}
     renderAll(d);
     $('tb-upd').textContent='Updated '+new Date().toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
   }catch(e){console.error(e)}
@@ -465,7 +603,7 @@ function renderAll(d){
   $('nb-vis').textContent=(d.recent_visits||[]).length||'—';
   $('nb-jobs').textContent=Object.values(d.jobs||{}).reduce((a,b)=>a+b,0)||'—';
   buildCharts(d);
-  renderCoRows('co-dash',d,false);
+  renderCoRows('co-dash',d);
   renderFeed(d);
   renderJobsSummary(d);
   const active=document.querySelector('.pv.active')?.id?.replace('page-','');
@@ -477,85 +615,193 @@ function renderPage(p,d){
   if(p==='jobs')renderJobs(d);
 }
 
-/* co row */
-function coRow(c,ext){
+/* ── COMPANY TABLE (dashboard) ── */
+function coRow(c){
   const s=c.score||0,cl=sc(s);
   const geo=c.geo?[c.geo.city,c.geo.country].filter(Boolean).join(', '):'—';
   const isp=c.is_isp?`<div class="isp-tag">ISP</div>`:'';
-  const li=c.linkedin_url?`<a class="co-li" href="https://${c.linkedin_url}" target="_blank" rel="noopener">LinkedIn ↗</a>`:'';
   const btn=c.is_isp?`<button class="e-btn" disabled>N/A</button>`:
     c.enriched_at?`<button class="e-btn done" disabled>✓ Done</button>`:
-    `<button class="e-btn" onclick="doEnrich('${c.id}',this)">Enrich</button>`;
-  const revTd=ext?`<td><span class="cell-sm">${esc(c.annual_revenue||'—')}</span></td>`:'';
-  const enrTd=ext?`<td>${c.enriched_at?`<span class="tag-ok">Yes</span>`:`<span class="tag-no">No</span>`}</td>`:'';
-  const sumTd=!ext?`<td><span class="cell-sm" style="max-width:130px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.alert_summary||c.short_description||'—')}</span></td>`:'';
-  return`<tr>
-    <td><div class="co-name">${esc(c.name||'Unknown')}</div><div class="co-dom">${esc(c.domain||'')}</div>${isp}${li}</td>
+    `<button class="e-btn" onclick="event.stopPropagation();doEnrich('${c.id}',this)">Enrich</button>`;
+  return`<tr onclick="openDetail('${c.id}')" style="cursor:pointer">
+    <td><div class="co-name">${esc(c.name||'Unknown')}</div><div class="co-dom">${esc(c.domain||'')}</div>${isp}</td>
     <td><div class="sc-wrap ${cl}"><div class="sc-bar"><div class="sc-fill" style="width:${s}%"></div></div><span class="sc-num">${s}</span></div></td>
-    <td><span class="cell" title="${esc(c.industry||'')}">${c.industry?esc(c.industry).slice(0,22):'—'}</span></td>
+    <td><span class="cell">${c.industry?esc(c.industry).slice(0,20):'—'}</span></td>
     <td><span class="cell">${esc(c.employee_range||'—')}</span></td>
-    ${revTd}
     <td><span class="cell-sm">${esc(geo)}</span></td>
-    ${enrTd}
     <td style="font-weight:700;font-variant-numeric:tabular-nums">${c.session_count||0}</td>
     <td><span class="cell-sm">${rel(c.last_seen_at)}</span></td>
-    ${sumTd}
+    <td><span class="cell-sm" style="max-width:120px;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.alert_summary||c.short_description||'—')}</span></td>
     <td>${btn}</td></tr>`;
 }
-function renderCoRows(id,d,ext){
+function renderCoRows(id,d){
   const cos=[...(d.companies||[])].sort((a,b)=>(b.score||0)-(a.score||0));
   const tb=$(id);if(!tb)return;
-  tb.innerHTML=cos.length?cos.map(c=>coRow(c,ext)).join(''):`<tr><td colspan="10" class="empty">No companies identified yet — visit the site then click Run Jobs</td></tr>`;
+  tb.innerHTML=cos.length?cos.map(c=>coRow(c)).join(''):`<tr><td colspan="9" class="empty">No companies identified yet — visit the site then click Run Jobs</td></tr>`;
 }
 
-/* feed */
+/* ── COMPANY CARDS (companies page) ── */
+function coCard(c){
+  const s=c.score||0,cl=sc(s);
+  const geo=c.geo?[c.geo.city,c.geo.country].filter(Boolean).join(', '):'—';
+  let topClass='';
+  if(c.is_isp)topClass='isp';
+  else if(s>=70)topClass='hot-lead';
+  else if(c.enriched_at)topClass='enriched';
+  const ispTag=c.is_isp?`<div class="cc-isp">ISP / Cloud</div>`:'';
+  const btn=c.is_isp?`<button class="cc-enrich" disabled>N/A</button>`:
+    c.enriched_at?`<button class="cc-enrich done" disabled>✓ Enriched</button>`:
+    `<button class="cc-enrich" onclick="event.stopPropagation();doEnrich('${c.id}',this)">Enrich →</button>`;
+  return`<div class="co-card ${topClass}" onclick="openDetail('${c.id}')">
+    <div class="cc-top">
+      <div class="cc-row">
+        <div>
+          <div class="cc-name">${esc(c.name||'Unknown')}</div>
+          <div class="cc-dom">${esc(c.domain||'')}</div>
+          ${ispTag}
+        </div>
+        <span class="cc-score-pill ${cl}">${s}</span>
+      </div>
+      <div class="cc-bar-wrap">
+        <div class="cc-bar"><div class="cc-bar-fill ${cl}" style="width:${s}%"></div></div>
+      </div>
+    </div>
+    <div class="cc-body">
+      <div class="cc-meta"><span>Industry</span><strong>${c.industry?esc(c.industry).slice(0,24):'—'}</strong></div>
+      <div class="cc-meta"><span>Employees</span><strong>${esc(c.employee_range||'—')}</strong></div>
+      <div class="cc-meta"><span>Location</span><strong>${esc(geo)}</strong></div>
+      <div class="cc-meta"><span>Sessions</span><strong>${c.session_count||0} visit${(c.session_count||0)!==1?'s':''}</strong></div>
+    </div>
+    <div class="cc-foot">
+      <span class="cc-ft-l">Last seen ${rel(c.last_seen_at)}</span>
+      ${btn}
+    </div>
+  </div>`;
+}
+function renderCompanies(d){
+  const cos=[...(d.companies||[])].sort((a,b)=>(b.score||0)-(a.score||0));
+  $('cp-hot').textContent=d.hot_leads||0;
+  $('cp-total').textContent=cos.length;
+  $('cp-enr').textContent=cos.filter(c=>c.enriched_at&&!c.is_isp).length;
+  $('cp-isp').textContent=cos.filter(c=>c.is_isp).length;
+  $('co-cards').innerHTML=cos.length?cos.map(c=>coCard(c)).join(''):`<div class="empty" style="grid-column:1/-1">No companies identified yet — visit the site then click Run Jobs</div>`;
+}
+
+/* ── DETAIL PANEL ── */
+function openDetail(id){
+  if(!state)return;
+  const c=(state.companies||[]).find(x=>x.id===id);if(!c)return;
+  const s=c.score||0,cl=sc(s);
+  const geo=c.geo?[c.geo.city,c.geo.country].filter(Boolean).join(', '):'—';
+  const visits=(state.recent_visits||[]).filter(v=>v.company_id===id||v.session_company===id);
+  const btn=c.is_isp?`<button class="dp-enrich-btn" disabled>ISP — Cannot Enrich</button>`:
+    c.enriched_at?`<button class="dp-enrich-btn done" disabled>✓ Enriched via Apollo</button>`:
+    `<button class="dp-enrich-btn" onclick="doEnrich('${c.id}',this)">Enrich with Apollo →</button>`;
+  const li=c.linkedin_url?`<a class="dp-li" href="https://${c.linkedin_url}" target="_blank" rel="noopener"><svg viewBox="0 0 12 12" fill="none"><path d="M2 4.5h2V10H2V4.5ZM3 3.5a1 1 0 110-2 1 1 0 010 2ZM5.5 4.5h1.8l.1.8c.4-.5 1.1-.9 2-.9C11 4.4 11.5 5.5 11.5 7V10H9.5V7.2c0-.8-.3-1.2-.9-1.2s-1.1.4-1.1 1.2V10H5.5V4.5Z" fill="currentColor"/></svg>View on LinkedIn</a>`:'';
+  $('dp-name').textContent=c.name||'Unknown';
+  $('dp-dom').textContent=c.domain||'';
+  $('dp-body').innerHTML=`
+    <div class="dp-sec">
+      <div class="dp-sec-t">ICP Score</div>
+      <div class="dp-score-big">
+        <div>
+          <div class="dp-score-num ${cl}">${s}</div>
+          <div class="dp-score-label">${cl==='hot'?'Hot Lead — High intent':cl==='warm'?'Warm — Moderate interest':'Cold — Low intent'}</div>
+        </div>
+        <div class="dp-score-track" style="flex:1"><div class="dp-score-fill ${cl}" style="width:${s}%"></div></div>
+      </div>
+    </div>
+    <div class="dp-sec">
+      <div class="dp-sec-t">Company Info</div>
+      <div class="dp-row"><span class="dp-key">Industry</span><span class="dp-val">${esc(c.industry||'—')}</span></div>
+      <div class="dp-row"><span class="dp-key">Employees</span><span class="dp-val">${esc(c.employee_range||'—')}</span></div>
+      <div class="dp-row"><span class="dp-key">Annual Revenue</span><span class="dp-val">${esc(c.annual_revenue||'—')}</span></div>
+      <div class="dp-row"><span class="dp-key">Location</span><span class="dp-val">${esc(geo)}</span></div>
+      <div class="dp-row"><span class="dp-key">Domain</span><span class="dp-val"><a href="https://${esc(c.domain||'')}" target="_blank" rel="noopener" style="color:#5AAAD4">${esc(c.domain||'—')}</a></span></div>
+      ${c.short_description?`<div class="dp-row"><span class="dp-key">Description</span><span class="dp-val" style="font-size:11px">${esc(c.short_description)}</span></div>`:''}
+      ${li}
+    </div>
+    <div class="dp-sec">
+      <div class="dp-sec-t">Visit Activity · ${c.session_count||0} session${(c.session_count||0)!==1?'s':''}</div>
+      ${(c.alert_summary||c.last_page_path)?`
+      <div class="dp-row"><span class="dp-key">Last seen</span><span class="dp-val">${rel(c.last_seen_at)}</span></div>
+      <div class="dp-row"><span class="dp-key">Summary</span><span class="dp-val" style="font-size:11px">${esc(c.alert_summary||'—')}</span></div>`:''}
+      <div style="margin-top:10px;display:flex;flex-wrap:wrap">
+        ${(state.recent_visits||[]).map(v=>`<span class="visit-chip">${esc(v.path)}</span>`).slice(0,12).join('')||'<span style="font-size:11px;color:#bbb">No visit detail available</span>'}
+      </div>
+    </div>
+    <div class="dp-sec">
+      <div class="dp-sec-t">Enrichment</div>
+      ${c.enriched_at?`<div class="dp-row"><span class="dp-key">Enriched at</span><span class="dp-val">${rel(c.enriched_at)}</span></div>`:''}
+      <div class="dp-row"><span class="dp-key">ISP / Cloud</span><span class="dp-val">${c.is_isp?'Yes — unverifiable IP':'No'}</span></div>
+      ${btn}
+    </div>`;
+  $('dp-overlay').classList.add('open');
+  $('dp').classList.add('open');
+}
+function closeDetail(){
+  $('dp-overlay').classList.remove('open');
+  $('dp').classList.remove('open');
+}
+
+/* ── FEED ── */
 function renderFeed(d){
   $('feed-dash').innerHTML=(d.recent_visits||[]).length
     ?(d.recent_visits||[]).map(v=>`<div class="feed-row"><span class="feed-path">${esc(v.path)}</span><span class="feed-t">${rel(v.occurred_at)}</span></div>`).join('')
     :`<div class="empty">No visits yet</div>`;
 }
 
-/* jobs summary */
+/* ── JOBS SUMMARY ── */
 const JMETA={succeeded:{dot:'ok',nc:'ok'},queued:{dot:'q',nc:'q'},running:{dot:'q',nc:'q'},failed:{dot:'err',nc:'err'},dead_letter:{dot:'err',nc:'err'}};
 const JORD=['succeeded','queued','running','failed','dead_letter'];
 function renderJobsSummary(d){
   const j=d.jobs||{};
   $('jobs-dash').innerHTML=Object.entries(j).sort((a,b)=>JORD.indexOf(a[0])-JORD.indexOf(b[0])).map(([k,v])=>{
     const m=JMETA[k]||{dot:'q',nc:'g'};
-    return`<div class="job-row"><div class="jr-l"><div class="jdot ${m.dot}"></div><span class="jr-label">${k.replace('_',' ')}</span></div><span class="jr-num ${m.nc}">${v}</span></div>`;
+    return`<div class="job-row"><div class="jdot ${m.dot}"></div><span class="jr-label">${k.replace('_',' ')}</span><span class="jr-num ${m.nc}">${v}</span></div>`;
   }).join('')||`<div class="empty">No jobs yet</div>`;
 }
 
-/* charts */
-const TIP={backgroundColor:'#111',titleColor:'#fff',bodyColor:'#aaa',borderColor:'rgba(0,0,0,.06)',borderWidth:1,padding:10,cornerRadius:6,displayColors:false};
-const GX={grid:{display:false},border:{display:false},ticks:{color:'#bbb',font:{size:10},padding:4}};
-const GY={beginAtZero:true,grid:{color:'rgba(0,0,0,.04)',drawTicks:false},border:{display:false},ticks:{color:'#bbb',font:{size:10},maxTicksLimit:4,padding:6}};
+/* ── CHARTS ── */
+const TIP={backgroundColor:'#111',titleColor:'#fff',bodyColor:'#aaa',borderColor:'rgba(0,0,0,.08)',borderWidth:1,padding:10,cornerRadius:6,displayColors:false};
+const GX={grid:{display:false},border:{display:false},ticks:{color:'#ccc',font:{size:10},padding:4}};
+const GY={beginAtZero:true,grid:{color:'rgba(0,0,0,.04)',drawTicks:false},border:{display:false},ticks:{color:'#ccc',font:{size:10},maxTicksLimit:5,padding:6}};
 
 function buildCharts(d){
+  /* sessions */
   if(charts.cSess)charts.cSess.destroy();
   const days=Object.keys(d.daily_sessions||{}),vals=Object.values(d.daily_sessions||{});
   charts.cSess=new Chart($('cSess'),{type:'line',
-    data:{labels:days.map(d=>new Date(d).toLocaleDateString('en',{weekday:'short'})),
-      datasets:[{data:vals,borderColor:'#111',backgroundColor:'rgba(12,12,10,.04)',borderWidth:2,pointBackgroundColor:'#111',pointRadius:4,pointHoverRadius:6,fill:true,tension:.4}]},
+    data:{labels:days.map(x=>new Date(x).toLocaleDateString('en',{weekday:'short'})),
+      datasets:[{data:vals,borderColor:'#111',backgroundColor:'rgba(12,12,10,.05)',borderWidth:2,
+        pointBackgroundColor:vals.map((v,i)=>i===vals.length-1?'#F3E400':'#111'),
+        pointRadius:vals.map((v,i)=>i===vals.length-1?6:4),
+        pointHoverRadius:7,fill:true,tension:.4}]},
     options:{responsive:true,plugins:{legend:{display:false},tooltip:TIP},scales:{x:GX,y:GY}}});
 
+  /* score bars */
   if(charts.cScore)charts.cScore.destroy();
   const sb=d.score_buckets||{};
+  const sbVals=[sb['0-25']||0,sb['26-50']||0,sb['51-75']||0,sb['76-100']||0];
+  const maxSb=Math.max(...sbVals,1);
   charts.cScore=new Chart($('cScore'),{type:'bar',
     data:{labels:['0–25','26–50','51–75','76–100'],
-      datasets:[{data:[sb['0-25']||0,sb['26-50']||0,sb['51-75']||0,sb['76-100']||0],
-        backgroundColor:['#E0E0DC','#9BCBEB','#F3E400','#111'],borderRadius:5,borderSkipped:false}]},
-    options:{responsive:true,plugins:{legend:{display:false},tooltip:TIP},scales:{x:GX,y:GY}}});
+      datasets:[{data:sbVals,
+        backgroundColor:sbVals.map((v,i)=>i===3?'#111':i===2?'#F3E400':i===1?'#9BCBEB':'#E0E0DB'),
+        borderRadius:5,borderSkipped:false}]},
+    options:{responsive:true,plugins:{legend:{display:false},tooltip:TIP},scales:{x:GX,y:{...GY,max:maxSb+1}}}});
+
+  /* job mini doughnut */
+  if(charts.cJobMini)charts.cJobMini.destroy();
+  const j=d.jobs||{};const jk=Object.keys(j),jv=Object.values(j);
+  if(jk.length){
+    charts.cJobMini=new Chart($('cJobMini'),{type:'doughnut',
+      data:{labels:jk,datasets:[{data:jv,backgroundColor:['#111','#F3E400','#9BCBEB','#ef4444'],borderWidth:3,borderColor:'#fff'}]},
+      options:{cutout:'65%',responsive:true,plugins:{legend:{display:true,position:'bottom',labels:{color:'#bbb',font:{size:9.5},boxWidth:7,padding:8,usePointStyle:true}},tooltip:TIP}}});
+  }
 }
 
-/* page renders */
-function renderCompanies(d){
-  const cos=d.companies||[];
-  $('cp-hot').textContent=d.hot_leads||0;
-  $('cp-total').textContent=cos.length;
-  $('cp-isp').textContent=cos.filter(c=>c.is_isp).length;
-  renderCoRows('co-full',d,true);
-}
+/* ── VISITS PAGE ── */
 function renderVisits(d){
   const v=d.recent_visits||[],tp=d.top_pages||[],today=new Date().toISOString().slice(0,10);
   $('pv-tot').textContent=v.length;
@@ -565,27 +811,46 @@ function renderVisits(d){
   $('vis-list').innerHTML=v.length
     ?v.map(r=>`<div class="vis-row"><span class="vpath">${esc(r.path)}</span><span class="vsid">${(r.session_id||'').slice(0,8)}</span><span class="vt">${rel(r.occurred_at)}</span></div>`).join('')
     :`<div class="empty">No visits recorded</div>`;
+
+  /* top pages horizontal bar */
   if(charts.cVP)charts.cVP.destroy();
   charts.cVP=new Chart($('cVisitPages'),{type:'bar',
-    data:{labels:tp.map(p=>p.path),datasets:[{data:tp.map(p=>p.count),backgroundColor:'#111',borderRadius:3}]},
+    data:{labels:tp.map(p=>p.path),datasets:[{data:tp.map(p=>p.count),backgroundColor:'#111',borderRadius:3,barThickness:12}]},
     options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false},tooltip:TIP},
-      scales:{x:{...GY,grid:{color:'rgba(0,0,0,.04)',drawTicks:false}},y:{...GX,ticks:{color:'#555',font:{size:10,family:'monospace'}}}}}});
+      scales:{x:{...GY,grid:{color:'rgba(0,0,0,.04)',drawTicks:false}},
+        y:{...GX,ticks:{color:'#555',font:{size:10,family:'monospace'},padding:6}}}}});
+
+  /* page breakdown cards */
+  const maxCount=tp[0]?.count||1;
+  $('vis-cards').innerHTML=tp.map(p=>`
+    <div class="vis-path-card">
+      <div style="flex:1">
+        <div class="vpc-path">${esc(p.path)}</div>
+        <div class="vpc-bar-wrap"><div class="vpc-bar" style="width:${Math.round(p.count/maxCount*100)}%"></div></div>
+      </div>
+      <span class="vpc-count">${p.count}</span>
+    </div>`).join('')||`<div class="empty">No page data</div>`;
 }
+
+/* ── JOBS PAGE ── */
 function renderJobs(d){
   const j=d.jobs||{};
-  $('jq-ok').textContent=j.succeeded||0; $('jq-q').textContent=j.queued||0;
-  $('jq-run').textContent=j.running||0; $('jq-fail').textContent=(j.failed||0)+(j.dead_letter||0);
+  $('jq-ok').textContent=j.succeeded||0;$('jq-q').textContent=j.queued||0;
+  $('jq-run').textContent=j.running||0;$('jq-fail').textContent=(j.failed||0)+(j.dead_letter||0);
   $('jobs-full').innerHTML=Object.entries(j).sort((a,b)=>JORD.indexOf(a[0])-JORD.indexOf(b[0])).map(([k,v])=>{
     const m=JMETA[k]||{dot:'q',nc:'g'};
     return`<div class="jf-row"><div class="jdot ${m.dot}"></div><span class="jf-label">${k.replace('_',' ')}</span><span class="jf-num ${m.nc}">${v}</span></div>`;
   }).join('')||`<div class="empty">No jobs yet</div>`;
   if(charts.cJT)charts.cJT.destroy();
-  charts.cJT=new Chart($('cJobType'),{type:'doughnut',
-    data:{labels:Object.keys(j),datasets:[{data:Object.values(j),backgroundColor:['#111','#F3E400','#9BCBEB','#ef4444'],borderWidth:3,borderColor:'#fff'}]},
-    options:{cutout:'62%',responsive:true,plugins:{legend:{display:true,position:'bottom',labels:{color:'#aaa',font:{size:10},boxWidth:8,padding:10,usePointStyle:true}},tooltip:TIP}}});
+  const jk=Object.keys(j),jv=Object.values(j);
+  if(jk.length){
+    charts.cJT=new Chart($('cJobType'),{type:'doughnut',
+      data:{labels:jk,datasets:[{data:jv,backgroundColor:['#111','#F3E400','#9BCBEB','#ef4444'],borderWidth:3,borderColor:'#fff'}]},
+      options:{cutout:'62%',responsive:true,plugins:{legend:{display:true,position:'bottom',labels:{color:'#bbb',font:{size:10},boxWidth:8,padding:10,usePointStyle:true}},tooltip:TIP}}});
+  }
 }
 
-/* enrich */
+/* ── ENRICH ── */
 async function doEnrich(id,btn){
   btn.disabled=true;btn.textContent='Queuing…';
   try{
@@ -596,7 +861,7 @@ async function doEnrich(id,btn){
   }catch{toast('Error — check APOLLO_API_KEY',5000);btn.disabled=false;btn.textContent='Enrich';}
 }
 
-/* job trigger */
+/* ── JOB TRIGGER ── */
 async function runJobs(){
   const btn=$('run-btn');btn.disabled=true;btn.textContent='Running…';toast('Processing queue…');
   try{
@@ -604,10 +869,10 @@ async function runJobs(){
     const n=d.processed||0;toast(`${n} job${n!==1?'s':''} processed`);
     if(n>0)setTimeout(()=>load(),1200);
   }catch{toast('Processor error');}
-  finally{btn.disabled=false;btn.innerHTML='<svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M2.5 1.5L7 4.5L2.5 7.5V1.5Z" fill="currentColor"/></svg>Run Jobs';}
+  finally{btn.disabled=false;btn.innerHTML='<svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M2.5 1.5L7 4.5L2.5 7.5V1.5Z" fill="currentColor"/></svg> Run Jobs';}
 }
 
-/* boot */
+/* ── BOOT ── */
 (async()=>{
   await load();pStart();startCd();
   setInterval(()=>{pReset();load().then(()=>{pStart();startCd()})},REFRESH);
