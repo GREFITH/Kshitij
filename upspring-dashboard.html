@@ -1,480 +1,572 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Visitor Intelligence — UpSpring</title>
+<title>Visitor Intelligence · UpSpring</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --black:#000;--white:#fff;--yellow:#F3E400;--blue:#9BCBEB;
-  --gray-100:#F5F5F5;--gray-200:#EBEBEB;--gray-400:#AAAAAA;--gray-600:#666;
-  --font:'Inter',sans-serif;
+/* ─── TOKENS ─────────────────────────────────────────────────────────────── */
+:root {
+  --yellow:    #F3E400;
+  --yellow-d:  #d6c800;
+  --blue:      #9BCBEB;
+  --black:     #000000;
+  --white:     #ffffff;
+  --bg:        #F7F7F5;
+  --surface:   #ffffff;
+  --border:    #E5E5E2;
+  --muted:     #F0F0EE;
+  --text:      #0A0A0A;
+  --text-2:    #555550;
+  --text-3:    #999990;
+  --sidebar-w: 220px;
+  --top-h:     52px;
+  --success:   #1a9e5c;
+  --warn:      #c47c00;
+  --danger:    #c0392b;
+  --font: 'Inter', system-ui, sans-serif;
+  --radius: 8px;
+  --shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
 }
-body{font-family:var(--font);background:var(--white);color:var(--black);min-height:100vh;font-size:14px}
-a{color:inherit;text-decoration:none}
-
-/* ── HEADER ── */
-header{background:var(--black);padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
-.logo{color:var(--white);font-size:18px;font-weight:800;letter-spacing:-0.5px;display:flex;align-items:center;gap:8px}
-.logo .arrow{color:var(--yellow);font-size:22px}
-.header-right{display:flex;align-items:center;gap:16px}
-.header-site{color:var(--gray-400);font-size:12px;font-weight:400}
-.live-badge{display:flex;align-items:center;gap:6px;background:#1a1a1a;border:1px solid #333;border-radius:20px;padding:4px 12px;font-size:11px;color:var(--gray-400)}
-.live-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.refresh-btn{background:var(--yellow);color:var(--black);border:none;border-radius:6px;padding:6px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font)}
-.refresh-btn:hover{background:#ded300}
-
-/* ── CONTAINER ── */
-.container{max-width:1400px;margin:0 auto;padding:32px}
-
-/* ── SECTION TITLE ── */
-.section-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gray-400);margin-bottom:16px}
-
-/* ── STATS ROW ── */
-.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:var(--gray-200);border:1px solid var(--gray-200);border-radius:12px;overflow:hidden;margin-bottom:32px}
-.stat{background:var(--white);padding:20px 20px 18px;display:flex;flex-direction:column;gap:4px}
-.stat .label{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gray-400)}
-.stat .value{font-size:36px;font-weight:800;line-height:1;color:var(--black)}
-.stat .value.yellow{color:#c8b800}
-.stat .sub{font-size:11px;color:var(--gray-400);margin-top:2px}
-
-/* ── CHARTS ROW ── */
-.charts-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px}
-.chart-card{background:var(--gray-100);border-radius:12px;padding:24px}
-.chart-card .chart-title{font-size:13px;font-weight:700;margin-bottom:20px;color:var(--black)}
-.chart-card canvas{max-height:160px}
-
-/* ── TOP PAGES ── */
-.pages-card{background:var(--gray-100);border-radius:12px;padding:24px;margin-bottom:32px}
-.pages-card canvas{max-height:140px}
-
-/* ── COMPANIES TABLE ── */
-.companies-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.companies-header h2{font-size:20px;font-weight:800}
-.companies-actions{display:flex;gap:10px;align-items:center}
-.btn{border:none;border-radius:8px;padding:8px 18px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--font);transition:.15s}
-.btn-yellow{background:var(--yellow);color:var(--black)}
-.btn-yellow:hover{background:#ded300}
-.btn-outline{background:transparent;color:var(--black);border:1.5px solid var(--gray-200)}
-.btn-outline:hover{background:var(--gray-100)}
-.table-wrap{border:1px solid var(--gray-200);border-radius:12px;overflow:hidden;margin-bottom:32px}
-table{width:100%;border-collapse:collapse}
-thead th{text-align:left;padding:12px 16px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gray-400);background:var(--gray-100);border-bottom:1px solid var(--gray-200);white-space:nowrap}
-tbody tr{border-bottom:1px solid var(--gray-200);transition:background .1s}
-tbody tr:hover{background:var(--gray-100)}
-tbody tr:last-child{border-bottom:none}
-td{padding:13px 16px;vertical-align:middle}
-.company-col .name{font-weight:700;font-size:13px;color:var(--black)}
-.company-col .domain{font-size:11px;color:var(--gray-400);margin-top:2px;font-family:monospace}
-.isp-flag{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;background:#FFF3CD;color:#856404;border:1px solid #FFE69C;border-radius:4px;padding:2px 7px;margin-top:4px}
-.score-wrap{display:flex;align-items:center;gap:10px}
-.score-track{width:70px;height:5px;background:var(--gray-200);border-radius:3px;overflow:hidden;flex-shrink:0}
-.score-fill{height:100%;border-radius:3px}
-.score-fill.hot{background:var(--black)}
-.score-fill.warm{background:#9BCBEB}
-.score-fill.cold{background:var(--gray-200)}
-.score-num{font-size:13px;font-weight:800;min-width:28px}
-.score-num.hot{color:var(--black)}
-.score-num.warm{color:#5a96b0}
-.score-num.cold{color:var(--gray-400)}
-.pill{display:inline-block;font-size:10px;padding:3px 9px;border-radius:20px;font-weight:600;white-space:nowrap}
-.pill.resolved{background:#e8f5e9;color:#2e7d32}
-.pill.unmatched{background:var(--gray-100);color:var(--gray-400)}
-.pill.pending{background:#fff8e1;color:#f57f17}
-.pill.enriched{background:#e3f2fd;color:#1565c0}
-.industry-text{font-size:12px;color:var(--gray-600);max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.emp-text{font-size:12px;color:var(--gray-600)}
-.revenue-text{font-size:12px;color:var(--gray-600)}
-.geo-text{font-size:12px;color:var(--gray-600)}
-.time-text{font-size:12px;color:var(--gray-400);white-space:nowrap}
-.session-count{font-size:13px;font-weight:700;color:var(--black)}
-.enrich-btn{background:var(--black);color:var(--white);border:none;border-radius:6px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer;font-family:var(--font);white-space:nowrap;transition:.15s}
-.enrich-btn:hover{background:#333}
-.enrich-btn:disabled{background:var(--gray-200);color:var(--gray-400);cursor:default}
-.enrich-btn.done{background:var(--blue);color:var(--black)}
-.linkedin-link{color:var(--blue);font-size:11px;font-weight:600}
-.empty-state{text-align:center;padding:60px;color:var(--gray-400)}
-.empty-state .big{font-size:40px;margin-bottom:8px}
-.empty-state p{font-size:14px}
-
-/* ── LIVE FEED ── */
-.feed-card{background:var(--gray-100);border-radius:12px;padding:24px}
-.feed-item{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--gray-200);font-size:12px}
-.feed-item:last-child{border-bottom:none}
-.feed-path{font-family:monospace;color:var(--black);font-weight:500}
-.feed-time{color:var(--gray-400);white-space:nowrap;margin-left:16px}
-
-/* ── APOLLO BANNER ── */
-.apollo-banner{background:var(--black);color:var(--white);border-radius:12px;padding:20px 24px;margin-bottom:32px;display:flex;align-items:center;justify-content:space-between}
-.apollo-banner p{font-size:13px;line-height:1.5}
-.apollo-banner strong{color:var(--yellow)}
-.apollo-banner .dismiss{background:transparent;border:1px solid #444;color:var(--white);border-radius:6px;padding:6px 14px;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font)}
-
-/* ── TOAST ── */
-#toast{position:fixed;bottom:24px;right:24px;background:var(--black);color:var(--white);padding:12px 20px;border-radius:8px;font-size:13px;font-weight:500;transform:translateY(80px);opacity:0;transition:.3s;z-index:999}
-#toast.show{transform:translateY(0);opacity:1}
-
-@media(max-width:1100px){
-  .stats{grid-template-columns:repeat(3,1fr)}
-  .charts-row{grid-template-columns:1fr 1fr}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg:#111110;--surface:#1A1A18;--border:#2A2A28;--muted:#222220;
+  --text:#F5F5F2;--text-2:#A0A09A;--text-3:#606058;
+}}
+:root[data-theme="dark"] {
+  --bg:#111110;--surface:#1A1A18;--border:#2A2A28;--muted:#222220;
+  --text:#F5F5F2;--text-2:#A0A09A;--text-3:#606058;
 }
-@media(max-width:700px){
-  .stats{grid-template-columns:repeat(2,1fr)}
-  .charts-row{grid-template-columns:1fr}
-  .container{padding:16px}
-}
+
+/* ─── RESET ──────────────────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;display:flex;min-height:100vh;overflow-x:hidden;}
+a{color:inherit;text-decoration:none;}
+button{font-family:var(--font);cursor:pointer;}
+
+/* ─── SIDEBAR ────────────────────────────────────────────────────────────── */
+.sidebar{width:var(--sidebar-w);background:var(--black);position:fixed;left:0;top:0;bottom:0;display:flex;flex-direction:column;z-index:50;}
+.sidebar-logo{height:var(--top-h);display:flex;align-items:center;gap:9px;padding:0 20px;border-bottom:1px solid #1a1a1a;flex-shrink:0;}
+.logo-arrow{color:var(--yellow);font-size:22px;font-weight:900;line-height:1;}
+.logo-text .name{color:#fff;font-size:15px;font-weight:800;letter-spacing:-.4px;}
+.logo-text .sub{color:#555;font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;}
+.sidebar-nav{padding:16px 12px;flex:1;display:flex;flex-direction:column;gap:2px;overflow-y:auto;}
+.nav-section{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#3a3a38;padding:12px 8px 5px;}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:6px;color:#666;font-size:12px;font-weight:500;transition:background .12s,color .12s;cursor:pointer;border:none;background:transparent;width:100%;text-align:left;}
+.nav-item:hover{background:#111;color:#aaa;}
+.nav-item.active{background:#1c1c1a;color:#fff;}
+.nav-item.active .nav-icon{color:var(--yellow);}
+.nav-icon{font-size:13px;width:15px;text-align:center;flex-shrink:0;}
+.nav-badge{margin-left:auto;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;background:#1c1c1a;color:#555;font-variant-numeric:tabular-nums;}
+.nav-badge.live{background:#0d2a0d;color:#4ade80;}
+.sidebar-bottom{padding:12px;border-top:1px solid #111;}
+.site-pill{display:flex;align-items:center;gap:7px;padding:9px 11px;border-radius:6px;background:#0c0c0a;}
+.site-dot{width:6px;height:6px;border-radius:50%;background:#4ade80;flex-shrink:0;animation:pulse 2s infinite;}
+.site-name{color:#444;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+
+/* ─── TOPBAR ─────────────────────────────────────────────────────────────── */
+.topbar{position:fixed;top:0;left:var(--sidebar-w);right:0;height:var(--top-h);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:10px;z-index:40;}
+.topbar-title{font-size:13px;font-weight:700;color:var(--text);}
+.topbar-sep{color:var(--border);font-size:14px;margin:0 2px;}
+.topbar-sub{font-size:12px;color:var(--text-3);}
+.spacer{flex:1;}
+.upd-status{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-3);}
+.spinner{width:11px;height:11px;border:2px solid var(--border);border-top-color:var(--yellow-d);border-radius:50%;animation:spin .7s linear infinite;display:none;}
+.spinner.on{display:block;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.btn-ghost{display:flex;align-items:center;gap:4px;border:1px solid var(--border);background:transparent;color:var(--text-2);border-radius:6px;padding:5px 11px;font-size:11px;font-weight:600;transition:.12s;}
+.btn-ghost:hover{background:var(--muted);color:var(--text);}
+.btn-cta{background:var(--yellow);color:var(--black);border:none;border-radius:6px;padding:6px 14px;font-size:11px;font-weight:700;transition:.12s;}
+.btn-cta:hover{background:var(--yellow-d);}
+.btn-icon{background:transparent;border:1px solid var(--border);border-radius:6px;padding:5px 9px;font-size:13px;color:var(--text-3);transition:.12s;}
+.btn-icon:hover{background:var(--muted);}
+
+/* progress strip */
+.pbar{position:fixed;top:var(--top-h);left:var(--sidebar-w);right:0;height:2px;background:transparent;z-index:39;pointer-events:none;}
+.pfill{height:100%;background:var(--yellow);width:0%;transition:width 30s linear;}
+.pfill.go{width:100%;}
+
+/* ─── LAYOUT ─────────────────────────────────────────────────────────────── */
+.main{margin-left:var(--sidebar-w);margin-top:var(--top-h);flex:1;min-width:0;padding:20px 24px;display:flex;flex-direction:column;gap:18px;}
+
+/* ─── STAT ROW ───────────────────────────────────────────────────────────── */
+.stats-row{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:15px 16px;display:flex;flex-direction:column;gap:3px;box-shadow:var(--shadow);}
+.stat.hl{border-left:3px solid var(--yellow);}
+.s-label{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3);}
+.s-val{font-size:26px;font-weight:800;line-height:1.15;color:var(--text);font-variant-numeric:tabular-nums;}
+.s-val.yell{color:#8a7c00;}
+:root[data-theme="dark"] .s-val.yell{color:#c8b800;}
+.s-sub{font-size:10px;color:var(--text-3);}
+
+/* ─── CHARTS ─────────────────────────────────────────────────────────────── */
+.charts-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);}
+.card-title{font-size:12px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.card-sub{font-size:10px;color:var(--text-3);margin-bottom:12px;}
+.card canvas{max-height:140px;}
+.pages-chart canvas{max-height:120px;}
+
+/* ─── TABLE ──────────────────────────────────────────────────────────────── */
+.sec-row{display:flex;align-items:center;justify-content:space-between;}
+.sec-title{font-size:15px;font-weight:800;color:var(--text);}
+.sec-actions{display:flex;gap:8px;}
+.tbl-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;}
+.tbl-scroll{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;min-width:860px;}
+thead th{padding:9px 13px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-3);background:var(--muted);border-bottom:1px solid var(--border);white-space:nowrap;}
+tbody tr{border-bottom:1px solid var(--border);transition:background .1s;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:var(--muted);}
+td{padding:10px 13px;vertical-align:middle;}
+.co-name{font-weight:700;font-size:13px;}
+.co-domain{font-size:10px;color:var(--text-3);font-family:monospace;margin-top:1px;}
+.co-li{font-size:10px;color:var(--blue);font-weight:600;margin-top:2px;display:block;}
+.isp-tag{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;background:#fff8e0;color:#b37200;border:1px solid #fde68a;border-radius:4px;padding:2px 6px;margin-top:3px;}
+:root[data-theme="dark"] .isp-tag{background:#251e00;color:#d4a000;border-color:#4a3800;}
+.score-wrap{display:flex;align-items:center;gap:7px;}
+.score-track{width:50px;height:4px;background:var(--muted);border-radius:2px;overflow:hidden;flex-shrink:0;}
+.sfill{height:100%;border-radius:2px;}
+.sfill.hot{background:var(--text);}
+.sfill.warm{background:var(--blue);}
+.sfill.cold{background:var(--border);}
+.snum{font-size:13px;font-weight:800;min-width:26px;font-variant-numeric:tabular-nums;}
+.snum.hot{color:var(--text);}
+.snum.warm{color:#5a8faa;}
+.snum.cold{color:var(--text-3);}
+.cell-sm{font-size:11px;color:var(--text-2);}
+.cell-xs{font-size:10px;color:var(--text-3);}
+.enrich-btn{background:var(--black);color:#fff;border:none;border-radius:5px;padding:5px 10px;font-size:10px;font-weight:700;white-space:nowrap;font-family:var(--font);transition:.12s;}
+.enrich-btn:hover:not(:disabled){background:#222;}
+.enrich-btn:disabled{background:var(--muted);color:var(--text-3);cursor:default;}
+.enrich-btn.done{background:var(--blue);color:var(--black);}
+.empty-row{text-align:center;padding:44px;color:var(--text-3);}
+
+/* ─── BOTTOM GRID ────────────────────────────────────────────────────────── */
+.bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.feed-item{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);}
+.feed-item:last-child{border-bottom:none;}
+.feed-path{font-family:monospace;font-size:11px;font-weight:500;}
+.feed-time{font-size:10px;color:var(--text-3);white-space:nowrap;margin-left:10px;}
+.job-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);}
+.job-row:last-child{border-bottom:none;}
+.jlabel{font-size:12px;font-weight:600;}
+.jcount{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;}
+.jcount.ok{color:var(--success);}
+.jcount.pend{color:var(--warn);}
+.jcount.err{color:var(--danger);}
+
+/* ─── NOTICE ─────────────────────────────────────────────────────────────── */
+.notice{background:var(--black);color:#fff;border-radius:var(--radius);padding:13px 16px;display:flex;align-items:center;justify-content:space-between;gap:14px;font-size:12px;line-height:1.5;}
+.notice strong{color:var(--yellow);}
+.notice code{background:#1c1c1a;padding:1px 5px;border-radius:3px;font-size:10px;}
+.notice-x{background:transparent;border:1px solid #333;color:#666;border-radius:5px;padding:4px 10px;font-size:10px;font-weight:600;white-space:nowrap;}
+.notice-x:hover{border-color:#555;color:#999;}
+
+/* ─── TOAST ──────────────────────────────────────────────────────────────── */
+#toast{position:fixed;bottom:22px;right:22px;background:var(--black);color:#fff;padding:10px 16px;border-radius:8px;font-size:12px;font-weight:500;transform:translateY(70px);opacity:0;transition:.28s cubic-bezier(.4,0,.2,1);z-index:999;max-width:300px;}
+#toast.show{transform:translateY(0);opacity:1;}
+
+/* ─── RESPONSIVE ─────────────────────────────────────────────────────────── */
+@media(max-width:1280px){.stats-row{grid-template-columns:repeat(3,1fr);}.charts-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:900px){.stats-row{grid-template-columns:repeat(2,1fr);}.charts-grid{grid-template-columns:1fr;}.bottom-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
 
-<header>
-  <div class="logo">
-    <span class="arrow">↑</span>UPSPRING
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <span class="logo-arrow">↑</span>
+    <div class="logo-text">
+      <div class="name">UPSPRING</div>
+      <div class="sub">Intelligence</div>
+    </div>
   </div>
-  <div class="header-right">
-    <span class="header-site">weareupspring.com · Visitor Intelligence</span>
-    <div class="live-badge"><span class="live-dot"></span><span id="live-label">Loading</span></div>
-    <button class="refresh-btn" onclick="load()">Refresh</button>
+  <nav class="sidebar-nav">
+    <div class="nav-section">Analytics</div>
+    <button class="nav-item active" onclick="switchNav(this,'Dashboard')">
+      <span class="nav-icon">◈</span>Dashboard
+      <span class="nav-badge live">Live</span>
+    </button>
+    <button class="nav-item" onclick="switchNav(this,'Companies')">
+      <span class="nav-icon">⬡</span>Companies
+      <span class="nav-badge" id="co-badge">—</span>
+    </button>
+    <button class="nav-item" onclick="switchNav(this,'Page Visits')">
+      <span class="nav-icon">◎</span>Page Visits
+    </button>
+    <div class="nav-section">System</div>
+    <button class="nav-item" onclick="switchNav(this,'Job Queue')">
+      <span class="nav-icon">⧗</span>Job Queue
+      <span class="nav-badge" id="job-badge">—</span>
+    </button>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="site-pill">
+      <div class="site-dot"></div>
+      <div class="site-name">kshitij-tawny.vercel.app</div>
+    </div>
   </div>
+</aside>
+
+<!-- ── TOPBAR ── -->
+<header class="topbar">
+  <span class="topbar-title" id="page-title">Dashboard</span>
+  <span class="topbar-sep">/</span>
+  <span class="topbar-sub">Visitor Intelligence</span>
+  <div class="spacer"></div>
+  <div class="upd-status">
+    <div class="spinner" id="spinner"></div>
+    <span id="upd-time">Connecting…</span>
+  </div>
+  <button class="btn-ghost" onclick="runJobs()">▶ Run Jobs</button>
+  <button class="btn-cta" onclick="manualRefresh()">↻ Refresh</button>
+  <button class="btn-icon" onclick="toggleTheme()" title="Toggle dark mode">◑</button>
 </header>
 
-<div class="container">
+<div class="pbar"><div class="pfill" id="pfill"></div></div>
 
-  <!-- Stats -->
-  <div class="stats" id="stats">
-    <div class="stat"><div class="label">Total Sessions</div><div class="value">—</div></div>
-    <div class="stat"><div class="label">Identified</div><div class="value">—</div></div>
-    <div class="stat"><div class="label">Hot Leads</div><div class="value yellow">—</div></div>
-    <div class="stat"><div class="label">Companies</div><div class="value">—</div></div>
-    <div class="stat"><div class="label">Pending</div><div class="value">—</div></div>
-    <div class="stat"><div class="label">Unmatched</div><div class="value">—</div></div>
+<!-- ── MAIN ── -->
+<main class="main">
+
+  <div class="notice" id="apollo-notice" style="display:none">
+    <p><strong>Apollo enrichment not configured.</strong> Add <code>APOLLO_API_KEY</code> to Supabase Edge Function secrets to enable company enrichment with industry, headcount, and revenue data.</p>
+    <button class="notice-x" onclick="this.closest('.notice').style.display='none'">×</button>
   </div>
 
-  <!-- Charts -->
-  <div class="charts-row">
-    <div class="chart-card">
-      <div class="chart-title">Sessions — Last 7 Days</div>
+  <!-- stats -->
+  <div class="stats-row" id="stats">
+    <div class="stat"><div class="s-label">Total Sessions</div><div class="s-val">—</div><div class="s-sub">all time</div></div>
+    <div class="stat"><div class="s-label">Identified</div><div class="s-val">—</div><div class="s-sub">IP → company</div></div>
+    <div class="stat hl"><div class="s-label">Hot Leads</div><div class="s-val yell">—</div><div class="s-sub">score ≥ 70</div></div>
+    <div class="stat"><div class="s-label">Companies</div><div class="s-val">—</div><div class="s-sub">unique orgs</div></div>
+    <div class="stat"><div class="s-label">Pending</div><div class="s-val">—</div><div class="s-sub">awaiting lookup</div></div>
+    <div class="stat"><div class="s-label">Unmatched</div><div class="s-val">—</div><div class="s-sub">ISP / consumer</div></div>
+  </div>
+
+  <!-- charts -->
+  <div class="charts-grid">
+    <div class="card">
+      <div class="card-title">Sessions — Last 7 Days</div>
+      <div class="card-sub">Unique visitor sessions per day</div>
       <canvas id="sessionChart"></canvas>
     </div>
-    <div class="chart-card">
-      <div class="chart-title">ICP Score Distribution</div>
+    <div class="card">
+      <div class="card-title">ICP Score Distribution</div>
+      <div class="card-sub">Visitors by engagement tier</div>
       <canvas id="scoreChart"></canvas>
     </div>
-    <div class="chart-card">
-      <div class="chart-title">Job Pipeline</div>
+    <div class="card">
+      <div class="card-title">Job Pipeline</div>
+      <div class="card-sub">Background queue status</div>
       <canvas id="jobChart"></canvas>
     </div>
   </div>
 
-  <!-- Top Pages -->
-  <div class="pages-card" style="margin-bottom:32px">
-    <div class="chart-title">Top Pages Visited</div>
+  <!-- top pages -->
+  <div class="card pages-chart">
+    <div class="card-title">Top Pages Visited</div>
     <canvas id="pagesChart"></canvas>
   </div>
 
-  <!-- Apollo Banner -->
-  <div class="apollo-banner" id="apollo-banner" style="display:none">
-    <p><strong>Apollo enrichment not configured.</strong><br>
-    Add <code style="background:#222;padding:1px 6px;border-radius:3px">APOLLO_API_KEY</code> to Supabase Edge Function secrets to enable company enrichment — industry, headcount, revenue, LinkedIn.</p>
-    <button class="dismiss" onclick="document.getElementById('apollo-banner').style.display='none'">Dismiss</button>
-  </div>
-
-  <!-- Companies Table -->
-  <div class="companies-header">
-    <div>
-      <div class="section-label">Identified Companies</div>
-      <h2>Visitor Intelligence</h2>
-    </div>
-    <div class="companies-actions">
-      <button class="btn btn-outline" onclick="runJobs()">▶ Run Job Processor</button>
-      <button class="btn btn-yellow" onclick="load()">↻ Refresh</button>
+  <!-- companies -->
+  <div class="sec-row">
+    <div class="sec-title">Identified Companies</div>
+    <div class="sec-actions">
+      <button class="btn-ghost" onclick="runJobs()">▶ Process Queue</button>
+      <button class="btn-cta" onclick="manualRefresh()">↻ Refresh</button>
     </div>
   </div>
 
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th>Company</th>
-          <th>ICP Score</th>
-          <th>Industry</th>
-          <th>Size</th>
-          <th>Revenue</th>
-          <th>Location</th>
-          <th>Sessions</th>
-          <th>Last Seen</th>
-          <th>Summary</th>
-          <th>Enrich</th>
-        </tr>
-      </thead>
-      <tbody id="company-tbody">
-        <tr><td colspan="10"><div class="empty-state"><div class="big">○</div><p>Loading…</p></div></td></tr>
-      </tbody>
-    </table>
+  <div class="tbl-card">
+    <div class="tbl-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Company</th>
+            <th>Score</th>
+            <th>Industry</th>
+            <th>Size</th>
+            <th>Revenue</th>
+            <th>Location</th>
+            <th>Sessions</th>
+            <th>Last Seen</th>
+            <th>Summary</th>
+            <th>Enrich</th>
+          </tr>
+        </thead>
+        <tbody id="co-tbody">
+          <tr><td colspan="10" class="empty-row">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
-  <!-- Live Feed -->
-  <div class="section-label">Recent Page Visits</div>
-  <div class="feed-card">
-    <div id="feed-list"><div style="color:#aaa;text-align:center;padding:20px;font-size:13px">Loading…</div></div>
+  <!-- feed + jobs -->
+  <div class="bottom-grid">
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <span class="card-title" style="margin:0">Recent Page Visits</span>
+        <span style="font-size:10px;color:var(--text-3)">auto-updates every 30s</span>
+      </div>
+      <div id="feed-list"><div class="empty-row">Loading…</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:14px">Job Queue Status</div>
+      <div id="job-list"><div class="empty-row">Loading…</div></div>
+    </div>
   </div>
 
-</div>
-
+</main>
 <div id="toast"></div>
 
 <script>
 const API   = 'https://sgaaeuqsmuydftxbftpw.supabase.co/functions/v1/get-dashboard';
 const JOBS  = 'https://sgaaeuqsmuydftxbftpw.supabase.co/functions/v1/process-jobs';
-const APOLLO_ENQUEUE = 'https://sgaaeuqsmuydftxbftpw.supabase.co/functions/v1/enqueue-apollo';
+const APOLLO= 'https://sgaaeuqsmuydftxbftpw.supabase.co/functions/v1/enqueue-apollo';
+const INTERVAL = 30000; // ms between data refreshes
+const JOB_INTERVAL = 60000; // ms between auto job runs
 
-let sessionChart, scoreChart, jobChart, pagesChart;
+let charts = {};
 
-function relTime(ts) {
+/* ── utils ── */
+const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function rel(ts) {
   if (!ts) return '—';
-  const s = Math.floor((Date.now() - new Date(ts)) / 1000);
-  if (s < 60) return s + 's ago';
-  if (s < 3600) return Math.floor(s/60) + 'm ago';
-  if (s < 86400) return Math.floor(s/3600) + 'h ago';
-  return Math.floor(s/86400) + 'd ago';
+  const s = Math.floor((Date.now()-new Date(ts))/1000);
+  if (s<60) return s+'s ago'; if (s<3600) return Math.floor(s/60)+'m ago';
+  if (s<86400) return Math.floor(s/3600)+'h ago'; return Math.floor(s/86400)+'d ago';
+}
+function toast(msg,dur=3500){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),dur);
+}
+const scoreClass = n => n>=70?'hot':n>=40?'warm':'cold';
+
+/* ── progress bar ── */
+const pfill = document.getElementById('pfill');
+function startProgress(){
+  pfill.style.transition='none'; pfill.style.width='0%';
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    pfill.style.transition=`width ${INTERVAL/1000}s linear`; pfill.style.width='100%';
+  }));
+}
+function resetProgress(){ pfill.style.transition='none'; pfill.style.width='0%'; }
+
+/* ── theme tokens for charts ── */
+function chartTheme(){
+  const dark = document.documentElement.dataset.theme==='dark'||
+    (!document.documentElement.dataset.theme && matchMedia('(prefers-color-scheme:dark)').matches);
+  return {
+    grid: dark?'rgba(255,255,255,.05)':'rgba(0,0,0,.05)',
+    tick: dark?'#555550':'#999990',
+    line: dark?'#F3E400':'#000',
+    area: dark?'rgba(243,228,0,.08)':'rgba(0,0,0,.06)',
+    bars: dark?'#F5F5F2':'#000000',
+  };
 }
 
-function esc(s) {
-  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
+/* ── build / update charts ── */
+function buildCharts(data){
+  const t = chartTheme();
+  const tickOpts = {color:t.tick,font:{size:10}};
+  const gridOpts = {color:t.grid};
 
-function toast(msg, dur=3000) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), dur);
-}
-
-function scoreClass(n) { return n>=70?'hot':n>=40?'warm':'cold'; }
-
-function renderStats(data) {
-  const s = data.sessions||{};
-  const total = Object.values(s).reduce((a,b)=>a+b,0);
-  const identified = s.resolved||0;
-  const pending = s.pending||0;
-  const unmatched = s.unmatched||0;
-  const companies = (data.companies||[]).length;
-  const hot = data.hot_leads||0;
-
-  document.getElementById('stats').innerHTML = `
-    <div class="stat"><div class="label">Total Sessions</div><div class="value">${total}</div><div class="sub">all time</div></div>
-    <div class="stat"><div class="label">Identified</div><div class="value">${identified}</div><div class="sub">IP → company resolved</div></div>
-    <div class="stat"><div class="label">Hot Leads</div><div class="value yellow">${hot}</div><div class="sub">score ≥ 70</div></div>
-    <div class="stat"><div class="label">Companies</div><div class="value">${companies}</div><div class="sub">unique orgs seen</div></div>
-    <div class="stat"><div class="label">Pending</div><div class="value">${pending}</div><div class="sub">awaiting lookup</div></div>
-    <div class="stat"><div class="label">Unmatched</div><div class="value">${unmatched}</div><div class="sub">ISP / consumer IP</div></div>
-  `;
-}
-
-function renderCharts(data) {
-  // Sessions chart
+  // sessions
   const days = Object.keys(data.daily_sessions||{});
   const counts = Object.values(data.daily_sessions||{});
-  const dayLabels = days.map(d=>{ const dt=new Date(d); return dt.toLocaleDateString('en',{weekday:'short'}); });
-
-  if (sessionChart) sessionChart.destroy();
-  sessionChart = new Chart(document.getElementById('sessionChart'), {
+  const labels = days.map(d=>new Date(d).toLocaleDateString('en',{weekday:'short'}));
+  if (charts.session) charts.session.destroy();
+  charts.session = new Chart(document.getElementById('sessionChart'),{
     type:'line',
-    data:{ labels:dayLabels, datasets:[{
-      data:counts, borderColor:'#000', backgroundColor:'rgba(0,0,0,0.06)',
-      borderWidth:2, pointBackgroundColor:'#000', pointRadius:3, fill:true, tension:.3
+    data:{labels,datasets:[{data:counts,borderColor:t.line,backgroundColor:t.area,borderWidth:2,pointBackgroundColor:t.line,pointRadius:3,fill:true,tension:.35}]},
+    options:{responsive:true,plugins:{legend:{display:false}},scales:{
+      y:{beginAtZero:true,grid:gridOpts,ticks:{...tickOpts,maxTicksLimit:4}},
+      x:{grid:{display:false},ticks:tickOpts}
+    }}
+  });
+
+  // score buckets
+  const sb=data.score_buckets||{};
+  if (charts.score) charts.score.destroy();
+  charts.score = new Chart(document.getElementById('scoreChart'),{
+    type:'bar',
+    data:{labels:['0–25','26–50','51–75','76–100'],datasets:[{
+      data:[sb['0-25']||0,sb['26-50']||0,sb['51-75']||0,sb['76-100']||0],
+      backgroundColor:['#d0d0cc','#9BCBEB','#F3E400','#000'],borderRadius:4,borderSkipped:false
     }]},
-    options:{plugins:{legend:{display:false}},scales:{
-      y:{beginAtZero:true,grid:{color:'#EBEBEB'},ticks:{color:'#aaa',font:{size:10},maxTicksLimit:4}},
-      x:{grid:{display:false},ticks:{color:'#aaa',font:{size:10}}}
+    options:{responsive:true,plugins:{legend:{display:false}},scales:{
+      y:{beginAtZero:true,grid:gridOpts,ticks:{...tickOpts,maxTicksLimit:4}},
+      x:{grid:{display:false},ticks:tickOpts}
     }}
   });
 
-  // Score distribution
-  const sb = data.score_buckets||{};
-  if (scoreChart) scoreChart.destroy();
-  scoreChart = new Chart(document.getElementById('scoreChart'), {
-    type:'bar',
-    data:{
-      labels:['0–25','26–50','51–75','76–100'],
-      datasets:[{data:[sb['0-25']||0,sb['26-50']||0,sb['51-75']||0,sb['76-100']||0],
-        backgroundColor:['#EBEBEB','#9BCBEB','#F3E400','#000'],borderRadius:4}]
-    },
-    options:{plugins:{legend:{display:false}},scales:{
-      y:{beginAtZero:true,grid:{color:'#EBEBEB'},ticks:{color:'#aaa',font:{size:10},maxTicksLimit:4}},
-      x:{grid:{display:false},ticks:{color:'#aaa',font:{size:10}}}
-    }}
-  });
-
-  // Job pipeline doughnut
-  const jb = data.jobs||{};
-  const jobLabels = Object.keys(jb);
-  const jobVals = Object.values(jb);
-  const jobColors = jobLabels.map(l=>l==='succeeded'?'#000':l==='queued'?'#F3E400':l==='running'?'#9BCBEB':'#EBEBEB');
-  if (jobChart) jobChart.destroy();
-  jobChart = new Chart(document.getElementById('jobChart'), {
+  // job doughnut
+  const jb=data.jobs||{};
+  const jKeys=Object.keys(jb); const jVals=Object.values(jb);
+  const jColors=jKeys.map(k=>k==='succeeded'?'#000':k==='queued'?'#F3E400':k==='running'?'#9BCBEB':'#c0392b');
+  if (charts.job) charts.job.destroy();
+  charts.job = new Chart(document.getElementById('jobChart'),{
     type:'doughnut',
-    data:{labels:jobLabels,datasets:[{data:jobVals,backgroundColor:jobColors,borderWidth:0}]},
-    options:{plugins:{legend:{position:'bottom',labels:{font:{size:10},color:'#666',boxWidth:10}}},cutout:'65%'}
+    data:{labels:jKeys,datasets:[{data:jVals,backgroundColor:jColors,borderWidth:0}]},
+    options:{responsive:true,cutout:'68%',plugins:{legend:{position:'bottom',labels:{font:{size:10},color:t.tick,boxWidth:10,padding:7}}}}
   });
 
-  // Top pages
-  const tp = data.top_pages||[];
-  if (pagesChart) pagesChart.destroy();
-  pagesChart = new Chart(document.getElementById('pagesChart'), {
+  // top pages
+  const tp=data.top_pages||[];
+  if (charts.pages) charts.pages.destroy();
+  charts.pages = new Chart(document.getElementById('pagesChart'),{
     type:'bar',
-    data:{
-      labels:tp.map(p=>p.path),
-      datasets:[{data:tp.map(p=>p.count),backgroundColor:'#000',borderRadius:3,barThickness:16}]
-    },
-    options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{
-      x:{beginAtZero:true,grid:{color:'#EBEBEB'},ticks:{color:'#aaa',font:{size:10}}},
-      y:{grid:{display:false},ticks:{color:'#555',font:{size:11,family:'monospace'}}}
+    data:{labels:tp.map(p=>p.path),datasets:[{data:tp.map(p=>p.count),backgroundColor:t.bars,borderRadius:3,barThickness:13}]},
+    options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},scales:{
+      x:{beginAtZero:true,grid:gridOpts,ticks:{...tickOpts}},
+      y:{grid:{display:false},ticks:{color:t.tick,font:{size:10,family:'monospace'}}}
     }}
   });
 }
 
-function renderTable(data) {
-  const companies = data.companies||[];
-  const tbody = document.getElementById('company-tbody');
+/* ── render stats ── */
+function renderStats(data){
+  const s=data.sessions||{};
+  const total=Object.values(s).reduce((a,b)=>a+b,0);
+  document.getElementById('stats').innerHTML=`
+    <div class="stat"><div class="s-label">Total Sessions</div><div class="s-val">${total}</div><div class="s-sub">all time</div></div>
+    <div class="stat"><div class="s-label">Identified</div><div class="s-val">${s.resolved||0}</div><div class="s-sub">IP → company</div></div>
+    <div class="stat hl"><div class="s-label">Hot Leads</div><div class="s-val yell">${data.hot_leads||0}</div><div class="s-sub">score ≥ 70</div></div>
+    <div class="stat"><div class="s-label">Companies</div><div class="s-val">${(data.companies||[]).length}</div><div class="s-sub">unique orgs</div></div>
+    <div class="stat"><div class="s-label">Pending</div><div class="s-val">${s.pending||0}</div><div class="s-sub">awaiting lookup</div></div>
+    <div class="stat"><div class="s-label">Unmatched</div><div class="s-val">${s.unmatched||0}</div><div class="s-sub">ISP / consumer</div></div>`;
+  document.getElementById('co-badge').textContent=(data.companies||[]).length||'—';
+}
 
-  if (!companies.length) {
-    tbody.innerHTML = `<tr><td colspan="10"><div class="empty-state">
-      <div class="big">◌</div>
-      <p>No companies identified yet.<br>Browse the Kshitij site and click <strong>Run Job Processor</strong>.</p>
-    </div></td></tr>`;
-    return;
-  }
-
-  tbody.innerHTML = companies.map(c => {
-    const sc = c.score||0;
-    const cls = scoreClass(sc);
-    const geo = c.geo ? [c.geo.city,c.geo.country].filter(Boolean).join(', ') : '—';
-    const enriched = !!c.enriched_at;
-
-    const ispFlag = c.is_isp
-      ? `<div class="isp-flag">⚠ Shared WiFi / ISP — identity unverified</div>`
-      : '';
-
-    const enrichBtn = c.is_isp
-      ? `<button class="enrich-btn" disabled title="ISPs cannot be enriched">N/A</button>`
-      : enriched
-        ? `<button class="enrich-btn done" disabled>✓ Enriched</button>`
-        : `<button class="enrich-btn" onclick="enrichCompany('${c.id}',this)">Enrich</button>`;
-
-    const linkedinLink = c.linkedin_url
-      ? `<a class="linkedin-link" href="https://${c.linkedin_url}" target="_blank">LinkedIn ↗</a>`
-      : '';
-
-    return `<tr>
-      <td class="company-col">
-        <div class="name">${esc(c.name||'Unknown')}</div>
-        <div class="domain">${esc(c.domain||'')}</div>
-        ${ispFlag}
-        ${linkedinLink}
-      </td>
-      <td>
-        <div class="score-wrap">
-          <div class="score-track"><div class="score-fill ${cls}" style="width:${sc}%"></div></div>
-          <span class="score-num ${cls}">${sc}</span>
-        </div>
-      </td>
-      <td><span class="industry-text" title="${esc(c.industry||'')}">${esc(c.industry||'—')}</span></td>
-      <td><span class="emp-text">${c.employee_range ? Number(c.employee_range).toLocaleString() : '—'}</span></td>
-      <td><span class="revenue-text">${esc(c.annual_revenue||'—')}</span></td>
-      <td><span class="geo-text">${esc(geo)}</span></td>
-      <td><span class="session-count">${c.session_count||0}</span></td>
-      <td><span class="time-text">${relTime(c.last_seen_at)}</span></td>
-      <td style="max-width:180px;font-size:12px;color:#666">${esc(c.alert_summary||c.short_description||'—')}</td>
-      <td>${enrichBtn}</td>
-    </tr>`;
+/* ── render table ── */
+function renderTable(data){
+  const cos=(data.companies||[]).slice().sort((a,b)=>(b.score||0)-(a.score||0));
+  const tbody=document.getElementById('co-tbody');
+  if(!cos.length){tbody.innerHTML='<tr><td colspan="10" class="empty-row">No companies identified yet — browse the site then click <strong>Process Queue</strong>.</td></tr>';return;}
+  tbody.innerHTML=cos.map(c=>{
+    const sc=c.score||0; const cls=scoreClass(sc);
+    const geo=c.geo?[c.geo.city,c.geo.country].filter(Boolean).join(', '):'—';
+    const li=c.linkedin_url?`<a class="co-li" href="https://${c.linkedin_url}" target="_blank" rel="noopener">LinkedIn ↗</a>`:'';
+    const isp=c.is_isp?`<div class="isp-tag">⚠ Shared/ISP</div>`:'';
+    const btn=c.is_isp
+      ?`<button class="enrich-btn" disabled>N/A</button>`
+      :c.enriched_at
+        ?`<button class="enrich-btn done" disabled>✓ Enriched</button>`
+        :`<button class="enrich-btn" onclick="enrichCo('${c.id}',this)">Enrich</button>`;
+    return`<tr>
+      <td><div class="co-name">${esc(c.name||'Unknown')}</div><div class="co-domain">${esc(c.domain||'')}</div>${isp}${li}</td>
+      <td><div class="score-wrap"><div class="score-track"><div class="sfill ${cls}" style="width:${sc}%"></div></div><span class="snum ${cls}">${sc}</span></div></td>
+      <td><span class="cell-sm" title="${esc(c.industry||'')}">${c.industry?esc(c.industry).slice(0,20)+(c.industry.length>20?'…':''):'—'}</span></td>
+      <td><span class="cell-sm">${c.employee_range||'—'}</span></td>
+      <td><span class="cell-sm">${esc(c.annual_revenue||'—')}</span></td>
+      <td><span class="cell-xs">${esc(geo)}</span></td>
+      <td style="font-weight:700;font-variant-numeric:tabular-nums">${c.session_count||0}</td>
+      <td><span class="cell-xs">${rel(c.last_seen_at)}</span></td>
+      <td style="max-width:150px;font-size:11px;color:var(--text-2)">${esc(c.alert_summary||c.short_description||'—')}</td>
+      <td>${btn}</td></tr>`;
   }).join('');
 }
 
-function renderFeed(data) {
-  const visits = data.recent_visits||[];
-  const el = document.getElementById('feed-list');
-  if (!visits.length) {
-    el.innerHTML = '<div style="color:#aaa;text-align:center;padding:20px;font-size:13px">No page visits yet.</div>';
-    return;
-  }
-  el.innerHTML = visits.map(v=>`
-    <div class="feed-item">
-      <span class="feed-path">${esc(v.path)}</span>
-      <span class="feed-time">${relTime(v.occurred_at)}</span>
-    </div>
-  `).join('');
+/* ── render feed + jobs ── */
+function renderFeed(data){
+  const visits=data.recent_visits||[];
+  const fl=document.getElementById('feed-list');
+  fl.innerHTML=visits.length
+    ?visits.map(v=>`<div class="feed-item"><span class="feed-path">${esc(v.path)}</span><span class="feed-time">${rel(v.occurred_at)}</span></div>`).join('')
+    :'<div class="empty-row">No page visits yet.</div>';
+
+  const jb=data.jobs||{};
+  const total=Object.values(jb).reduce((a,b)=>a+b,0);
+  document.getElementById('job-badge').textContent=total||'—';
+  const jl=document.getElementById('job-list');
+  const order=['queued','running','succeeded','failed','dead_letter'];
+  const labels={queued:'Queued',running:'Running',succeeded:'Succeeded',failed:'Failed',dead_letter:'Dead Letter'};
+  const rows=Object.entries(jb);
+  jl.innerHTML=rows.length
+    ?rows.sort((a,b)=>order.indexOf(a[0])-order.indexOf(b[0])).map(([k,v])=>{
+      const cls=k==='succeeded'?'ok':k==='queued'||k==='running'?'pend':'err';
+      return`<div class="job-row"><span class="jlabel">${labels[k]||k}</span><span class="jcount ${cls}">${v}</span></div>`;
+    }).join('')
+    :'<div class="empty-row">No jobs yet.</div>';
 }
 
-async function load() {
-  document.getElementById('live-label').textContent = 'Updating…';
-  try {
-    const r = await fetch(API);
-    const data = await r.json();
-    document.getElementById('live-label').textContent = 'Live · ' + new Date().toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit'});
-
-    if (!data.apollo_configured) {
-      document.getElementById('apollo-banner').style.display = 'flex';
-    }
-
-    renderStats(data);
-    renderCharts(data);
-    renderTable(data);
-    renderFeed(data);
-  } catch(e) {
-    document.getElementById('live-label').textContent = 'Error';
+/* ── load data ── */
+async function load(silent=false){
+  if(!silent) document.getElementById('spinner').classList.add('on');
+  try{
+    const r=await fetch(API);
+    if(!r.ok) throw new Error(`HTTP ${r.status}`);
+    const d=await r.json();
+    document.getElementById('upd-time').textContent='Updated '+new Date().toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    if(!d.apollo_configured) document.getElementById('apollo-notice').style.display='flex';
+    renderStats(d); buildCharts(d); renderTable(d); renderFeed(d);
+  }catch(e){
+    document.getElementById('upd-time').textContent='Error — retrying…';
     console.error(e);
+  }finally{
+    document.getElementById('spinner').classList.remove('on');
   }
 }
 
-async function runJobs() {
+async function manualRefresh(){
+  resetProgress(); await load(false); startProgress();
+}
+
+/* ── job processor ── */
+async function runJobs(){
   toast('Running job processor…');
-  try {
-    const r = await fetch(JOBS, {method:'POST'});
-    const d = await r.json();
-    toast(`Processed ${d.processed} job${d.processed!==1?'s':''}. Refreshing…`);
-    setTimeout(load, 1200);
-  } catch(e) {
-    toast('Job processor error — check console');
-  }
+  try{
+    const r=await fetch(JOBS,{method:'POST'});
+    const d=await r.json();
+    const n=d.processed||0;
+    toast(`Processed ${n} job${n!==1?'s':''}${n>0?'. Refreshing…':''}`);
+    if(n>0) setTimeout(()=>load(true),1200);
+  }catch(e){ toast('Job processor error — check console'); }
 }
 
-async function enrichCompany(companyId, btn) {
-  btn.disabled = true;
-  btn.textContent = 'Enriching…';
-  try {
-    const r = await fetch(APOLLO_ENQUEUE, {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({company_id:companyId})
-    });
-    const d = await r.json();
-    if (d.error) {
-      toast('Apollo: ' + d.error, 5000);
-      btn.disabled = false;
-      btn.textContent = 'Enrich';
-    } else {
-      toast('Apollo enrichment queued. Run job processor to complete.');
-      btn.textContent = 'Queued…';
-      // Auto-run jobs after 500ms
-      setTimeout(async()=>{
-        await fetch(JOBS,{method:'POST'});
-        setTimeout(load, 1500);
-      }, 500);
+/* ── apollo enrich ── */
+async function enrichCo(id,btn){
+  btn.disabled=true; btn.textContent='Enriching…';
+  try{
+    const r=await fetch(APOLLO,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({company_id:id})});
+    const d=await r.json();
+    if(d.error){ toast('Apollo: '+d.error,5000); btn.disabled=false; btn.textContent='Enrich'; }
+    else{
+      toast('Queued — processing now…'); btn.textContent='Queued…';
+      setTimeout(async()=>{ await fetch(JOBS,{method:'POST'}); setTimeout(()=>load(true),1500); },500);
     }
-  } catch(e) {
-    toast('Error — is APOLLO_API_KEY set?', 5000);
-    btn.disabled = false;
-    btn.textContent = 'Enrich';
-  }
+  }catch(e){ toast('Error — is APOLLO_API_KEY set?',5000); btn.disabled=false; btn.textContent='Enrich'; }
 }
 
-load();
-setInterval(load, 30000);
+/* ── nav ── */
+function switchNav(el,title){
+  document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('page-title').textContent=title;
+}
+
+/* ── theme ── */
+function toggleTheme(){
+  const r=document.documentElement;
+  const cur=r.dataset.theme||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
+  r.dataset.theme=cur==='dark'?'light':'dark';
+  setTimeout(()=>{ if(Object.keys(charts).length) load(true); },60);
+}
+
+/* ── boot ── */
+(async function(){
+  await load(false);
+  startProgress();
+  setInterval(async()=>{ resetProgress(); await load(true); startProgress(); }, INTERVAL);
+  setInterval(runJobs, JOB_INTERVAL); // auto-process queue every 60s
+})();
 </script>
 </body>
 </html>
