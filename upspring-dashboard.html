@@ -4,545 +4,534 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Visitor Intelligence · UpSpring</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
-/* ── DESIGN TOKENS ─────────────────────────────────────────────────────── */
-:root{
-  /* brand */
-  --y:#F3E400; --y-dk:#C8BB00; --y-bg:#FEFCE8;
-  --bl:#9BCBEB; --bl-dk:#6AAFD4;
-  /* neutrals – light */
-  --bg:#F4F4F2; --surface:#FFFFFF; --surface-2:#FAFAF8;
-  --border:#E4E4E0; --border-2:#D0D0CC;
-  --ink:#0A0A08; --ink-2:#4A4A46; --ink-3:#8A8A84; --ink-4:#C0C0BA;
-  /* sidebar */
-  --sb:#0A0A08; --sb-surface:#141412; --sb-border:#222220;
-  --sb-ink:#E8E8E2; --sb-ink-2:#7A7A74; --sb-ink-3:#3A3A36;
-  /* semantic */
-  --green:#15803D; --green-bg:#DCFCE7;
-  --amber:#B45309; --amber-bg:#FEF3C7;
-  --red:#B91C1C;   --red-bg:#FEE2E2;
-  --blue-bg:#DBEAFE;
-  /* sizing */
-  --sw:240px; --th:56px;
-  --r:6px; --r-lg:10px;
-  --shadow:0 1px 2px rgba(0,0,0,.06),0 1px 3px rgba(0,0,0,.04);
-  --shadow-md:0 4px 12px rgba(0,0,0,.08),0 2px 4px rgba(0,0,0,.05);
+/* ── TOKENS ────────────────────────────────────────────────────────────── */
+:root {
+  --y:#F3E400; --yd:#C8BB00; --ybg:#FEFCE8;
+  --bl:#9BCBEB; --bld:#5AAAD4;
+  --bg:#F3F3F1; --surf:#FFFFFF; --surf2:#F8F8F6;
+  --bdr:#E2E2DE; --bdr2:#CCCCC8;
+  --ink:#0C0C0A; --ink2:#4C4C48; --ink3:#8C8C86; --ink4:#C4C4BE;
+  --sb:#0C0C0A; --sbs:#161614; --sbbd:#252522;
+  --sbink:#E8E8E2; --sbink2:#7C7C76; --sbink3:#3A3A36;
+  --ok:#166534; --okbg:#DCFCE7;
+  --warn:#92400E; --warnbg:#FEF3C7;
+  --err:#991B1B; --errbg:#FEE2E2;
+  --sw:260px; --th:60px;
+  --r:7px; --rlg:10px;
+  --sh:0 1px 3px rgba(0,0,0,.05),0 1px 2px rgba(0,0,0,.04);
+  --shm:0 4px 16px rgba(0,0,0,.08);
   --font:'Inter',system-ui,sans-serif;
 }
 [data-theme="dark"]{
-  --bg:#0E0E0C; --surface:#181816; --surface-2:#1E1E1C;
-  --border:#2A2A26; --border-2:#3A3A36;
-  --ink:#F0F0E8; --ink-2:#A0A098; --ink-3:#606058; --ink-4:#3A3A34;
-  --shadow:0 1px 2px rgba(0,0,0,.3),0 1px 3px rgba(0,0,0,.25);
-  --shadow-md:0 4px 12px rgba(0,0,0,.4),0 2px 4px rgba(0,0,0,.25);
-  --green:#4ADE80; --green-bg:#052E16;
-  --amber:#FCD34D; --amber-bg:#451A03;
-  --red:#F87171; --red-bg:#450A0A;
-  --blue-bg:#1E3A5F;
+  --bg:#0C0C0A; --surf:#161614; --surf2:#1C1C1A;
+  --bdr:#282826; --bdr2:#383836;
+  --ink:#F0F0E8; --ink2:#A0A098; --ink3:#5C5C58; --ink4:#363632;
+  --ok:#4ADE80; --okbg:#052E16; --warn:#FCD34D; --warnbg:#451A03; --err:#F87171; --errbg:#450A0A;
 }
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0E0E0C; --surface:#181816; --surface-2:#1E1E1C;
-  --border:#2A2A26; --border-2:#3A3A36;
-  --ink:#F0F0E8; --ink-2:#A0A098; --ink-3:#606058; --ink-4:#3A3A34;
-  --shadow:0 1px 2px rgba(0,0,0,.3); --shadow-md:0 4px 12px rgba(0,0,0,.4);
-  --green:#4ADE80; --green-bg:#052E16; --amber:#FCD34D; --amber-bg:#451A03;
-  --red:#F87171; --red-bg:#450A0A; --blue-bg:#1E3A5F;
+  --bg:#0C0C0A;--surf:#161614;--surf2:#1C1C1A;--bdr:#282826;--bdr2:#383836;
+  --ink:#F0F0E8;--ink2:#A0A098;--ink3:#5C5C58;--ink4:#363632;
+  --ok:#4ADE80;--okbg:#052E16;--warn:#FCD34D;--warnbg:#451A03;--err:#F87171;--errbg:#450A0A;
 }}
 
-/* ── RESET ──────────────────────────────────────────────────────────────── */
+/* ── RESET ─────────────────────────────────────────────────────────────── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
-body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:13px;line-height:1.5;display:flex;min-height:100vh}
+html{-webkit-font-smoothing:antialiased;scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);font-size:13px;line-height:1.5;display:flex;min-height:100vh;overflow-x:hidden}
 a{color:inherit;text-decoration:none}
-button,input{font-family:var(--font);cursor:pointer}
-svg{display:block}
+button{font-family:var(--font);cursor:pointer;border:none;background:none}
+svg{display:block;flex-shrink:0}
 
-/* ── SIDEBAR ────────────────────────────────────────────────────────────── */
-.sidebar{
-  width:var(--sw);flex-shrink:0;
-  background:var(--sb);
-  position:fixed;top:0;left:0;bottom:0;
-  display:flex;flex-direction:column;
-  z-index:60;overflow:hidden;
-}
+/* ── SIDEBAR ───────────────────────────────────────────────────────────── */
+.sb{width:var(--sw);background:var(--sb);position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;z-index:60}
 
-/* Logo */
-.sb-logo{
-  height:var(--th);
-  padding:0 20px;
-  display:flex;align-items:center;gap:10px;
-  border-bottom:1px solid var(--sb-border);
-  flex-shrink:0;
+/* logo */
+.sb-logo{height:var(--th);padding:0 16px;display:flex;align-items:center;gap:11px;border-bottom:1px solid var(--sbbd);flex-shrink:0}
+.logo-mark{
+  width:32px;height:32px;border-radius:6px;background:var(--y);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
 }
-.sb-logomark{
-  width:28px;height:28px;flex-shrink:0;
-  background:var(--y);border-radius:4px;
-  display:flex;align-items:center;justify-content:center;
-}
-.sb-logomark svg{width:16px;height:16px;}
-.sb-wordmark{display:flex;flex-direction:column;line-height:1.1}
-.sb-wordmark .wm-name{color:#fff;font-size:13px;font-weight:800;letter-spacing:.02em;}
-.sb-wordmark .wm-sub{color:var(--sb-ink-2);font-size:9px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;margin-top:1px;}
+.logo-text .lt-name{color:#fff;font-size:14px;font-weight:800;letter-spacing:-.01em;line-height:1.1}
+.logo-text .lt-sub{color:var(--sbink3);font-size:9.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;margin-top:2px}
 
-/* Nav */
-.sb-nav{flex:1;padding:10px 12px;display:flex;flex-direction:column;gap:1px;overflow-y:auto;}
-.sb-nav::-webkit-scrollbar{width:4px}
-.sb-nav::-webkit-scrollbar-track{background:transparent}
-.sb-nav::-webkit-scrollbar-thumb{background:var(--sb-ink-3);border-radius:2px}
-.nav-group{margin-top:4px}
-.nav-group-label{
-  font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--sb-ink-3);padding:10px 10px 4px;display:block;
-}
+/* section label */
+.sb-sec{font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--sbink3);padding:14px 16px 5px;display:block}
+
+/* nav */
+.sb-nav{flex:1;padding:8px 10px;display:flex;flex-direction:column;overflow-y:auto}
+.sb-nav::-webkit-scrollbar{width:3px}
+.sb-nav::-webkit-scrollbar-thumb{background:var(--sbbd);border-radius:2px}
+
 .nav-item{
-  display:flex;align-items:center;gap:9px;
-  padding:7px 10px;border-radius:var(--r);
-  color:var(--sb-ink-2);font-size:12px;font-weight:500;
+  display:flex;align-items:center;gap:10px;
+  padding:8.5px 10px;border-radius:6px;
+  color:var(--sbink2);font-size:12.5px;font-weight:500;
   transition:background .12s,color .12s;
-  cursor:pointer;border:none;background:transparent;width:100%;text-align:left;
+  cursor:pointer;width:100%;text-align:left;
   position:relative;
 }
-.nav-item:hover{background:var(--sb-surface);color:var(--sb-ink);}
-.nav-item.active{background:var(--sb-surface);color:#fff;}
-.nav-item.active::before{
+.nav-item:hover{background:var(--sbs);color:#ccc}
+.nav-item.active{background:var(--sbs);color:#fff}
+.nav-item.active .ni-icon{color:var(--y)}
+.nav-item.active::after{
   content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);
-  width:2px;height:18px;background:var(--y);border-radius:0 2px 2px 0;
+  width:3px;height:20px;background:var(--y);border-radius:0 3px 3px 0;
 }
-.nav-icon{
-  width:18px;height:18px;flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;
-  border-radius:4px;
+.ni-icon{width:18px;height:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--sbink2)}
+.ni-icon svg{width:15px;height:15px}
+.ni-label{flex:1;line-height:1}
+.ni-badge{
+  font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;
+  font-variant-numeric:tabular-nums;background:var(--sbbd);color:var(--sbink2);
 }
-.nav-item.active .nav-icon{color:var(--y);}
-.nav-icon svg{width:14px;height:14px;}
-.nav-label{flex:1;}
-.nav-chip{
-  font-size:10px;font-weight:700;letter-spacing:.02em;
-  padding:1px 7px;border-radius:20px;font-variant-numeric:tabular-nums;
-  background:var(--sb-border);color:var(--sb-ink-2);
-  transition:background .15s,color .15s;
-}
-.nav-chip.live-chip{background:#0d2a0d;color:#4ade80;}
-.nav-chip.count-chip{background:var(--sb-border);color:var(--sb-ink-2);}
-.nav-divider{height:1px;background:var(--sb-border);margin:8px 10px;}
+.ni-badge.live{background:#0A2E0A;color:#4ade80}
+.ni-badge.yellow{background:rgba(243,228,0,.15);color:var(--y)}
+.sb-divider{height:1px;background:var(--sbbd);margin:6px 0}
 
-/* Workspace footer */
-.sb-footer{
-  padding:12px;border-top:1px solid var(--sb-border);flex-shrink:0;
-}
-.sb-workspace{
-  display:flex;align-items:center;gap:9px;
-  padding:8px 10px;border-radius:var(--r);
-  background:var(--sb-surface);
-}
-.ws-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;flex-shrink:0;animation:pulse 2s ease-in-out infinite;}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.ws-info{min-width:0;flex:1}
-.ws-name{color:var(--sb-ink-2);font-size:11px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.ws-status{color:var(--sb-ink-3);font-size:9px;margin-top:1px;}
+/* footer */
+.sb-foot{padding:10px;border-top:1px solid var(--sbbd);flex-shrink:0}
+.sb-site{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:6px;background:var(--sbs)}
+.site-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;flex-shrink:0;animation:sdot 2s ease-in-out infinite}
+@keyframes sdot{0%,100%{opacity:1}50%{opacity:.25}}
+.site-label{color:var(--sbink2);font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.site-meta{color:var(--sbink3);font-size:9px;margin-top:1px}
 
 /* ── TOPBAR ─────────────────────────────────────────────────────────────── */
-.topbar{
-  position:fixed;top:0;left:var(--sw);right:0;
-  height:var(--th);
-  background:var(--surface);border-bottom:1px solid var(--border);
-  display:flex;align-items:center;gap:10px;padding:0 24px;
-  z-index:50;
-}
-.tb-breadcrumb{display:flex;align-items:center;gap:8px;}
-.tb-page{font-size:13px;font-weight:600;color:var(--ink);}
-.tb-sep{color:var(--ink-4);font-size:12px;}
-.tb-sub{font-size:12px;color:var(--ink-3);}
-.tb-spacer{flex:1;}
-.tb-status{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--ink-3);}
-.tb-fetching{display:none;align-items:center;gap:5px;font-size:11px;color:var(--ink-3);}
-.tb-fetching.on{display:flex;}
-.fetch-dot{width:6px;height:6px;border-radius:50%;background:var(--y-dk);animation:fetchpulse .8s ease-in-out infinite;}
-@keyframes fetchpulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
-.countdown{
-  font-size:10px;font-weight:600;color:var(--ink-4);
-  background:var(--surface-2);border:1px solid var(--border);
-  border-radius:20px;padding:2px 9px;letter-spacing:.01em;
-  font-variant-numeric:tabular-nums;
-}
-.tb-btn{
-  display:flex;align-items:center;gap:5px;
-  border:1px solid var(--border);background:var(--surface);
-  color:var(--ink-2);border-radius:var(--r);
-  padding:5px 12px;font-size:11px;font-weight:600;
-  transition:.12s;
-}
-.tb-btn:hover{background:var(--surface-2);color:var(--ink);border-color:var(--border-2);}
-.tb-btn-primary{
-  background:var(--ink);color:var(--y);
-  border:1px solid var(--ink);border-radius:var(--r);
-  padding:5px 14px;font-size:11px;font-weight:700;transition:.12s;
-}
-.tb-btn-primary:hover{background:var(--ink-2);}
-.tb-icon{
-  background:transparent;border:1px solid var(--border);
-  border-radius:var(--r);padding:6px 8px;font-size:12px;
-  color:var(--ink-3);transition:.12s;line-height:1;
-}
-.tb-icon:hover{background:var(--surface-2);color:var(--ink);}
+.tb{position:fixed;top:0;left:var(--sw);right:0;height:var(--th);background:var(--surf);border-bottom:1px solid var(--bdr);display:flex;align-items:center;padding:0 24px;gap:12px;z-index:50}
+.tb-page{font-size:14px;font-weight:700;color:var(--ink)}
+.tb-sep{color:var(--bdr2);margin:0 2px}
+.tb-sub{font-size:12px;color:var(--ink3)}
+.tb-sp{flex:1}
+.tb-fetching{display:none;align-items:center;gap:6px;font-size:11px;color:var(--ink3)}
+.tb-fetching.on{display:flex}
+.fetch-dot{width:6px;height:6px;border-radius:50%;background:var(--yd);animation:fdot .7s ease-in-out infinite}
+@keyframes fdot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.75)}}
+.tb-upd{font-size:11px;color:var(--ink3)}
+.cd-pill{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--ink3);background:var(--surf2);border:1px solid var(--bdr);border-radius:20px;padding:3px 10px;font-variant-numeric:tabular-nums;cursor:default}
+.btn-ghost{display:flex;align-items:center;gap:5px;border:1px solid var(--bdr);color:var(--ink2);background:var(--surf);border-radius:var(--r);padding:6px 13px;font-size:11.5px;font-weight:600;transition:.12s}
+.btn-ghost:hover{background:var(--surf2);border-color:var(--bdr2);color:var(--ink)}
+.btn-dark{background:var(--ink);color:var(--y);border-radius:var(--r);padding:6px 15px;font-size:11.5px;font-weight:700;transition:.12s}
+.btn-dark:hover{background:var(--ink2)}
+.btn-icon{border:1px solid var(--bdr);background:var(--surf);color:var(--ink3);border-radius:var(--r);padding:7px 10px;font-size:13px;transition:.12s}
+.btn-icon:hover{background:var(--surf2);color:var(--ink)}
 
 /* refresh strip */
-.rstrip{position:fixed;top:var(--th);left:var(--sw);right:0;height:2px;z-index:49;overflow:hidden;}
-.rstrip-fill{height:100%;background:var(--y);width:0%;transition:none;}
-.rstrip-fill.running{transition:width 30s linear;width:100%;}
+.rstrip{position:fixed;top:var(--th);left:var(--sw);right:0;height:2px;z-index:49}
+.rstrip-fill{height:100%;background:var(--y);width:0;transition:none}
+.rstrip-fill.go{transition:width 30s linear;width:100%}
 
-/* ── MAIN ───────────────────────────────────────────────────────────────── */
-.main{margin-left:var(--sw);margin-top:var(--th);flex:1;min-width:0;padding:22px 24px;display:flex;flex-direction:column;gap:16px;}
+/* ── MAIN SHELL ─────────────────────────────────────────────────────────── */
+.main{margin-left:var(--sw);margin-top:var(--th);flex:1;min-width:0}
+.page-view{display:none;padding:22px 24px;flex-direction:column;gap:16px}
+.page-view.active{display:flex}
 
-/* ── STAT CARDS ─────────────────────────────────────────────────────────── */
-.stats-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;}
-.stat{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--r-lg);padding:16px 18px;
-  display:flex;flex-direction:column;gap:2px;
-  box-shadow:var(--shadow);
-}
-.stat.accent{border-top:2px solid var(--y);}
-.st-label{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);}
-.st-val{font-size:32px;font-weight:800;line-height:1.1;color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:-.02em;}
-.stat.accent .st-val{color:var(--y-dk);}
-[data-theme="dark"] .stat.accent .st-val{color:var(--y);}
-.st-sub{font-size:10px;color:var(--ink-3);margin-top:1px;}
+/* ── COMPONENTS ─────────────────────────────────────────────────────────── */
+/* stat grid */
+.stat-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.stat{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--rlg);padding:17px 18px;display:flex;flex-direction:column;gap:2px;box-shadow:var(--sh)}
+.stat.ac{border-top:2.5px solid var(--y)}
+.sl{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3)}
+.sv{font-size:34px;font-weight:800;line-height:1.1;color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:-.03em}
+.stat.ac .sv{color:var(--yd)}
+[data-theme="dark"] .stat.ac .sv{color:var(--y)}
+.ss{font-size:10px;color:var(--ink3);margin-top:2px}
 
-/* ── CHART GRID ─────────────────────────────────────────────────────────── */
-.chart-grid{display:grid;grid-template-columns:5fr 3fr 2fr;gap:10px;}
-.chart-card{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--r-lg);padding:18px 20px;
-  box-shadow:var(--shadow);
-}
-.cc-head{margin-bottom:14px;}
-.cc-title{font-size:12px;font-weight:700;color:var(--ink);}
-.cc-sub{font-size:10px;color:var(--ink-3);margin-top:2px;}
-.chart-canvas-wrap{position:relative;}
-.chart-canvas-wrap canvas{max-height:144px;}
+/* cards */
+.card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--rlg);padding:18px 20px;box-shadow:var(--sh)}
+.card-title{font-size:12.5px;font-weight:700;color:var(--ink);margin-bottom:3px}
+.card-sub{font-size:10.5px;color:var(--ink3);margin-bottom:14px}
+canvas{max-height:148px}
 
-/* pages row */
-.pages-card{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--r-lg);padding:18px 20px;
-  box-shadow:var(--shadow);
-}
-.pages-card canvas{max-height:120px;}
+/* chart grid */
+.chart-grid{display:grid;grid-template-columns:5fr 3fr 2fr;gap:10px}
 
-/* ── SECTION HEADER ─────────────────────────────────────────────────────── */
-.sec-row{display:flex;align-items:center;justify-content:space-between;}
-.sec-title{font-size:15px;font-weight:800;color:var(--ink);letter-spacing:-.02em;}
-.sec-actions{display:flex;gap:8px;align-items:center;}
+/* section header */
+.sec-hd{display:flex;align-items:center;justify-content:space-between}
+.sec-title{font-size:15px;font-weight:800;letter-spacing:-.02em;color:var(--ink)}
+.sec-actions{display:flex;gap:8px}
 
-/* ── TABLE ──────────────────────────────────────────────────────────────── */
-.tbl-card{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--r-lg);box-shadow:var(--shadow);overflow:hidden;
-}
-.tbl-scroll{overflow-x:auto;}
-table{width:100%;border-collapse:collapse;min-width:880px;}
-thead th{
-  padding:10px 14px;text-align:left;
-  font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;
-  color:var(--ink-3);background:var(--surface-2);
-  border-bottom:1px solid var(--border);white-space:nowrap;
-}
-tbody tr{border-bottom:1px solid var(--border);transition:background .1s;}
-tbody tr:last-child{border-bottom:none;}
-tbody tr:hover{background:var(--surface-2);}
-td{padding:11px 14px;vertical-align:middle;}
+/* table */
+.tbl-wrap{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--rlg);overflow:hidden;box-shadow:var(--sh)}
+.tbl-scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:900px}
+thead th{padding:10px 14px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);background:var(--surf2);border-bottom:1px solid var(--bdr);white-space:nowrap}
+tbody tr{border-bottom:1px solid var(--bdr);transition:background .1s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--surf2)}
+td{padding:11px 14px;vertical-align:middle}
+.co-name{font-weight:700;font-size:13px}
+.co-dom{font-size:10px;color:var(--ink3);font-family:monospace;margin-top:2px}
+.co-li{font-size:10px;color:var(--bld);font-weight:600;margin-top:2px;display:block}
+.isp-tag{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;background:var(--warnbg);color:var(--warn);border:1px solid rgba(146,64,14,.2);border-radius:4px;padding:2px 6px;margin-top:3px}
+.sc-wrap{display:flex;align-items:center;gap:8px}
+.sc-track{width:52px;height:4px;background:var(--bdr);border-radius:2px;overflow:hidden;flex-shrink:0}
+.sc-fill{height:100%;border-radius:2px;transition:width .5s cubic-bezier(.4,0,.2,1)}
+.f-hot{background:var(--ink)}
+.f-warm{background:var(--bld)}
+.f-cold{background:var(--bdr2)}
+.sc-num{font-size:13px;font-weight:800;min-width:26px;font-variant-numeric:tabular-nums}
+.sc-num.hot{color:var(--ink)}.sc-num.warm{color:var(--bld)}.sc-num.cold{color:var(--ink3)}
+.cell{font-size:12px;color:var(--ink2)}
+.cell-sm{font-size:11px;color:var(--ink3)}
+.tag{display:inline-block;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:600}
+.tag-ok{background:var(--okbg);color:var(--ok)}
+.tag-warn{background:var(--warnbg);color:var(--warn)}
+.tag-err{background:var(--errbg);color:var(--err)}
+.tag-gray{background:var(--surf2);color:var(--ink3)}
+.enrich-btn{background:var(--ink);color:var(--y);border-radius:var(--r);padding:5px 12px;font-size:10px;font-weight:700;white-space:nowrap;transition:.12s;font-family:var(--font)}
+.enrich-btn:hover:not(:disabled){background:var(--ink2)}
+.enrich-btn:disabled{background:var(--bdr);color:var(--ink3);cursor:default}
+.enrich-btn.done{background:var(--okbg);color:var(--ok)}
+.empty-state{text-align:center;padding:50px 24px;color:var(--ink3);font-size:12.5px}
+.empty-state strong{color:var(--ink2)}
 
-/* cells */
-.co-block .co-name{font-weight:700;font-size:13px;color:var(--ink);}
-.co-block .co-domain{font-size:10px;color:var(--ink-3);font-family:monospace;margin-top:2px;}
-.co-block .co-li{font-size:10px;color:var(--bl-dk);font-weight:600;margin-top:2px;display:block;}
-.isp-badge{
-  display:inline-flex;align-items:center;gap:3px;
-  font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
-  background:var(--amber-bg);color:var(--amber);
-  border:1px solid color-mix(in srgb,var(--amber) 30%,transparent);
-  border-radius:4px;padding:2px 6px;margin-top:4px;
-}
-.score-row{display:flex;align-items:center;gap:8px;}
-.score-track{width:52px;height:4px;background:var(--border);border-radius:2px;overflow:hidden;flex-shrink:0;}
-.score-fill{height:100%;border-radius:2px;transition:width .5s cubic-bezier(.4,0,.2,1);}
-.fill-hot{background:var(--ink);}
-.fill-warm{background:var(--bl-dk);}
-.fill-cold{background:var(--border-2);}
-.score-num{font-size:13px;font-weight:800;min-width:28px;font-variant-numeric:tabular-nums;}
-.score-num.hot{color:var(--ink);}
-.score-num.warm{color:var(--bl-dk);}
-.score-num.cold{color:var(--ink-3);}
-.cell-md{font-size:12px;color:var(--ink-2);}
-.cell-sm{font-size:11px;color:var(--ink-3);}
-.enrich-btn{
-  background:var(--ink);color:var(--y);
-  border:none;border-radius:var(--r);
-  padding:5px 12px;font-size:10px;font-weight:700;
-  white-space:nowrap;transition:.12s;
-  font-family:var(--font);letter-spacing:.02em;
-}
-.enrich-btn:hover:not(:disabled){background:var(--ink-2);}
-.enrich-btn:disabled{background:var(--border);color:var(--ink-3);cursor:default;}
-.enrich-btn.done{background:var(--green-bg);color:var(--green);border:1px solid color-mix(in srgb,var(--green) 30%,transparent);}
-.empty-row{text-align:center;padding:48px 24px;color:var(--ink-3);font-size:12px;}
-.empty-row strong{color:var(--ink-2);}
+/* bottom grid */
+.bot-grid{display:grid;grid-template-columns:3fr 2fr;gap:10px}
+.feed-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bdr);gap:10px}
+.feed-row:last-child{border-bottom:none}
+.feed-path{font-family:monospace;font-size:11px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.feed-time{font-size:10px;color:var(--ink3);white-space:nowrap}
+.jrow{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bdr)}
+.jrow:last-child{border-bottom:none}
+.jrow-left{display:flex;align-items:center;gap:9px}
+.jdot{width:8px;height:8px;border-radius:50%}
+.jdot.ok{background:var(--ok)}.jdot.pend{background:var(--warn)}.jdot.err{background:var(--err)}
+.jlabel{font-size:12.5px;font-weight:500;color:var(--ink2)}
+.jnum{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums}
+.jnum.ok{color:var(--ok)}.jnum.pend{color:var(--warn)}.jnum.err{color:var(--err)}
 
-/* ── BOTTOM CARDS ───────────────────────────────────────────────────────── */
-.bottom-grid{display:grid;grid-template-columns:3fr 2fr;gap:10px;}
-.bottom-card{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--r-lg);padding:18px 20px;
-  box-shadow:var(--shadow);
-}
-.bc-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-.bc-title{font-size:12px;font-weight:700;color:var(--ink);}
-.bc-meta{font-size:10px;color:var(--ink-3);}
-.feed-item{display:flex;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);gap:10px;}
-.feed-item:last-child{border-bottom:none;}
-.feed-path{font-family:monospace;font-size:11px;color:var(--ink);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.feed-time{font-size:10px;color:var(--ink-3);white-space:nowrap;flex-shrink:0;}
-.job-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);}
-.job-row:last-child{border-bottom:none;}
-.job-label{font-size:12px;font-weight:500;color:var(--ink-2);}
-.job-meta{display:flex;align-items:center;gap:8px;}
-.job-num{font-size:18px;font-weight:800;font-variant-numeric:tabular-nums;}
-.job-num.ok{color:var(--green);}
-.job-num.pend{color:var(--amber);}
-.job-num.err{color:var(--red);}
-.job-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.dot-ok{background:var(--green);}
-.dot-pend{background:var(--amber);}
-.dot-err{background:var(--red);}
+/* notice */
+.notice{background:var(--ink);color:#fff;border-radius:var(--rlg);padding:14px 18px;display:flex;align-items:center;gap:14px;font-size:12px;line-height:1.5}
+.notice strong{color:var(--y)}
+.notice code{background:rgba(255,255,255,.1);padding:1px 5px;border-radius:3px;font-size:11px}
+.nbtn{border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.5);border-radius:5px;padding:4px 10px;font-size:10px;font-weight:600;white-space:nowrap;flex-shrink:0}
+.nbtn:hover{border-color:rgba(255,255,255,.3);color:#fff}
 
-/* ── NOTICE ─────────────────────────────────────────────────────────────── */
-.notice{
-  background:var(--ink);color:#fff;
-  border-radius:var(--r-lg);padding:14px 18px;
-  display:flex;align-items:center;gap:14px;font-size:12px;line-height:1.5;
-}
-.notice strong{color:var(--y);}
-.notice code{background:rgba(255,255,255,.1);padding:1px 5px;border-radius:3px;font-size:11px;}
-.notice-close{background:transparent;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.5);border-radius:5px;padding:4px 10px;font-size:10px;font-weight:600;white-space:nowrap;flex-shrink:0;}
-.notice-close:hover{border-color:rgba(255,255,255,.3);color:rgba(255,255,255,.8);}
+/* ── PAGE-SPECIFIC ──────────────────────────────────────────────────────── */
+/* Page Visits */
+.visits-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.visit-full-row{display:flex;align-items:center;padding:9px 14px;border-bottom:1px solid var(--bdr);gap:12px;transition:background .1s}
+.visit-full-row:hover{background:var(--surf2)}
+.visit-full-row:last-child{border-bottom:none}
+.vpath{font-family:monospace;font-size:12px;font-weight:500;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vsid{font-size:10px;color:var(--ink3);font-family:monospace;white-space:nowrap}
+.vtime{font-size:10px;color:var(--ink3);white-space:nowrap;min-width:60px;text-align:right}
+
+/* Job Queue page */
+.jobs-grid{display:grid;grid-template-columns:2fr 1fr;gap:10px}
+.job-full-row{display:flex;align-items:flex-start;padding:12px 14px;border-bottom:1px solid var(--bdr);gap:12px}
+.job-full-row:last-child{border-bottom:none}
+.jf-type{font-size:11px;font-weight:700;color:var(--ink);font-family:monospace}
+.jf-id{font-size:9px;color:var(--ink3);font-family:monospace;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px}
+.jf-err{font-size:10px;color:var(--err);margin-top:4px}
+.jf-time{font-size:10px;color:var(--ink3);white-space:nowrap;margin-left:auto;text-align:right;flex-shrink:0}
+
+/* stat-2col */
+.stat-grid-2{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.stat-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 
 /* ── TOAST ──────────────────────────────────────────────────────────────── */
-#toast{
-  position:fixed;bottom:24px;right:24px;
-  background:var(--ink);color:#fff;
-  padding:11px 18px;border-radius:8px;font-size:12px;font-weight:500;
-  transform:translateY(80px);opacity:0;
-  transition:transform .25s cubic-bezier(.4,0,.2,1),opacity .25s;
-  z-index:999;max-width:320px;pointer-events:none;
-  box-shadow:var(--shadow-md);
-}
-#toast.show{transform:translateY(0);opacity:1;}
+#toast{position:fixed;bottom:22px;right:22px;background:var(--ink);color:#fff;padding:11px 18px;border-radius:8px;font-size:12px;font-weight:500;transform:translateY(80px);opacity:0;transition:transform .25s cubic-bezier(.4,0,.2,1),opacity .25s;z-index:999;max-width:300px;pointer-events:none;box-shadow:var(--shm)}
+#toast.show{transform:translateY(0);opacity:1}
 
 /* ── RESPONSIVE ─────────────────────────────────────────────────────────── */
-@media(max-width:1300px){.stats-grid{grid-template-columns:repeat(3,1fr)}.chart-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:1000px){.stats-grid{grid-template-columns:repeat(2,1fr)}.chart-grid{grid-template-columns:1fr}.bottom-grid{grid-template-columns:1fr}}
+@media(max-width:1300px){.stat-grid{grid-template-columns:repeat(3,1fr)}.chart-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:1000px){.stat-grid{grid-template-columns:repeat(2,1fr)}.chart-grid,.bot-grid,.jobs-grid,.visits-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 
 <!-- ══ SIDEBAR ══════════════════════════════════════════════════════════ -->
-<aside class="sidebar">
+<aside class="sb">
 
   <!-- Logo -->
   <div class="sb-logo">
-    <div class="sb-logomark">
-      <!-- UpSpring arrow mark -->
-      <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M8 13V3M8 3L3.5 7.5M8 3L12.5 7.5" stroke="#0A0A08" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <div class="logo-mark">
+      <!-- UpSpring arrow: white on yellow -->
+      <svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+        <path d="M10 16V5" stroke="#0C0C0A" stroke-width="2.5" stroke-linecap="round"/>
+        <path d="M4.5 10.5L10 5L15.5 10.5" stroke="#0C0C0A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </div>
-    <div class="sb-wordmark">
-      <span class="wm-name">UPSPRING</span>
-      <span class="wm-sub">Intelligence</span>
+    <div class="logo-text">
+      <div class="lt-name">UPSPRING</div>
+      <div class="lt-sub">Visitor Intelligence</div>
     </div>
   </div>
 
-  <!-- Nav -->
   <nav class="sb-nav">
-    <div class="nav-group">
-      <span class="nav-group-label">Analytics</span>
-      <button class="nav-item active" onclick="setPage(this,'Dashboard')">
-        <span class="nav-icon">
-          <svg viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" fill="currentColor" opacity=".8"/><rect x="8" y="1" width="5" height="5" rx="1" fill="currentColor"/><rect x="1" y="8" width="5" height="5" rx="1" fill="currentColor"/><rect x="8" y="8" width="5" height="5" rx="1" fill="currentColor" opacity=".5"/></svg>
-        </span>
-        <span class="nav-label">Dashboard</span>
-        <span class="nav-chip live-chip">Live</span>
-      </button>
-      <button class="nav-item" onclick="setPage(this,'Companies')">
-        <span class="nav-icon">
-          <svg viewBox="0 0 14 14" fill="none"><rect x="1" y="4" width="12" height="9" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M4 4V3a3 3 0 0 1 6 0v1" stroke="currentColor" stroke-width="1.2"/><circle cx="5" cy="8.5" r="1" fill="currentColor"/><circle cx="9" cy="8.5" r="1" fill="currentColor"/></svg>
-        </span>
-        <span class="nav-label">Companies</span>
-        <span class="nav-chip count-chip" id="nav-co-count">—</span>
-      </button>
-      <button class="nav-item" onclick="setPage(this,'Page Visits')">
-        <span class="nav-icon">
-          <svg viewBox="0 0 14 14" fill="none"><path d="M1 7C1 7 3 2.5 7 2.5S13 7 13 7s-2 4.5-6 4.5S1 7 1 7Z" stroke="currentColor" stroke-width="1.2"/><circle cx="7" cy="7" r="1.5" fill="currentColor"/></svg>
-        </span>
-        <span class="nav-label">Page Visits</span>
-      </button>
-    </div>
 
-    <div class="nav-divider"></div>
+    <span class="sb-sec">Analytics</span>
 
-    <div class="nav-group">
-      <span class="nav-group-label">System</span>
-      <button class="nav-item" onclick="setPage(this,'Job Queue')">
-        <span class="nav-icon">
-          <svg viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5.5" stroke="currentColor" stroke-width="1.2"/><path d="M7 4v3.5l2 1.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
-        </span>
-        <span class="nav-label">Job Queue</span>
-        <span class="nav-chip count-chip" id="nav-job-count">—</span>
-      </button>
-    </div>
+    <button class="nav-item active" data-page="dashboard">
+      <span class="ni-icon">
+        <svg viewBox="0 0 16 16" fill="none"><rect x="1.5" y="1.5" width="5" height="5" rx="1" fill="currentColor"/><rect x="9.5" y="1.5" width="5" height="5" rx="1" fill="currentColor" opacity=".5"/><rect x="1.5" y="9.5" width="5" height="5" rx="1" fill="currentColor" opacity=".5"/><rect x="9.5" y="9.5" width="5" height="5" rx="1" fill="currentColor"/></svg>
+      </span>
+      <span class="ni-label">Dashboard</span>
+      <span class="ni-badge live">Live</span>
+    </button>
+
+    <button class="nav-item" data-page="companies">
+      <span class="ni-icon">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M2 14V6l6-4 6 4v8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><rect x="5.5" y="9" width="2" height="5" rx=".5" fill="currentColor"/><rect x="8.5" y="9" width="2" height="5" rx=".5" fill="currentColor"/><path d="M2 14h12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      </span>
+      <span class="ni-label">Companies</span>
+      <span class="ni-badge count-badge" id="nb-co">—</span>
+    </button>
+
+    <button class="nav-item" data-page="visits">
+      <span class="ni-icon">
+        <svg viewBox="0 0 16 16" fill="none"><path d="M1.5 8C1.5 8 4 3 8 3s6.5 5 6.5 5-2.5 5-6.5 5-6.5-5-6.5-5Z" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8" r="2" fill="currentColor"/></svg>
+      </span>
+      <span class="ni-label">Page Visits</span>
+      <span class="ni-badge count-badge" id="nb-visits">—</span>
+    </button>
+
+    <div class="sb-divider"></div>
+    <span class="sb-sec">System</span>
+
+    <button class="nav-item" data-page="jobs">
+      <span class="ni-icon">
+        <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3"/><path d="M8 5v3.5l2.5 1.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <span class="ni-label">Job Queue</span>
+      <span class="ni-badge count-badge" id="nb-jobs">—</span>
+    </button>
+
+    <button class="nav-item" data-page="settings">
+      <span class="ni-icon">
+        <svg viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M8 1.5v1M8 13.5v1M1.5 8h1M13.5 8h1M3.4 3.4l.7.7M11.9 11.9l.7.7M12.6 3.4l-.7.7M4.1 11.9l-.7.7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      </span>
+      <span class="ni-label">Settings</span>
+    </button>
+
   </nav>
 
-  <!-- Footer workspace -->
-  <div class="sb-footer">
-    <div class="sb-workspace">
-      <div class="ws-dot"></div>
-      <div class="ws-info">
-        <div class="ws-name">kshitij-tawny.vercel.app</div>
-        <div class="ws-status">Tracking active</div>
+  <div class="sb-foot">
+    <div class="sb-site">
+      <div class="site-dot"></div>
+      <div>
+        <div class="site-label">kshitij-tawny.vercel.app</div>
+        <div class="site-meta">Tracker active · collecting</div>
       </div>
     </div>
   </div>
-
 </aside>
 
 <!-- ══ TOPBAR ════════════════════════════════════════════════════════════ -->
-<header class="topbar">
-  <div class="tb-breadcrumb">
-    <span class="tb-page" id="tb-page">Dashboard</span>
-    <span class="tb-sep">/</span>
-    <span class="tb-sub">Visitor Intelligence</span>
+<header class="tb">
+  <span class="tb-page" id="tb-title">Dashboard</span>
+  <span class="tb-sep">/</span>
+  <span class="tb-sub" id="tb-sub">Overview</span>
+  <div class="tb-sp"></div>
+  <div class="tb-fetching" id="tb-fetch"><div class="fetch-dot"></div>Updating…</div>
+  <span class="tb-upd" id="tb-upd"></span>
+  <div class="cd-pill" id="cd-pill" title="Next auto-refresh">
+    <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.3"/><path d="M6 3.5V6.5l2 1.2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+    <span id="cd-num">—</span>
   </div>
-  <div class="tb-spacer"></div>
-
-  <!-- fetch state -->
-  <div class="tb-fetching" id="tb-fetching">
-    <div class="fetch-dot"></div>
-    <span>Updating…</span>
-  </div>
-  <div class="tb-status" id="tb-status">Ready</div>
-  <span class="countdown" id="countdown" title="Next auto-refresh">—</span>
-
-  <button class="tb-btn" onclick="triggerJobs()" id="jobs-btn">▶ Run Jobs</button>
-  <button class="tb-btn-primary" onclick="forceRefresh()">↻ Refresh</button>
-  <button class="tb-icon" onclick="toggleTheme()" title="Toggle theme">◑</button>
+  <button class="btn-ghost" id="run-jobs-btn" onclick="triggerJobs()">▶ Run Jobs</button>
+  <button class="btn-dark" onclick="manualRefresh()">↻ Refresh</button>
+  <button class="btn-icon" onclick="toggleTheme()" title="Toggle theme">◑</button>
 </header>
 
-<!-- refresh strip -->
 <div class="rstrip"><div class="rstrip-fill" id="rstrip"></div></div>
 
-<!-- ══ MAIN ══════════════════════════════════════════════════════════════ -->
+<!-- ══ PAGES ════════════════════════════════════════════════════════════ -->
 <main class="main">
 
-  <!-- Apollo notice -->
+<!-- ─ DASHBOARD ─────────────────────────────────────────────────────── -->
+<div class="page-view active" id="page-dashboard">
+
   <div class="notice" id="apollo-notice" style="display:none">
-    <span>🔑 <strong>Apollo enrichment not configured.</strong> Add <code>APOLLO_API_KEY</code> to Supabase Edge Function secrets to unlock company enrichment — industry, headcount, revenue, LinkedIn.</span>
-    <button class="notice-close" onclick="this.closest('.notice').style.display='none'">Dismiss</button>
+    <span>🔑 <strong>Apollo enrichment not configured.</strong> Add <code>APOLLO_API_KEY</code> to Supabase Edge Function secrets to unlock company data — industry, headcount, revenue, LinkedIn.</span>
+    <button class="nbtn" onclick="this.closest('.notice').style.display='none'">Dismiss</button>
   </div>
 
-  <!-- STATS -->
-  <div class="stats-grid" id="stats">
-    <div class="stat"><div class="st-label">Total Sessions</div><div class="st-val">—</div><div class="st-sub">all time</div></div>
-    <div class="stat"><div class="st-label">Identified</div><div class="st-val">—</div><div class="st-sub">IP → company matched</div></div>
-    <div class="stat accent"><div class="st-label">Hot Leads</div><div class="st-val">—</div><div class="st-sub">ICP score ≥ 70</div></div>
-    <div class="stat"><div class="st-label">Companies</div><div class="st-val">—</div><div class="st-sub">unique orgs seen</div></div>
-    <div class="stat"><div class="st-label">Pending</div><div class="st-val">—</div><div class="st-sub">awaiting lookup</div></div>
-    <div class="stat"><div class="st-label">Unmatched</div><div class="st-val">—</div><div class="st-sub">ISP / cloud IP</div></div>
+  <div class="stat-grid" id="stats">
+    <div class="stat"><div class="sl">Total Sessions</div><div class="sv">—</div><div class="ss">all time</div></div>
+    <div class="stat"><div class="sl">Identified</div><div class="sv">—</div><div class="ss">IP → company</div></div>
+    <div class="stat ac"><div class="sl">Hot Leads</div><div class="sv">—</div><div class="ss">ICP score ≥ 70</div></div>
+    <div class="stat"><div class="sl">Companies</div><div class="sv">—</div><div class="ss">unique orgs</div></div>
+    <div class="stat"><div class="sl">Pending</div><div class="sv">—</div><div class="ss">awaiting lookup</div></div>
+    <div class="stat"><div class="sl">Unmatched</div><div class="sv">—</div><div class="ss">ISP / cloud IP</div></div>
   </div>
 
-  <!-- CHARTS -->
   <div class="chart-grid">
-    <div class="chart-card">
-      <div class="cc-head">
-        <div class="cc-title">Sessions — Last 7 Days</div>
-        <div class="cc-sub">Unique visitor sessions per calendar day</div>
-      </div>
-      <div class="chart-canvas-wrap"><canvas id="cSession"></canvas></div>
+    <div class="card">
+      <div class="card-title">Sessions — Last 7 Days</div>
+      <div class="card-sub">Unique visitor sessions per calendar day</div>
+      <canvas id="cSess"></canvas>
     </div>
-    <div class="chart-card">
-      <div class="cc-head">
-        <div class="cc-title">ICP Score Distribution</div>
-        <div class="cc-sub">Companies by engagement tier</div>
-      </div>
-      <div class="chart-canvas-wrap"><canvas id="cScore"></canvas></div>
+    <div class="card">
+      <div class="card-title">ICP Score Distribution</div>
+      <div class="card-sub">Companies by engagement tier</div>
+      <canvas id="cScore"></canvas>
     </div>
-    <div class="chart-card">
-      <div class="cc-head">
-        <div class="cc-title">Job Pipeline</div>
-        <div class="cc-sub">Processing queue breakdown</div>
-      </div>
-      <div class="chart-canvas-wrap"><canvas id="cJob"></canvas></div>
+    <div class="card">
+      <div class="card-title">Job Pipeline</div>
+      <div class="card-sub">Queue breakdown</div>
+      <canvas id="cJob"></canvas>
     </div>
   </div>
 
-  <!-- TOP PAGES -->
-  <div class="pages-card">
-    <div class="cc-head"><div class="cc-title">Top Pages Visited</div></div>
-    <canvas id="cPages"></canvas>
+  <div class="card" style="padding-bottom:14px">
+    <div class="card-title">Top Pages Visited</div>
+    <canvas id="cPages" style="max-height:112px"></canvas>
   </div>
 
-  <!-- COMPANIES TABLE -->
-  <div class="sec-row">
+  <div class="sec-hd">
     <div class="sec-title">Identified Companies</div>
     <div class="sec-actions">
-      <button class="tb-btn" onclick="triggerJobs()">▶ Process Queue</button>
-      <button class="tb-btn-primary" onclick="forceRefresh()">↻ Refresh</button>
+      <button class="btn-ghost" onclick="triggerJobs()">▶ Process Queue</button>
+      <button class="btn-dark" onclick="manualRefresh()">↻ Refresh</button>
+    </div>
+  </div>
+  <div class="tbl-wrap"><div class="tbl-scroll"><table>
+    <thead><tr><th>Company</th><th>ICP Score</th><th>Industry</th><th>Size</th><th>Revenue</th><th>Location</th><th>Sessions</th><th>Last Seen</th><th>Summary</th><th>Action</th></tr></thead>
+    <tbody id="co-tbody-dash"></tbody>
+  </table></div></div>
+
+  <div class="bot-grid">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <span class="card-title" style="margin:0">Recent Page Visits</span>
+        <span style="font-size:10px;color:var(--ink3)">last 20 events</span>
+      </div>
+      <div id="feed-dash"></div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:14px">Job Queue</div>
+      <div id="jobs-dash"></div>
     </div>
   </div>
 
-  <div class="tbl-card">
-    <div class="tbl-scroll">
-      <table>
-        <thead>
-          <tr>
-            <th>Company</th>
-            <th>ICP Score</th>
-            <th>Industry</th>
-            <th>Size</th>
-            <th>Revenue</th>
-            <th>Location</th>
-            <th>Sessions</th>
-            <th>Last Seen</th>
-            <th>Summary</th>
-            <th>Enrich</th>
-          </tr>
-        </thead>
-        <tbody id="co-tbody">
-          <tr><td colspan="10" class="empty-row">Connecting to data…</td></tr>
-        </tbody>
-      </table>
+</div><!-- /dashboard -->
+
+
+<!-- ─ COMPANIES ─────────────────────────────────────────────────────── -->
+<div class="page-view" id="page-companies">
+
+  <div class="stat-grid-3">
+    <div class="stat ac"><div class="sl">Hot Leads</div><div class="sv" id="cp-hot">—</div><div class="ss">ICP score ≥ 70</div></div>
+    <div class="stat"><div class="sl">Total Companies</div><div class="sv" id="cp-total">—</div><div class="ss">unique orgs identified</div></div>
+    <div class="stat"><div class="sl">ISP / Cloud</div><div class="sv" id="cp-isp">—</div><div class="ss">unverifiable IPs</div></div>
+  </div>
+
+  <div class="sec-hd">
+    <div class="sec-title">All Companies</div>
+    <div class="sec-actions">
+      <button class="btn-ghost" onclick="triggerJobs()">▶ Process Queue</button>
+      <button class="btn-dark" onclick="manualRefresh()">↻ Refresh</button>
+    </div>
+  </div>
+  <div class="tbl-wrap"><div class="tbl-scroll"><table>
+    <thead><tr><th>Company</th><th>ICP Score</th><th>Industry</th><th>Employees</th><th>Revenue</th><th>Technologies</th><th>Location</th><th>Sessions</th><th>Enriched</th><th>Last Seen</th><th>Action</th></tr></thead>
+    <tbody id="co-tbody-full"></tbody>
+  </table></div></div>
+
+</div><!-- /companies -->
+
+
+<!-- ─ PAGE VISITS ───────────────────────────────────────────────────── -->
+<div class="page-view" id="page-visits">
+
+  <div class="stat-grid-2">
+    <div class="stat"><div class="sl">Total Visits</div><div class="sv" id="pv-total">—</div><div class="ss">all recorded events</div></div>
+    <div class="stat"><div class="sl">Unique Paths</div><div class="sv" id="pv-paths">—</div><div class="ss">distinct URLs</div></div>
+    <div class="stat"><div class="sl">Top Page</div><div class="sv" style="font-size:18px;margin-top:4px" id="pv-top">—</div><div class="ss">most visited</div></div>
+    <div class="stat ac"><div class="sl">Today</div><div class="sv" id="pv-today">—</div><div class="ss">visits so far</div></div>
+  </div>
+
+  <div class="visits-grid">
+    <div class="card" style="padding:0">
+      <div style="padding:14px 18px;border-bottom:1px solid var(--bdr)">
+        <div class="card-title">Recent Page Visits</div>
+        <div class="card-sub" style="margin-bottom:0">All tracked page events, newest first</div>
+      </div>
+      <div id="visits-list" style="max-height:440px;overflow-y:auto"></div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:14px">Pages by Visit Count</div>
+      <canvas id="cVisitPages" style="max-height:300px"></canvas>
     </div>
   </div>
 
-  <!-- BOTTOM: feed + jobs -->
-  <div class="bottom-grid">
-    <div class="bottom-card">
-      <div class="bc-head">
-        <span class="bc-title">Recent Page Visits</span>
-        <span class="bc-meta" id="feed-meta">—</span>
-      </div>
-      <div id="feed-list"><div class="empty-row">Loading…</div></div>
-    </div>
-    <div class="bottom-card">
-      <div class="bc-head">
-        <span class="bc-title">Job Queue Status</span>
-        <span class="bc-meta" id="job-meta">—</span>
-      </div>
-      <div id="job-list"><div class="empty-row">Loading…</div></div>
+</div><!-- /visits -->
+
+
+<!-- ─ JOB QUEUE ─────────────────────────────────────────────────────── -->
+<div class="page-view" id="page-jobs">
+
+  <div class="stat-grid-2">
+    <div class="stat ac"><div class="sl">Succeeded</div><div class="sv" id="jq-ok">—</div><div class="ss">completed successfully</div></div>
+    <div class="stat"><div class="sl">Queued</div><div class="sv" id="jq-q">—</div><div class="ss">waiting to run</div></div>
+    <div class="stat"><div class="sl">Running</div><div class="sv" id="jq-run">—</div><div class="ss">in progress</div></div>
+    <div class="stat"><div class="sl">Failed</div><div class="sv" id="jq-fail" style="color:var(--err)">—</div><div class="ss">needs attention</div></div>
+  </div>
+
+  <div class="sec-hd">
+    <div class="sec-title">Job History</div>
+    <div class="sec-actions">
+      <button class="btn-ghost" onclick="triggerJobs()">▶ Run Processor</button>
+      <button class="btn-dark" onclick="manualRefresh()">↻ Refresh</button>
     </div>
   </div>
+  <div class="jobs-grid">
+    <div class="tbl-wrap"><div class="tbl-scroll"><table style="min-width:500px">
+      <thead><tr><th>Type</th><th>Status</th><th>Attempt</th><th>Error</th><th>Created</th></tr></thead>
+      <tbody id="jobs-tbody"></tbody>
+    </table></div></div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:14px">Job Type Breakdown</div>
+      <canvas id="cJobType" style="max-height:200px"></canvas>
+    </div>
+  </div>
+
+</div><!-- /jobs -->
+
+
+<!-- ─ SETTINGS ──────────────────────────────────────────────────────── -->
+<div class="page-view" id="page-settings">
+  <div class="sec-title" style="margin-bottom:16px">Settings & Configuration</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <div class="card">
+      <div class="card-title" style="margin-bottom:12px">Pipeline Configuration</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--bdr)">
+          <div><div style="font-weight:600;font-size:13px">Supabase Project</div><div class="cell-sm" style="margin-top:2px">sgaaeuqsmuydftxbftpw</div></div>
+          <span class="tag tag-ok">Connected</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--bdr)">
+          <div><div style="font-weight:600;font-size:13px">Tracker Script</div><div class="cell-sm" style="margin-top:2px">kshitij-tawny.vercel.app/tracker.js</div></div>
+          <span class="tag tag-ok">Active</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--bdr)">
+          <div><div style="font-weight:600;font-size:13px">IP Resolution</div><div class="cell-sm" style="margin-top:2px">Reverse DNS + ip2asn + IPinfo (3 layers)</div></div>
+          <span class="tag tag-ok">Active</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0">
+          <div><div style="font-weight:600;font-size:13px">Apollo Enrichment</div><div class="cell-sm" style="margin-top:2px">Set APOLLO_API_KEY in Supabase secrets</div></div>
+          <span class="tag tag-warn" id="apollo-status-tag">Not Set</span>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:12px">ICP Scoring Rules</div>
+      <div style="display:flex;flex-direction:column;gap:8px;font-size:12px;color:var(--ink2)">
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bdr)"><span>Page visit (each)</span><span style="font-weight:700;color:var(--ink)">+8 pts</span></div>
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bdr)"><span>High-value page (/work, /services…)</span><span style="font-weight:700;color:var(--ink)">+15 pts</span></div>
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bdr)"><span>Built environment industry match</span><span style="font-weight:700;color:var(--ink)">+25 pts</span></div>
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bdr)"><span>Company size 50–2,000 employees</span><span style="font-weight:700;color:var(--ink)">+15 pts</span></div>
+        <div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--bdr)"><span>ISP / cloud IP detected</span><span style="font-weight:700;color:var(--err)">cap 20</span></div>
+        <div style="display:flex;justify-content:space-between;padding:7px 0"><span><strong>Hot lead threshold</strong></span><span style="font-weight:700;color:var(--yd)">≥ 70</span></div>
+      </div>
+    </div>
+  </div>
+</div><!-- /settings -->
 
 </main>
 
@@ -550,314 +539,341 @@ td{padding:11px 14px;vertical-align:middle;}
 
 <!-- ══ JS ═══════════════════════════════════════════════════════════════ -->
 <script>
-/* ── Config ── */
-const DASH   = 'https://sgaaeuqsmuydftxbftpw.supabase.co/functions/v1/get-dashboard';
-const JOBS   = 'https://sgaaeuqsmuydftxbftpw.supabase.co/functions/v1/process-jobs';
-const ENRICH = 'https://sgaaeuqsmuydftxbftpw.supabase.co/functions/v1/enqueue-apollo';
-const REFRESH_MS = 30_000;
-const JOB_MS     = 60_000;
+const DASH_API = 'https://sgaaeuqsmuydftxbftpw.supabase.co/functions/v1/get-dashboard';
+const JOBS_API = 'https://sgaaeuqsmuydftxbftpw.supabase.co/functions/v1/process-jobs';
+const ENRICH_API = 'https://sgaaeuqsmuydftxbftpw.supabase.co/functions/v1/enqueue-apollo';
+const REFRESH_MS = 30000;
+const JOB_AUTO_MS = 60000;
 
-/* ── State ── */
 let charts = {};
-let countdownSec = REFRESH_MS / 1000;
-let countdownTimer, refreshTimer, jobTimer;
+let cdSec = REFRESH_MS / 1000;
+let cdTimer, refreshTimer, jobTimer;
+let lastData = null;
 
-/* ── Utils ── */
-const $ = id => document.getElementById(id);
+/* ── utils ── */
+const $  = id => document.getElementById(id);
 const esc = s => String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-function rel(ts){
-  if(!ts) return '—';
-  const s=Math.floor((Date.now()-new Date(ts))/1000);
-  if(s<60) return s+'s ago';
-  if(s<3600) return Math.floor(s/60)+'m ago';
-  if(s<86400) return Math.floor(s/3600)+'h ago';
-  return Math.floor(s/86400)+'d ago';
+function rel(ts) {
+  if (!ts) return '—';
+  const s = Math.floor((Date.now() - new Date(ts)) / 1000);
+  if (s < 60) return s + 's ago';
+  if (s < 3600) return Math.floor(s/60) + 'm ago';
+  if (s < 86400) return Math.floor(s/3600) + 'h ago';
+  return Math.floor(s/86400) + 'd ago';
 }
-function cls(n){ return n>=70?'hot':n>=40?'warm':'cold'; }
-function toast(msg,dur=3500){
-  const t=$('toast'); t.textContent=msg; t.classList.add('show');
-  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),dur);
+function scoreClass(n) { return n >= 70 ? 'hot' : n >= 40 ? 'warm' : 'cold'; }
+function toast(msg, dur=3500) {
+  const t = $('toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), dur);
 }
 
-/* ── Refresh strip ── */
-function stripStart(){
-  const el=$('rstrip');
-  el.style.transition='none'; el.style.width='0%';
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{
-    el.style.transition=`width ${REFRESH_MS/1000}s linear`; el.style.width='100%';
+/* ── router ── */
+const PAGE_META = {
+  dashboard: ['Dashboard','Overview'],
+  companies: ['Companies','All identified organisations'],
+  visits:    ['Page Visits','All tracked page events'],
+  jobs:      ['Job Queue','Processing pipeline status'],
+  settings:  ['Settings','Configuration & scoring rules'],
+};
+function goTo(pageId) {
+  document.querySelectorAll('.page-view').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  const pg = $('page-' + pageId);
+  if (pg) pg.classList.add('active');
+  const btn = document.querySelector(`.nav-item[data-page="${pageId}"]`);
+  if (btn) btn.classList.add('active');
+  const [title, sub] = PAGE_META[pageId] || ['Dashboard','Overview'];
+  $('tb-title').textContent = title;
+  $('tb-sub').textContent = sub;
+  if (lastData) renderPage(pageId, lastData);
+}
+document.querySelectorAll('.nav-item[data-page]').forEach(btn => {
+  btn.addEventListener('click', () => goTo(btn.dataset.page));
+});
+
+/* ── strip + countdown ── */
+function stripStart() {
+  const el = $('rstrip');
+  el.style.transition = 'none'; el.style.width = '0';
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    el.style.transition = `width ${REFRESH_MS/1000}s linear`; el.style.width = '100%';
   }));
 }
-function stripReset(){
-  const el=$('rstrip'); el.style.transition='none'; el.style.width='0%';
+function stripReset() { const el=$('rstrip'); el.style.transition='none'; el.style.width='0'; }
+function startCd() {
+  clearInterval(cdTimer); cdSec = REFRESH_MS / 1000;
+  cdTimer = setInterval(() => {
+    cdSec--;
+    $('cd-num').textContent = cdSec > 0 ? cdSec + 's' : 'now';
+    if (cdSec <= 0) clearInterval(cdTimer);
+  }, 1000);
 }
 
-/* ── Countdown ── */
-function startCountdown(){
-  clearInterval(countdownTimer);
-  countdownSec = REFRESH_MS/1000;
-  countdownTimer = setInterval(()=>{
-    countdownSec--;
-    $('countdown').textContent = countdownSec > 0 ? `↻ ${countdownSec}s` : '↻ now';
-    if(countdownSec<=0) clearInterval(countdownTimer);
-  },1000);
-}
-
-/* ── Chart theme ── */
-function ct(){
-  const dark = document.documentElement.dataset.theme==='dark'||
-    (!document.documentElement.dataset.theme&&matchMedia('(prefers-color-scheme:dark)').matches);
-  return{
-    grid: dark?'rgba(255,255,255,.05)':'rgba(0,0,0,.06)',
-    tick: dark?'#606058':'#8A8A84',
-    line: dark?'#F3E400':'#0A0A08',
-    area: dark?'rgba(243,228,0,.07)':'rgba(10,10,8,.06)',
-    bar1: dark?'#F3E400':'#0A0A08',
-    doughnut:['#0A0A08','#F3E400','#9BCBEB','#B91C1C'],
-    scoreBars:['#C0C0BA','#9BCBEB','#F3E400','#0A0A08'],
+/* ── chart helpers ── */
+function ct() {
+  const dk = document.documentElement.dataset.theme === 'dark' ||
+    (!document.documentElement.dataset.theme && matchMedia('(prefers-color-scheme:dark)').matches);
+  return {
+    grid: dk ? 'rgba(255,255,255,.05)' : 'rgba(0,0,0,.055)',
+    tick: dk ? '#5C5C58' : '#8C8C86',
+    line: dk ? '#F3E400' : '#0C0C0A',
+    area: dk ? 'rgba(243,228,0,.06)' : 'rgba(12,12,10,.05)',
+    donut: dk ? ['#F3E400','#9BCBEB','#0C0C0A','#991B1B'] : ['#0C0C0A','#9BCBEB','#F3E400','#991B1B'],
+    scoreBars: dk ? ['#3A3A36','#9BCBEB','#F3E400','#E8E8E2'] : ['#C4C4BE','#9BCBEB','#F3E400','#0C0C0A'],
+    surf: dk ? '#161614' : '#FFFFFF',
   };
 }
-
-/* ── Build charts ── */
-function buildCharts(d){
-  const C=ct();
-  const baseOpts={responsive:true,maintainAspectRatio:true,
-    plugins:{legend:{display:false},tooltip:{
-      backgroundColor:'rgba(10,10,8,.9)',titleColor:'#fff',bodyColor:'#C0C0BA',
-      borderColor:'rgba(255,255,255,.1)',borderWidth:1,padding:10,cornerRadius:6,
-    }}
-  };
-
-  /* sessions */
-  const days=Object.keys(d.daily_sessions||{});
-  const dayCounts=Object.values(d.daily_sessions||{});
-  const dayLabels=days.map(v=>new Date(v).toLocaleDateString('en',{weekday:'short'}));
-  if(charts.s) charts.s.destroy();
-  charts.s=new Chart($('cSession'),{type:'line',
-    data:{labels:dayLabels,datasets:[{data:dayCounts,borderColor:C.line,
-      backgroundColor:C.area,borderWidth:2,pointBackgroundColor:C.line,
-      pointRadius:4,pointHoverRadius:6,fill:true,tension:.35}]},
-    options:{...baseOpts,scales:{
-      y:{beginAtZero:true,grid:{color:C.grid,drawTicks:false},border:{display:false},
-         ticks:{color:C.tick,font:{size:10},maxTicksLimit:4,padding:6}},
-      x:{grid:{display:false},border:{display:false},
-         ticks:{color:C.tick,font:{size:10},padding:4}}
-    }}
-  });
-
-  /* score buckets */
-  const sb=d.score_buckets||{};
-  if(charts.sc) charts.sc.destroy();
-  charts.sc=new Chart($('cScore'),{type:'bar',
-    data:{labels:['0–25','26–50','51–75','76–100'],
-      datasets:[{data:[sb['0-25']||0,sb['26-50']||0,sb['51-75']||0,sb['76-100']||0],
-        backgroundColor:C.scoreBars,borderRadius:4,borderSkipped:false}]},
-    options:{...baseOpts,scales:{
-      y:{beginAtZero:true,grid:{color:C.grid,drawTicks:false},border:{display:false},
-         ticks:{color:C.tick,font:{size:10},maxTicksLimit:4,padding:6}},
-      x:{grid:{display:false},border:{display:false},ticks:{color:C.tick,font:{size:10}}}
-    }}
-  });
-
-  /* job doughnut */
-  const jb=d.jobs||{};
-  const jk=Object.keys(jb); const jv=Object.values(jb);
-  const jcolors=jk.map(k=>k==='succeeded'?C.doughnut[0]:k==='queued'?C.doughnut[1]:k==='running'?C.doughnut[2]:C.doughnut[3]);
-  if(charts.j) charts.j.destroy();
-  charts.j=new Chart($('cJob'),{type:'doughnut',
-    data:{labels:jk,datasets:[{data:jv,backgroundColor:jcolors,borderWidth:2,
-      borderColor:document.documentElement.dataset.theme==='dark'?'#181816':'#FFFFFF'}]},
-    options:{...baseOpts,cutout:'65%',
-      plugins:{...baseOpts.plugins,legend:{display:true,position:'bottom',
-        labels:{color:C.tick,font:{size:10},boxWidth:8,padding:10,usePointStyle:true,pointStyleWidth:8}}}}
-  });
-
-  /* pages */
-  const tp=d.top_pages||[];
-  if(charts.p) charts.p.destroy();
-  charts.p=new Chart($('cPages'),{type:'bar',
-    data:{labels:tp.map(p=>p.path),
-      datasets:[{data:tp.map(p=>p.count),backgroundColor:C.bar1,borderRadius:3,barThickness:12}]},
-    options:{...baseOpts,indexAxis:'y',scales:{
-      x:{beginAtZero:true,grid:{color:C.grid,drawTicks:false},border:{display:false},
-         ticks:{color:C.tick,font:{size:10},maxTicksLimit:5}},
-      y:{grid:{display:false},border:{display:false},ticks:{color:C.tick,font:{size:10,family:'monospace'},padding:6}}
-    }}
-  });
+const TOOLTIP_OPTS = {
+  backgroundColor: '#0C0C0A', titleColor: '#fff', bodyColor: '#8C8C86',
+  borderColor: 'rgba(255,255,255,.08)', borderWidth: 1,
+  padding: 10, cornerRadius: 6, displayColors: false,
+};
+function mkChart(id, type, data, opts) {
+  if (charts[id]) charts[id].destroy();
+  charts[id] = new Chart($(id), { type, data, options: { responsive: true, plugins: { legend: { display: false }, tooltip: TOOLTIP_OPTS }, ...opts } });
+  return charts[id];
 }
 
-/* ── Render ── */
-function renderStats(d){
-  const s=d.sessions||{};
-  const total=Object.values(s).reduce((a,b)=>a+b,0);
-  $('stats').innerHTML=`
-    <div class="stat"><div class="st-label">Total Sessions</div><div class="st-val">${total}</div><div class="st-sub">all time</div></div>
-    <div class="stat"><div class="st-label">Identified</div><div class="st-val">${s.resolved||0}</div><div class="st-sub">IP → company matched</div></div>
-    <div class="stat accent"><div class="st-label">Hot Leads</div><div class="st-val">${d.hot_leads||0}</div><div class="st-sub">ICP score ≥ 70</div></div>
-    <div class="stat"><div class="st-label">Companies</div><div class="st-val">${(d.companies||[]).length}</div><div class="st-sub">unique orgs seen</div></div>
-    <div class="stat"><div class="st-label">Pending</div><div class="st-val">${s.pending||0}</div><div class="st-sub">awaiting lookup</div></div>
-    <div class="stat"><div class="st-label">Unmatched</div><div class="st-val">${s.unmatched||0}</div><div class="st-sub">ISP / cloud IP</div></div>`;
-  const coCount=(d.companies||[]).length;
-  $('nav-co-count').textContent=coCount||'—';
-}
-
-function renderTable(d){
-  const cos=[...(d.companies||[])].sort((a,b)=>(b.score||0)-(a.score||0));
-  const tb=$('co-tbody');
-  if(!cos.length){
-    tb.innerHTML=`<tr><td colspan="10" class="empty-row">No companies identified yet — browse the Kshitij site, then click <strong>Process Queue</strong>.</td></tr>`;
-    return;
-  }
-  tb.innerHTML=cos.map(c=>{
-    const sc=c.score||0,cl=cls(sc);
-    const geo=c.geo?[c.geo.city,c.geo.country].filter(Boolean).join(', '):'—';
-    const li=c.linkedin_url?`<a class="co-li" href="https://${c.linkedin_url}" target="_blank" rel="noopener">LinkedIn ↗</a>`:'';
-    const isp=c.is_isp?`<div class="isp-badge">⚠ Shared/ISP</div>`:'';
-    const btn=c.is_isp
-      ?`<button class="enrich-btn" disabled>N/A</button>`
-      :c.enriched_at
-        ?`<button class="enrich-btn done" disabled>✓ Enriched</button>`
-        :`<button class="enrich-btn" onclick="doEnrich('${c.id}',this)">Enrich</button>`;
-    return `<tr>
-      <td><div class="co-block"><div class="co-name">${esc(c.name||'Unknown')}</div><div class="co-domain">${esc(c.domain||'')}</div>${isp}${li}</div></td>
-      <td><div class="score-row"><div class="score-track"><div class="score-fill fill-${cl}" style="width:${sc}%"></div></div><span class="score-num ${cl}">${sc}</span></div></td>
-      <td><span class="cell-md" title="${esc(c.industry||'')}">${c.industry?esc(c.industry).slice(0,22)+(c.industry.length>22?'…':''):'—'}</span></td>
-      <td><span class="cell-md">${c.employee_range||'—'}</span></td>
-      <td><span class="cell-sm">${esc(c.annual_revenue||'—')}</span></td>
-      <td><span class="cell-sm">${esc(geo)}</span></td>
-      <td style="font-weight:700;font-variant-numeric:tabular-nums">${c.session_count||0}</td>
-      <td><span class="cell-sm">${rel(c.last_seen_at)}</span></td>
-      <td style="max-width:160px"><span class="cell-sm">${esc(c.alert_summary||c.short_description||'—')}</span></td>
-      <td>${btn}</td></tr>`;
-  }).join('');
-}
-
-function renderFeed(d){
-  const visits=d.recent_visits||[];
-  $('feed-meta').textContent=visits.length?`${visits.length} recent`:'';
-  $('feed-list').innerHTML=visits.length
-    ?visits.map(v=>`<div class="feed-item"><span class="feed-path">${esc(v.path)}</span><span class="feed-time">${rel(v.occurred_at)}</span></div>`).join('')
-    :`<div class="empty-row">No page visits recorded yet.</div>`;
-
-  const jb=d.jobs||{};
-  const total=Object.values(jb).reduce((a,b)=>a+b,0);
-  $('nav-job-count').textContent=total||'—';
-  $('job-meta').textContent=`${total} total jobs`;
-  const ORDER=['queued','running','succeeded','failed','dead_letter'];
-  const LABELS={queued:'Queued',running:'Running',succeeded:'Succeeded',failed:'Failed',dead_letter:'Dead Letter'};
-  const DOT={queued:'dot-pend',running:'dot-pend',succeeded:'dot-ok',failed:'dot-err',dead_letter:'dot-err'};
-  const NUM={queued:'pend',running:'pend',succeeded:'ok',failed:'err',dead_letter:'err'};
-  const rows=Object.entries(jb).sort((a,b)=>ORDER.indexOf(a[0])-ORDER.indexOf(b[0]));
-  $('job-list').innerHTML=rows.length
-    ?rows.map(([k,v])=>`<div class="job-row">
-        <div style="display:flex;align-items:center;gap:8px">
-          <div class="job-dot ${DOT[k]||'dot-pend'}"></div>
-          <span class="job-label">${LABELS[k]||k}</span>
-        </div>
-        <span class="job-num ${NUM[k]||'pend'}">${v}</span>
-      </div>`).join('')
-    :`<div class="empty-row">No jobs yet.</div>`;
-}
-
-/* ── Load data ── */
-async function loadData(silent=false){
-  if(!silent){
-    $('tb-fetching').classList.add('on');
-    $('tb-status').style.display='none';
-  }
-  try{
-    const r=await fetch(DASH);
-    if(!r.ok) throw new Error(`HTTP ${r.status}`);
-    const d=await r.json();
-
-    const t=new Date().toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-    $('tb-status').textContent=`Updated ${t}`;
-    if(!d.apollo_configured) $('apollo-notice').style.display='flex';
-
-    renderStats(d);
-    buildCharts(d);
-    renderTable(d);
-    renderFeed(d);
-  }catch(e){
-    $('tb-status').textContent='Error — retrying…';
-    console.error(e);
-  }finally{
-    $('tb-fetching').classList.remove('on');
-    $('tb-status').style.display='';
+/* ── load data ── */
+async function loadData(silent = false) {
+  if (!silent) { $('tb-fetch').classList.add('on'); $('tb-upd').style.display = 'none'; }
+  try {
+    const r = await fetch(DASH_API);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const d = await r.json();
+    lastData = d;
+    if (!d.apollo_configured) { $('apollo-notice').style.display = 'flex'; $('apollo-status-tag').textContent = 'Not Set'; $('apollo-status-tag').className = 'tag tag-warn'; }
+    else { $('apollo-status-tag').textContent = 'Active'; $('apollo-status-tag').className = 'tag tag-ok'; }
+    renderAll(d);
+    $('tb-upd').textContent = 'Updated ' + new Date().toLocaleTimeString('en', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  } catch(e) {
+    $('tb-upd').textContent = 'Error — retrying…'; console.error(e);
+  } finally {
+    $('tb-fetch').classList.remove('on'); $('tb-upd').style.display = '';
   }
 }
 
-/* ── Refresh cycle ── */
-function forceRefresh(){
-  clearInterval(countdownTimer);
-  stripReset();
-  loadData(false).then(()=>{ stripStart(); startCountdown(); });
+/* ── render all ── */
+function renderAll(d) {
+  renderStats(d);
+  buildDashCharts(d);
+  renderCoTable('co-tbody-dash', d, false);
+  renderFeedDash(d);
+  const activePage = document.querySelector('.page-view.active')?.id?.replace('page-','');
+  if (activePage && activePage !== 'dashboard' && activePage !== 'settings') renderPage(activePage, d);
+  // update badges
+  $('nb-co').textContent = (d.companies||[]).length || '—';
+  $('nb-jobs').textContent = Object.values(d.jobs||{}).reduce((a,b)=>a+b,0) || '—';
+  $('nb-visits').textContent = (d.recent_visits||[]).length || '—';
 }
 
-function startAutoRefresh(){
-  stripStart(); startCountdown();
-  refreshTimer=setInterval(()=>{
-    stripReset();
-    loadData(true).then(()=>{ stripStart(); startCountdown(); });
-  }, REFRESH_MS);
-  jobTimer=setInterval(()=>silentJobs(), JOB_MS);
+function renderPage(page, d) {
+  if (page === 'companies') renderCompaniesPage(d);
+  if (page === 'visits') renderVisitsPage(d);
+  if (page === 'jobs') renderJobsPage(d);
 }
 
-/* ── Jobs ── */
-async function triggerJobs(){
-  const btn=$('jobs-btn');
-  btn.disabled=true; btn.textContent='Running…';
+/* ── stats ── */
+function renderStats(d) {
+  const s = d.sessions||{}; const total = Object.values(s).reduce((a,b)=>a+b,0);
+  $('stats').innerHTML = `
+    <div class="stat"><div class="sl">Total Sessions</div><div class="sv">${total}</div><div class="ss">all time</div></div>
+    <div class="stat"><div class="sl">Identified</div><div class="sv">${s.resolved||0}</div><div class="ss">IP → company</div></div>
+    <div class="stat ac"><div class="sl">Hot Leads</div><div class="sv">${d.hot_leads||0}</div><div class="ss">ICP score ≥ 70</div></div>
+    <div class="stat"><div class="sl">Companies</div><div class="sv">${(d.companies||[]).length}</div><div class="ss">unique orgs</div></div>
+    <div class="stat"><div class="sl">Pending</div><div class="sv">${s.pending||0}</div><div class="ss">awaiting lookup</div></div>
+    <div class="stat"><div class="sl">Unmatched</div><div class="sv">${s.unmatched||0}</div><div class="ss">ISP / cloud IP</div></div>`;
+}
+
+/* ── company row builder ── */
+function coRow(c, extended = false) {
+  const sc = c.score||0, cl = scoreClass(sc);
+  const geo = c.geo ? [c.geo.city,c.geo.country].filter(Boolean).join(', ') : '—';
+  const li = c.linkedin_url ? `<a class="co-li" href="https://${c.linkedin_url}" target="_blank" rel="noopener">LinkedIn ↗</a>` : '';
+  const isp = c.is_isp ? `<div class="isp-tag">⚠ ISP / Cloud</div>` : '';
+  const btn = c.is_isp
+    ? `<button class="enrich-btn" disabled>N/A</button>`
+    : c.enriched_at
+      ? `<button class="enrich-btn done" disabled>✓ Enriched</button>`
+      : `<button class="enrich-btn" onclick="doEnrich('${c.id}',this)">Enrich</button>`;
+  const tech = c.technologies ? Object.values(c.technologies).flat().slice(0,3).join(', ') : '—';
+  const extra = extended ? `<td><span class="cell-sm">${esc(tech).slice(0,40)+(tech.length>40?'…':'')}</span></td>` : '';
+  return `<tr>
+    <td><div class="co-name">${esc(c.name||'Unknown')}</div><div class="co-dom">${esc(c.domain||'')}</div>${isp}${li}</td>
+    <td><div class="sc-wrap"><div class="sc-track"><div class="sc-fill f-${cl}" style="width:${sc}%"></div></div><span class="sc-num ${cl}">${sc}</span></div></td>
+    <td><span class="cell" title="${esc(c.industry||'')}">${c.industry?esc(c.industry).slice(0,20)+(c.industry.length>20?'…':''):'—'}</span></td>
+    <td><span class="cell">${c.employee_range||'—'}</span></td>
+    <td><span class="cell-sm">${esc(c.annual_revenue||'—')}</span></td>
+    ${extra}
+    <td><span class="cell-sm">${esc(geo)}</span></td>
+    <td style="font-weight:700;font-variant-numeric:tabular-nums">${c.session_count||0}</td>
+    ${extended ? `<td>${c.enriched_at?`<span class="tag tag-ok">✓</span>`:`<span class="tag tag-gray">No</span>`}</td>` : ''}
+    <td><span class="cell-sm">${rel(c.last_seen_at)}</span></td>
+    ${extended ? '' : `<td><span class="cell-sm" style="max-width:140px;display:block">${esc(c.alert_summary||c.short_description||'—')}</span></td>`}
+    <td>${btn}</td></tr>`;
+}
+
+function renderCoTable(tbodyId, d, extended) {
+  const cos = [...(d.companies||[])].sort((a,b)=>(b.score||0)-(a.score||0));
+  const tb = $(tbodyId);
+  if (!cos.length) { tb.innerHTML = `<tr><td colspan="12" class="empty-state">No companies identified yet — browse the site and click <strong>Process Queue</strong>.</td></tr>`; return; }
+  tb.innerHTML = cos.map(c => coRow(c, extended)).join('');
+}
+
+/* ── dashboard feed + jobs ── */
+function renderFeedDash(d) {
+  const visits = d.recent_visits||[];
+  $('feed-dash').innerHTML = visits.length
+    ? visits.map(v=>`<div class="feed-row"><span class="feed-path">${esc(v.path)}</span><span class="feed-time">${rel(v.occurred_at)}</span></div>`).join('')
+    : `<div class="empty-state">No visits yet.</div>`;
+  const jb = d.jobs||{};
+  const ORDER = ['queued','running','succeeded','failed'];
+  const LABELS = {queued:'Queued',running:'Running',succeeded:'Succeeded',failed:'Failed'};
+  const DOT = {queued:'pend',running:'pend',succeeded:'ok',failed:'err'};
+  $('jobs-dash').innerHTML = Object.entries(jb).sort((a,b)=>ORDER.indexOf(a[0])-ORDER.indexOf(b[0])).map(([k,v])=>`
+    <div class="jrow"><div class="jrow-left"><div class="jdot ${DOT[k]||'pend'}"></div><span class="jlabel">${LABELS[k]||k}</span></div><span class="jnum ${DOT[k]||'pend'}">${v}</span></div>`).join('')
+    || `<div class="empty-state">No jobs yet.</div>`;
+}
+
+/* ── dashboard charts ── */
+function buildDashCharts(d) {
+  const C = ct();
+  const gridOpts = (h) => ({
+    y:{beginAtZero:true,grid:{color:C.grid,drawTicks:false},border:{display:false},ticks:{color:C.tick,font:{size:10},maxTicksLimit:4,padding:6}},
+    x:{grid:{display:false},border:{display:false},ticks:{color:C.tick,font:{size:10},padding:4}}
+  });
+  // sessions line
+  const days = Object.keys(d.daily_sessions||{});
+  const dc = Object.values(d.daily_sessions||{});
+  mkChart('cSess','line',{
+    labels:days.map(d=>new Date(d).toLocaleDateString('en',{weekday:'short'})),
+    datasets:[{data:dc,borderColor:C.line,backgroundColor:C.area,borderWidth:2,pointBackgroundColor:C.line,pointRadius:4,pointHoverRadius:6,fill:true,tension:.35}]
+  },{scales:gridOpts()});
+  // score buckets
+  const sb = d.score_buckets||{};
+  mkChart('cScore','bar',{
+    labels:['0–25','26–50','51–75','76–100'],
+    datasets:[{data:[sb['0-25']||0,sb['26-50']||0,sb['51-75']||0,sb['76-100']||0],backgroundColor:C.scoreBars,borderRadius:4,borderSkipped:false}]
+  },{scales:gridOpts()});
+  // job doughnut
+  const jb = d.jobs||{};
+  const jk = Object.keys(jb), jv = Object.values(jb);
+  const jc = jk.map(k=>k==='succeeded'?C.donut[0]:k==='queued'?C.donut[1]:k==='running'?C.donut[2]:C.donut[3]);
+  mkChart('cJob','doughnut',{labels:jk,datasets:[{data:jv,backgroundColor:jc,borderWidth:2,borderColor:C.surf}]},
+    {cutout:'65%',plugins:{legend:{display:true,position:'bottom',labels:{color:C.tick,font:{size:9.5},boxWidth:8,padding:8,usePointStyle:true}},tooltip:TOOLTIP_OPTS}});
+  // top pages bar
+  const tp = d.top_pages||[];
+  mkChart('cPages','bar',{
+    labels:tp.map(p=>p.path),
+    datasets:[{data:tp.map(p=>p.count),backgroundColor:C.line,borderRadius:3,barThickness:11}]
+  },{indexAxis:'y',scales:{
+    x:{beginAtZero:true,grid:{color:C.grid,drawTicks:false},border:{display:false},ticks:{color:C.tick,font:{size:10}}},
+    y:{grid:{display:false},border:{display:false},ticks:{color:C.tick,font:{size:10,family:'monospace'},padding:6}}
+  }});
+}
+
+/* ── Companies page ── */
+function renderCompaniesPage(d) {
+  const cos = d.companies||[];
+  $('cp-hot').textContent = d.hot_leads||0;
+  $('cp-total').textContent = cos.length;
+  $('cp-isp').textContent = cos.filter(c=>c.is_isp).length;
+  renderCoTable('co-tbody-full', d, true);
+}
+
+/* ── Visits page ── */
+function renderVisitsPage(d) {
+  const visits = d.recent_visits||[];
+  const tp = d.top_pages||[];
+  const today = new Date().toISOString().slice(0,10);
+  $('pv-total').textContent = visits.length;
+  const paths = [...new Set(visits.map(v=>v.path))];
+  $('pv-paths').textContent = paths.length;
+  $('pv-top').textContent = tp[0]?.path||'—';
+  $('pv-today').textContent = visits.filter(v=>(v.occurred_at||'').startsWith(today)).length;
+
+  $('visits-list').innerHTML = visits.length
+    ? visits.map(v=>`<div class="visit-full-row"><span class="vpath">${esc(v.path)}</span><span class="vsid">${(v.session_id||'').slice(0,8)}…</span><span class="vtime">${rel(v.occurred_at)}</span></div>`).join('')
+    : `<div class="empty-state">No page visits recorded yet.</div>`;
+
+  // visit pages chart (vertical bar)
+  const C = ct();
+  if (charts['cVisitPages']) charts['cVisitPages'].destroy();
+  charts['cVisitPages'] = new Chart($('cVisitPages'),{type:'bar',
+    data:{labels:tp.map(p=>p.path),datasets:[{data:tp.map(p=>p.count),backgroundColor:C.line,borderRadius:4}]},
+    options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false},tooltip:TOOLTIP_OPTS},
+      scales:{
+        x:{beginAtZero:true,grid:{color:C.grid,drawTicks:false},border:{display:false},ticks:{color:C.tick,font:{size:10}}},
+        y:{grid:{display:false},border:{display:false},ticks:{color:C.tick,font:{size:10,family:'monospace'}}}
+      }}
+  });
+}
+
+/* ── Jobs page ── */
+function renderJobsPage(d) {
+  const jb = d.jobs||{};
+  $('jq-ok').textContent = jb.succeeded||0;
+  $('jq-q').textContent = jb.queued||0;
+  $('jq-run').textContent = jb.running||0;
+  $('jq-fail').textContent = (jb.failed||0)+(jb.dead_letter||0);
+  // simple table from job stats
+  const STATUS_CLS = {queued:'tag-warn',running:'tag-warn',succeeded:'tag-ok',failed:'tag-err',dead_letter:'tag-err'};
+  const rows = Object.entries(jb).map(([status,count])=>
+    `<tr><td><span class="cell" style="font-family:monospace">${status}</span></td><td><span class="tag ${STATUS_CLS[status]||'tag-gray'}">${status}</span></td><td><span class="cell" style="font-weight:700">${count}</span></td><td>—</td><td>—</td></tr>`).join('');
+  const tb = $('jobs-tbody');
+  tb.innerHTML = rows||`<tr><td colspan="5" class="empty-state">No jobs recorded.</td></tr>`;
+  // job type pie
+  const C = ct();
+  if (charts['cJobType']) charts['cJobType'].destroy();
+  charts['cJobType'] = new Chart($('cJobType'),{type:'doughnut',
+    data:{labels:Object.keys(jb),datasets:[{data:Object.values(jb),backgroundColor:C.donut,borderWidth:2,borderColor:C.surf}]},
+    options:{cutout:'60%',responsive:true,plugins:{legend:{display:true,position:'bottom',labels:{color:C.tick,font:{size:10},boxWidth:8,padding:8,usePointStyle:true}},tooltip:TOOLTIP_OPTS}}
+  });
+}
+
+/* ── jobs trigger ── */
+async function triggerJobs() {
+  const btn = $('run-jobs-btn'); btn.disabled=true; btn.textContent='Running…';
   toast('Processing job queue…');
-  try{
-    const r=await fetch(JOBS,{method:'POST'});
-    const d=await r.json();
-    const n=d.processed||0;
-    toast(`${n} job${n!==1?'s':''} processed${n>0?'. Refreshing data…':''}`);
-    if(n>0) setTimeout(()=>loadData(true),1200);
-  }catch(e){ toast('Job processor error'); }
-  finally{ btn.disabled=false; btn.textContent='▶ Run Jobs'; }
+  try {
+    const r = await fetch(JOBS_API,{method:'POST'});
+    const d = await r.json();
+    const n = d.processed||0;
+    toast(`${n} job${n!==1?'s':''} processed${n>0?' — refreshing…':''}`);
+    if (n>0) setTimeout(()=>loadData(true),1200);
+  } catch(e) { toast('Job processor error'); }
+  finally { btn.disabled=false; btn.textContent='▶ Run Jobs'; }
 }
-async function silentJobs(){
-  try{
-    const r=await fetch(JOBS,{method:'POST'});
-    const d=await r.json();
-    if((d.processed||0)>0) setTimeout(()=>loadData(true),1200);
-  }catch{}
+async function silentJobs() {
+  try { const r=await fetch(JOBS_API,{method:'POST'}); const d=await r.json(); if((d.processed||0)>0) setTimeout(()=>loadData(true),1200); } catch{}
 }
 
-/* ── Enrich ── */
-async function doEnrich(id,btn){
+/* ── enrich ── */
+async function doEnrich(id, btn) {
   btn.disabled=true; btn.textContent='Queuing…';
-  try{
-    const r=await fetch(ENRICH,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({company_id:id})});
-    const d=await r.json();
-    if(d.error){toast('Apollo: '+d.error,5000);btn.disabled=false;btn.textContent='Enrich';}
-    else{
-      toast('Apollo enrichment queued — processing now…');
-      btn.textContent='Processing…';
-      setTimeout(async()=>{await fetch(JOBS,{method:'POST'});setTimeout(()=>loadData(true),1500);},600);
-    }
-  }catch(e){toast('Error — is APOLLO_API_KEY configured?',5000);btn.disabled=false;btn.textContent='Enrich';}
+  try {
+    const r = await fetch(ENRICH_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({company_id:id})});
+    const d = await r.json();
+    if (d.error) { toast('Apollo: '+d.error,5000); btn.disabled=false; btn.textContent='Enrich'; }
+    else { toast('Queued — processing now…'); btn.textContent='Processing…'; setTimeout(async()=>{await fetch(JOBS_API,{method:'POST'});setTimeout(()=>loadData(true),1500);},500); }
+  } catch { toast('Error — is APOLLO_API_KEY configured?',5000); btn.disabled=false; btn.textContent='Enrich'; }
 }
 
-/* ── Nav ── */
-function setPage(el,title){
-  document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
-  el.classList.add('active');
-  $('tb-page').textContent=title;
-}
+/* ── refresh ── */
+function manualRefresh() { stripReset(); loadData(false).then(()=>{stripStart();startCd();}); }
 
-/* ── Theme ── */
+/* ── theme ── */
 function toggleTheme(){
-  const r=document.documentElement;
-  const cur=r.dataset.theme||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
-  r.dataset.theme=cur==='dark'?'light':'dark';
-  setTimeout(()=>loadData(true),80);
+  const r=document.documentElement; const cur=r.dataset.theme||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
+  r.dataset.theme=cur==='dark'?'light':'dark'; setTimeout(()=>loadData(true),80);
 }
 
-/* ── Boot ── */
+/* ── boot ── */
 (async function(){
   await loadData(false);
-  startAutoRefresh();
+  stripStart(); startCd();
+  refreshTimer = setInterval(()=>{ stripReset(); loadData(true).then(()=>{stripStart();startCd();}); }, REFRESH_MS);
+  jobTimer = setInterval(silentJobs, JOB_AUTO_MS);
 })();
 </script>
 </body>
