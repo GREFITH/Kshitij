@@ -236,6 +236,56 @@ td{padding:10px 14px;vertical-align:middle}
 .dp-enrich-btn.done{background:#f0fdf4;color:#166534}
 .dp-li{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;color:#5AAAD4;margin-top:8px}
 .dp-li svg{width:11px;height:11px}
+/* ── RETURNING STRIP ─────────────────────────────────────────────── */
+.ret-strip{background:#111;padding:0 24px;display:flex;align-items:center;gap:0;overflow-x:auto;scrollbar-width:none;flex-shrink:0;border-bottom:1px solid #222}
+.ret-strip::-webkit-scrollbar{display:none}
+.ret-strip-lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#555;white-space:nowrap;padding:10px 12px 10px 0;border-right:1px solid #222;margin-right:12px;flex-shrink:0}
+.ret-chip{display:flex;align-items:center;gap:7px;padding:7px 12px;border-radius:6px;cursor:pointer;transition:background .1s;flex-shrink:0;margin:6px 4px}
+.ret-chip:hover{background:#1c1c1c}
+.ret-init{width:26px;height:26px;border-radius:6px;background:var(--y);color:#111;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ret-init.warm{background:var(--bl);color:#1a3a55}
+.ret-init.cold{background:#333;color:#999}
+.ret-info{display:flex;flex-direction:column;gap:1px}
+.ret-name{font-size:11.5px;font-weight:700;color:#eee;white-space:nowrap}
+.ret-meta{font-size:9.5px;color:#666;white-space:nowrap}
+.ret-badge{font-size:9px;font-weight:700;background:#1a1a1a;border:1px solid #F3E400;color:#F3E400;border-radius:4px;padding:1px 5px;flex-shrink:0}
+.ret-badge.warm{border-color:#9BCBEB;color:#9BCBEB}
+.ret-empty{font-size:11px;color:#444;padding:11px 0}
+
+/* ── JOURNEY DRAWER ──────────────────────────────────────────────── */
+.jd-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:110;opacity:0;pointer-events:none;transition:opacity .2s;backdrop-filter:blur(3px)}
+.jd-overlay.open{opacity:1;pointer-events:all}
+.jd{position:fixed;top:0;right:0;bottom:0;width:520px;background:#fff;z-index:111;transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);overflow-y:auto;display:flex;flex-direction:column}
+.jd.open{transform:translateX(0)}
+.jd-hd{padding:20px 22px 16px;border-bottom:1px solid var(--bdr);display:flex;align-items:flex-start;justify-content:space-between;gap:12px;position:sticky;top:0;background:#fff;z-index:1;flex-shrink:0}
+.jd-title{font-size:16px;font-weight:800;letter-spacing:-.02em;color:#111}
+.jd-sub{font-size:11px;color:#bbb;font-family:monospace;margin-top:3px}
+.jd-close{width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:6px;color:#bbb;transition:background .1s,color .1s;font-size:18px}
+.jd-close:hover{background:#F4F4F1;color:#111}
+.jd-body{padding:20px 22px;flex:1}
+.jd-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
+.jd-kpi{background:#F4F4F1;border-radius:8px;padding:12px 14px}
+.jd-kv{font-size:22px;font-weight:900;letter-spacing:-.03em;color:#111}
+.jd-kl{font-size:9.5px;color:#999;text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+.jd-sec{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#bbb;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--bdr)}
+.jd-timeline{display:flex;flex-direction:column;gap:0;position:relative}
+.jd-step{display:flex;gap:14px;position:relative;padding-bottom:4px}
+.jd-step:not(:last-child)::after{content:'';position:absolute;left:11px;top:28px;bottom:-4px;width:1px;background:#eee}
+.jd-dot{width:23px;height:23px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;margin-top:3px;position:relative;z-index:1}
+.jd-dot.pricing{background:#111;color:#F3E400}
+.jd-dot.about{background:#EBF5FB;color:#5AAAD4}
+.jd-dot.home{background:#F4F4F1;color:#888}
+.jd-dot.other{background:#F4F4F1;color:#aaa}
+.jd-step-info{flex:1;padding:4px 0 16px}
+.jd-step-path{font-family:monospace;font-size:12px;font-weight:600;color:#111;word-break:break-all}
+.jd-step-time{font-size:10px;color:#bbb;margin-top:2px}
+.jd-step-tag{display:inline-block;font-size:9px;font-weight:700;background:#FEF9C3;color:#78350f;border-radius:3px;padding:1px 5px;margin-top:4px}
+.jd-step-tag.intent{background:#FEE2E2;color:#991b1b}
+.jd-enrich-btn{background:#111;color:var(--y);border-radius:7px;padding:9px 20px;font-size:12px;font-weight:700;width:100%;margin-top:14px;transition:.12s;text-align:center}
+.jd-enrich-btn:hover:not(:disabled){background:#333}
+.jd-enrich-btn:disabled{background:#F4F4F1;color:#ccc;cursor:default}
+.jd-enrich-btn.done{background:#f0fdf4;color:#166534}
+
 
 /* ── STAT MINI STRIP ─────────────────────────────────────────────── */
 .pg-stats{display:grid;background:var(--surf);border-bottom:1px solid var(--bdr)}
@@ -392,6 +442,25 @@ td{padding:10px 14px;vertical-align:middle}
 
 <!-- PAGES -->
 <main class="main">
+
+<!-- Returning Companies Strip -->
+<div class="ret-strip" id="ret-strip">
+  <div class="ret-strip-lbl">🔁 Returning</div>
+  <div id="ret-chips" style="display:flex;align-items:center"><div class="ret-empty">No returning companies yet</div></div>
+</div>
+
+<!-- Company Journey Drawer -->
+<div class="jd-overlay" id="jd-overlay" onclick="closeJourney()"></div>
+<div class="jd" id="jd">
+  <div class="jd-hd">
+    <div>
+      <div class="jd-title" id="jd-name">Company</div>
+      <div class="jd-sub" id="jd-dom"></div>
+    </div>
+    <button class="jd-close" onclick="closeJourney()">×</button>
+  </div>
+  <div class="jd-body" id="jd-body"></div>
+</div>
 
 <!-- ══ DASHBOARD ══════════════════════════════════════════════════════ -->
 <div class="pv active" id="page-dashboard">
@@ -644,6 +713,7 @@ function renderAll(d){
   renderCoRows('co-dash',d);
   renderFeed(d);
   renderJobsSummary(d);
+  renderReturning(d);
   const active=document.querySelector('.pv.active')?.id?.replace('page-','');
   if(active&&active!=='dashboard'&&active!=='settings')renderPage(active,d);
 }
@@ -669,7 +739,7 @@ function coRow(c){
   const btn=c.is_isp?`<button class="e-btn" disabled>N/A</button>`:
     c.enriched_at?`<button class="e-btn done" disabled>✓ Done</button>`:
     `<button class="e-btn" onclick="event.stopPropagation();doEnrich('${c.id}',this)">Enrich</button>`;
-  return`<tr onclick="openDetail('${c.id}')" style="cursor:pointer">
+  return`<tr onclick="openJourney('${c.id}')" style="cursor:pointer">
     <td>
       <div style="display:flex;align-items:center;gap:9px">
         <div style="width:30px;height:30px;border-radius:7px;background:${cl==='hot'?'#111':cl==='warm'?'#EBF5FB':'#F0F0EB'};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:${cl==='hot'?'var(--y)':cl==='warm'?'#5AAAD4':'#bbb'};flex-shrink:0">
@@ -996,6 +1066,105 @@ async function runJobs(){
 }
 
 /* ── BOOT ── */
+
+/* ── RETURNING COMPANIES STRIP ── */
+function renderReturning(d){
+  const cos=(d.companies||[]).filter(c=>!c.is_isp&&(c.session_count||0)>1)
+    .sort((a,b)=>(b.score||0)-(a.score||0)).slice(0,10);
+  const el=$('ret-chips');if(!el)return;
+  if(!cos.length){el.innerHTML='<div class="ret-empty">No returning companies yet</div>';return;}
+  el.innerHTML=cos.map(c=>{
+    const s=c.score||0,cl=sc(s);
+    const visits=c.session_count||0;
+    const last=rel(c.last_seen_at);
+    const init=(c.name||'?')[0].toUpperCase();
+    return`<div class="ret-chip" onclick="openJourney('${c.id}')">
+  <div class="ret-init ${cl}">${esc(init)}</div>
+  <div class="ret-info">
+    <div class="ret-name">${esc(c.name||'Unknown')}</div>
+    <div class="ret-meta">${visits} visits · ${last}</div>
+  </div>
+  <div class="ret-badge ${cl}">${s}</div>
+</div>`;
+  }).join('');
+}
+
+/* ── JOURNEY DRAWER ── */
+const HIGH_INTENT=['pricing','demo','contact','trial','buy','checkout','signup','schedule','plan'];
+function pageClass(path){
+  const p=(path||'').toLowerCase();
+  if(HIGH_INTENT.some(k=>p.includes(k)))return'pricing';
+  if(p.includes('about')||p.includes('team'))return'about';
+  if(p==='/'||p===''||p.endsWith('index'))return'home';
+  return'other';
+}
+function pageIcon(cls){return cls==='pricing'?'💰':cls==='about'?'👥':cls==='home'?'🏠':'📄'}
+function pageTag(path){
+  const p=(path||'').toLowerCase();
+  if(HIGH_INTENT.some(k=>p.includes(k)))return'<span class="jd-step-tag intent">High Intent</span>';
+  if(p.includes('blog')||p.includes('resource'))return'<span class="jd-step-tag">Content</span>';
+  return'';
+}
+
+function openJourney(id){
+  if(!state)return;
+  const c=(state.companies||[]).find(x=>x.id===id);if(!c)return;
+  const s=c.score||0,cl=sc(s);
+  // filter visits for this company
+  const visits=(state.recent_visits||[]).filter(v=>v.company_id===id).sort((a,b)=>new Date(a.occurred_at)-new Date(b.occurred_at));
+  const sessionCount=c.session_count||0;
+  const firstSeen=c.first_seen_at||visits[0]?.occurred_at;
+  const lastSeen=c.last_seen_at||visits[visits.length-1]?.occurred_at;
+  const highIntentPages=visits.filter(v=>HIGH_INTENT.some(k=>(v.path||'').toLowerCase().includes(k)));
+
+  $('jd-name').textContent=c.name||'Unknown';
+  $('jd-dom').textContent=c.domain||'';
+
+  const enrich=c.is_isp?`<button class="jd-enrich-btn" disabled>ISP — Cannot Enrich</button>`:
+    c.enriched_at?`<button class="jd-enrich-btn done" disabled>✓ Enriched via Apollo</button>`:
+    `<button class="jd-enrich-btn" onclick="doEnrich('${c.id}',this)">Enrich with Apollo →</button>`;
+
+  const timeline=visits.length?visits.map((v,i)=>{
+    const cls=pageClass(v.path);
+    return`<div class="jd-step">
+  <div class="jd-dot ${cls}">${pageIcon(cls)}</div>
+  <div class="jd-step-info">
+    <div class="jd-step-path">${esc(v.path||'/')}</div>
+    <div class="jd-step-time">${v.occurred_at?new Date(v.occurred_at).toLocaleString('en',{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'—'}</div>
+    ${pageTag(v.path)}
+  </div>
+</div>`;
+  }).join(''):`<div style="color:#bbb;font-size:12px;padding:16px 0">No detailed page visit data available yet.<br><span style="color:#ddd">Visits will appear here as the company browses the site.</span></div>`;
+
+  $('jd-body').innerHTML=`
+<div class="jd-kpis">
+  <div class="jd-kpi"><div class="jd-kv">${s}</div><div class="jd-kl">ICP Score</div></div>
+  <div class="jd-kpi"><div class="jd-kv">${sessionCount}</div><div class="jd-kl">Sessions</div></div>
+  <div class="jd-kpi"><div class="jd-kv">${highIntentPages.length||0}</div><div class="jd-kl">Intent Pages</div></div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px">
+  <div style="background:#F4F4F1;border-radius:8px;padding:10px 14px">
+    <div style="font-size:9.5px;color:#aaa;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">First Seen</div>
+    <div style="font-size:12px;font-weight:600;color:#333">${firstSeen?new Date(firstSeen).toLocaleDateString('en',{month:'short',day:'numeric',year:'numeric'}):'—'}</div>
+  </div>
+  <div style="background:#F4F4F1;border-radius:8px;padding:10px 14px">
+    <div style="font-size:9.5px;color:#aaa;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">Last Seen</div>
+    <div style="font-size:12px;font-weight:600;color:#333">${lastSeen?new Date(lastSeen).toLocaleDateString('en',{month:'short',day:'numeric',year:'numeric'}):'—'}</div>
+  </div>
+</div>
+${c.short_description?`<div style="background:#F9F9F7;border-radius:8px;padding:12px 14px;font-size:11.5px;color:#555;line-height:1.6;margin-bottom:20px">${esc(c.short_description)}</div>`:''}
+<div class="jd-sec">Page Journey</div>
+<div class="jd-timeline">${timeline}</div>
+${enrich}`;
+
+  $('jd-overlay').classList.add('open');
+  $('jd').classList.add('open');
+}
+function closeJourney(){
+  $('jd-overlay').classList.remove('open');
+  $('jd').classList.remove('open');
+}
+
 (async()=>{
   await load();
   setInterval(()=>{load()},REFRESH);
