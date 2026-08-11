@@ -305,6 +305,56 @@ td{padding:10px 14px;vertical-align:middle}
 .ret-badge.cold{background:#F4F4F1;color:#999}
 .ret-empty{font-size:12px;color:#bbb;padding:20px 16px;text-align:center}
 
+/* ── SNITCHER DRAWER ─────────────────────────────────────────────── */
+.snd-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:120;opacity:0;pointer-events:none;transition:opacity .2s;backdrop-filter:blur(3px)}
+.snd-overlay.open{opacity:1;pointer-events:all}
+.snd{position:fixed;top:0;right:0;bottom:0;width:580px;background:#0D0F12;z-index:121;transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);overflow-y:auto;display:flex;flex-direction:column;color:#F8F9FA}
+.snd.open{transform:translateX(0)}
+.snd-hd{padding:20px 24px 16px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:flex-start;justify-content:space-between;gap:12px;position:sticky;top:0;background:#0D0F12;z-index:1;flex-shrink:0}
+.snd-logo{width:40px;height:40px;border-radius:9px;object-fit:cover;flex-shrink:0;border:1px solid rgba(255,255,255,.1)}
+.snd-logo-fb{width:40px;height:40px;border-radius:9px;background:#1e293b;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#60a5fa;flex-shrink:0}
+.snd-name{font-size:17px;font-weight:900;letter-spacing:-.02em;color:#fff}
+.snd-web{font-size:11px;color:#8B9DB0;font-family:monospace;margin-top:2px}
+.snd-icp{padding:3px 10px;border-radius:6px;font-size:11px;font-weight:800;background:rgba(34,197,94,.12);color:#22c55e;border:1px solid rgba(34,197,94,.2);white-space:nowrap;margin-top:4px;display:inline-block}
+.snd-close{width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:6px;color:#8B9DB0;transition:background .1s,color .1s;font-size:18px;flex-shrink:0;cursor:pointer}
+.snd-close:hover{background:rgba(255,255,255,.07);color:#fff}
+.snd-body{padding:20px 24px;flex:1;display:flex;flex-direction:column;gap:22px}
+.snd-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.snd-kpi{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:12px 14px}
+.snd-kv{font-size:20px;font-weight:900;letter-spacing:-.03em;color:#fff;font-variant-numeric:tabular-nums}
+.snd-kv.green{color:#22c55e}
+.snd-kv.amber{color:#F59E0B}
+.snd-kl{font-size:9px;color:#8B9DB0;text-transform:uppercase;letter-spacing:.06em;margin-top:3px;font-weight:600}
+.snd-sec{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8B9DB0;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,.06)}
+.snd-pages{display:flex;flex-direction:column;gap:4px}
+.snd-page{display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:6px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.04)}
+.snd-page-path{font-family:monospace;font-size:11.5px;color:#c5d0df;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.snd-page-bar-w{width:56px;height:3px;background:rgba(255,255,255,.06);border-radius:2px;flex-shrink:0}
+.snd-page-bar{height:100%;border-radius:2px;background:#22c55e}
+.snd-firm-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.snd-firm{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:7px;padding:10px 12px}
+.snd-fl{font-size:9.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:#4B5563;margin-bottom:4px}
+.snd-fv{font-size:12.5px;font-weight:700;color:#e2e8f0}
+.snd-soc{display:flex;flex-wrap:wrap;gap:6px}
+.snd-soc-a{display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);font-size:11px;font-weight:600;color:#c5d0df;text-decoration:none;transition:background .1s}
+.snd-soc-a:hover{background:rgba(255,255,255,.09);color:#fff}
+.snd-tech-cats{display:flex;flex-direction:column;gap:8px}
+.snd-tech-cat{border:1px solid rgba(255,255,255,.06);border-radius:7px;overflow:hidden}
+.snd-tech-cat-hd{padding:9px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;background:rgba(255,255,255,.03)}
+.snd-tech-cat-hd:hover{background:rgba(255,255,255,.06)}
+.snd-tc-name{font-size:11.5px;font-weight:700;color:#c5d0df}
+.snd-tc-count{font-size:10px;font-weight:700;background:rgba(255,255,255,.07);color:#8B9DB0;padding:2px 7px;border-radius:8px}
+.snd-tc-body{padding:10px 14px;display:flex;flex-wrap:wrap;gap:5px;border-top:1px solid rgba(255,255,255,.05)}
+.snd-tech-tag{display:flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.05);font-size:11px;color:#8B9DB0;font-weight:500}
+.snd-tech-tag img{width:13px;height:13px;object-fit:contain;border-radius:2px;flex-shrink:0}
+.snd-kw-wrap{display:flex;flex-wrap:wrap;gap:5px}
+.snd-kw{padding:3px 9px;border-radius:20px;font-size:11px;border:1px solid rgba(255,255,255,.06);color:#8B9DB0;background:rgba(255,255,255,.02);cursor:default}
+.snd-kw.big{font-size:12px;color:#c5d0df;background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.09)}
+.snd-desc{font-size:12px;line-height:1.7;color:#8B9DB0}
+.snd-ref{font-size:11px;color:#8B9DB0;padding:5px 10px;background:rgba(255,255,255,.02);border-radius:5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.snd-loc-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:20px;background:rgba(96,165,250,.08);border:1px solid rgba(96,165,250,.15);font-size:11.5px;color:#60a5fa;font-weight:500}
+.snd-seg{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:20px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.18);font-size:11px;color:#F59E0B;font-weight:600}
+
 /* ── JOURNEY DRAWER ──────────────────────────────────────────────── */
 .jd-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:110;opacity:0;pointer-events:none;transition:opacity .2s;backdrop-filter:blur(3px)}
 .jd-overlay.open{opacity:1;pointer-events:all}
@@ -421,6 +471,7 @@ td{padding:10px 14px;vertical-align:middle}
 <script>
 !function(e){"use strict";var t=e&&e.namespace;if(t&&e.profileId&&e.cdn){var i=window[t];if(i&&Array.isArray(i)||(i=window[t]=[]),!i.initialized&&!i._loaded)if(i._loaded)console&&console.warn("[Radar] Duplicate initialization attempted");else{i._loaded=!0;["track","page","identify","group","alias","ready","debug","on","off","once","trackClick","trackSubmit","trackLink","trackForm","pageview","screen","reset","register","setAnonymousId","addSourceMiddleware","addIntegrationMiddleware","addDestinationMiddleware","giveCookieConsent"].forEach((function(e){var a;i[e]=(a=e,function(){var e=window[t];if(e.initialized)return e[a].apply(e,arguments);var i=[].slice.call(arguments);return i.unshift(a),e.push(i),e})})),-1===e.apiEndpoint.indexOf("http")&&(e.apiEndpoint="https://"+e.apiEndpoint),i.bootstrap=function(){var t,i=document.createElement("script");i.async=!0,i.type="text/javascript",i.id="__radar__",i.setAttribute("data-settings",JSON.stringify(e)),i.src=[-1!==(t=e.cdn).indexOf("http")?"":"https://",t,"/releases/latest/radar.min.js"].join("");var a=document.scripts[0];a.parentNode.insertBefore(i,a)},i.bootstrap()}}else"undefined"!=typeof console&&console.error("[Radar] Configuration incomplete")}({"apiEndpoint":"radar.snitcher.com","cdn":"cdn.snitcher.com","namespace":"Snitcher","profileId":"slS6lRbB5f"});
 </script>
+<script>(function(ss,ex){window.ldfdr=window.ldfdr||function(){(ldfdr._q=ldfdr._q||[]).push([].slice.call(arguments));};(function(d,s){fs=d.getElementsByTagName(s)[0];function ce(src){var cs=d.createElement(s);cs.src=src;cs.async=1;fs.parentNode.insertBefore(cs,fs);};ce("https://sc.lfeeder.com/lftracker_v1_"+ss+(ex?"_"+ex:"")+".js");})(document,"script");})('3P1w24d3oZJ7mY5n');</script>
 </head>
 <body>
 
@@ -519,11 +570,12 @@ td{padding:10px 14px;vertical-align:middle}
     <span class="n-close" onclick="this.closest('.notice').style.display='none'">×</span>
   </div>
 
-  <div class="stat-strip" id="stats-strip" style="grid-template-columns:repeat(4,1fr)">
+  <div class="stat-strip" id="stats-strip" style="grid-template-columns:repeat(5,1fr)">
     <div class="ss-cell"><div class="ss-l">Sessions</div><div class="ss-v" id="s-tot">—</div><div class="ss-s">all time</div></div>
     <div class="ss-cell"><div class="ss-l">Identified</div><div class="ss-v" id="s-id">—</div><div class="ss-s">IP resolved</div></div>
     <div class="ss-cell ac"><div class="ss-l">Hot Leads</div><div class="ss-v hl" id="s-hot">—</div><div class="ss-s">score ≥ 70</div></div>
     <div class="ss-cell"><div class="ss-l">Companies</div><div class="ss-v" id="s-co">—</div><div class="ss-s">unique orgs</div></div>
+    <div class="ss-cell" style="border-left:2px solid #E8FFE8"><div class="ss-l" style="color:#22c55e">Snitcher</div><div class="ss-v" id="s-sn" style="color:#16a34a">—</div><div class="ss-s">B2B identified</div></div>
   </div>
 
   <div class="content">
@@ -566,6 +618,25 @@ td{padding:10px 14px;vertical-align:middle}
         <thead><tr><th>Company</th><th>Score</th><th>Industry</th><th>Size</th><th>Location</th><th>Sessions</th><th>Last Seen</th><th>Summary</th><th></th></tr></thead>
         <tbody id="co-dash"></tbody>
       </table></div></div>
+    </div>
+
+    <!-- Snitcher Identified Visitors Card -->
+    <div class="ret-card" id="sn-card">
+      <div class="ret-card-hd">
+        <div class="ret-card-t">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="flex-shrink:0"><circle cx="7" cy="7" r="6" fill="#22c55e" opacity=".2"/><circle cx="7" cy="7" r="3" fill="#22c55e"/></svg>
+          Snitcher Identified Companies
+        </div>
+        <div class="ret-card-s" id="sn-card-s">loading…</div>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="cp-table" style="min-width:0">
+          <thead><tr>
+            <th>Company</th><th>Industry</th><th>Size</th><th>Location</th><th>Sessions</th><th>ICP</th><th>Last Seen</th>
+          </tr></thead>
+          <tbody id="sn-tbody"></tbody>
+        </table>
+      </div>
     </div>
 
     <!-- Returning Companies Card -->
@@ -720,6 +791,24 @@ td{padding:10px 14px;vertical-align:middle}
 
 </main>
 
+<!-- SNITCHER DETAIL DRAWER -->
+<div class="snd-overlay" id="snd-overlay" onclick="closeSnDetail()"></div>
+<div class="snd" id="snd">
+  <div class="snd-hd">
+    <div style="display:flex;align-items:flex-start;gap:13px;flex:1;min-width:0">
+      <img class="snd-logo" id="snd-logo" src="" alt="" onerror="this.style.display='none';document.getElementById('snd-logo-fb').style.display='flex'">
+      <div class="snd-logo-fb" id="snd-logo-fb" style="display:none">?</div>
+      <div style="flex:1;min-width:0">
+        <div class="snd-name" id="snd-name">—</div>
+        <div class="snd-web" id="snd-web"></div>
+        <div id="snd-icp-wrap"></div>
+      </div>
+    </div>
+    <button class="snd-close" onclick="closeSnDetail()">×</button>
+  </div>
+  <div class="snd-body" id="snd-body"></div>
+</div>
+
 <!-- COMPANY DETAIL PANEL -->
 <div class="detail-overlay" id="dp-overlay" onclick="closeDetail()"></div>
 <div class="detail-panel" id="dp">
@@ -739,9 +828,10 @@ td{padding:10px 14px;vertical-align:middle}
 const API      = 'https://sgaaeuqsmuydftxbftpw.supabase.co/functions/v1/get-dashboard';
 const JOBS_API = 'https://sgaaeuqsmuydftxbftpw.supabase.co/functions/v1/process-jobs';
 const ENR_API  = 'https://sgaaeuqsmuydftxbftpw.supabase.co/functions/v1/enqueue-apollo';
+const SN_API   = 'https://sgaaeuqsmuydftxbftpw.supabase.co/functions/v1/get-snitcher';
 const REFRESH  = 30000, JOB_TICK = 60000;
 
-let charts={}, state=null;
+let charts={}, state=null, snOrgs=[];
 const $=id=>document.getElementById(id);
 const esc=s=>String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function rel(ts){if(!ts)return'—';const s=Math.floor((Date.now()-new Date(ts))/1000);if(s<60)return s+'s ago';if(s<3600)return Math.floor(s/60)+'m ago';if(s<86400)return Math.floor(s/3600)+'h ago';return Math.floor(s/86400)+'d ago'}
@@ -772,6 +862,49 @@ document.querySelectorAll('.nav-item[data-page]').forEach(b=>b.addEventListener(
 
 
 
+/* ── SNITCHER ── */
+async function loadSnitcher(){
+  try{
+    const r=await fetch(SN_API);
+    if(!r.ok)throw 0;
+    const d=await r.json();
+    renderSnitcher(d.organisations||[]);
+  }catch(e){
+    const tb=$('sn-tbody');if(tb)tb.innerHTML='<tr><td colspan="7" class="empty">Snitcher secret not set yet — add SNITCHER_API_KEY in Supabase Edge Function secrets</td></tr>';
+    $('sn-card-s').textContent='—';
+  }
+}
+function snIcpBadge(tier){
+  const colors={S:'#16a34a',A:'#2563eb',B:'#9333ea',C:'#d97706'};
+  const c=colors[tier]||'#aaa';
+  return tier?`<span style="font-size:10px;font-weight:800;color:${c};background:${c}18;border-radius:4px;padding:2px 6px">${tier}</span>`:'—';
+}
+function renderSnitcher(orgs){
+  const tb=$('sn-tbody');if(!tb)return;
+  $('s-sn').textContent=orgs.length||0;
+  $('sn-card-s').textContent=orgs.length+' compan'+(orgs.length===1?'y':'ies')+' identified';
+  if(!orgs.length){
+    tb.innerHTML='<tr><td colspan="7" class="empty">No companies identified yet — visit the site from a corporate network</td></tr>';
+    return;
+  }
+  tb.innerHTML=orgs.map(o=>{
+    const loc=[o.address?.city,o.address?.country_code].filter(Boolean).join(', ')||'—';
+    const init=(o.name||'?')[0].toUpperCase();
+    return`<tr>
+      <td><div style="display:flex;align-items:center;gap:9px">
+        <div style="width:30px;height:30px;border-radius:7px;background:#E8FFE8;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#16a34a;flex-shrink:0">${esc(init)}</div>
+        <div><div class="co-name">${esc(o.name||'Unknown')}</div><div class="co-dom">${esc(o.website||'')}</div></div>
+      </div></td>
+      <td><span class="cell">${esc((o.industry||'—').slice(0,22))}</span></td>
+      <td><span class="cell-sm">${esc(o.size||'—')}</span></td>
+      <td><span class="cell-sm">${esc(loc)}</span></td>
+      <td style="font-weight:700;font-variant-numeric:tabular-nums">${o.total_sessions||0}</td>
+      <td>${snIcpBadge(o.icp_tier)}</td>
+      <td><span class="cell-sm">${rel(o.last_seen)}</span></td>
+    </tr>`;
+  }).join('');
+}
+
 /* load */
 async function load(){
   try{
@@ -782,6 +915,7 @@ async function load(){
     renderAll(d);
     $('tb-upd').textContent='Updated '+new Date().toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
   }catch(e){console.error(e)}
+  loadSnitcher();
 }
 async function manualRefresh(){await load()}
 
