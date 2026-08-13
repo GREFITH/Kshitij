@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Snitcher Intelligence · E2M</title>
+<style>
+/* ── TOKENS ──────────────────────────────────────────────── */
+:root{
+  --nav:#1A2035; --bg:#F0F3F9; --surf:#fff; --surf2:#EEF1F8;
+  --bdr:#DDE2EE; --ink:#1A2035; --ink2:#3D4A63; --muted:#7A8BAD;
+  --icp-s-bg:#F5F3FF; --icp-s:#7C3AED;
+  --icp-a-bg:#ECFDF5; --icp-a:#059669;
+  --icp-b-bg:#EFF6FF; --icp-b:#2563EB;
+  --icp-c-bg:#FFFBEB; --icp-c:#D97706;
+  --icp-d-bg:#F1F3F8; --icp-d:#7A8BAD;
+  --green:#059669; --red:#DC2626; --amber:#D97706;
+  --radius:10px; --sh:0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.04);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-font-smoothing:antialiased}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.5;min-height:100vh}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+
+/* ── NAV ─────────────────────────────────────────────────── */
+.nav{
+  background:var(--nav); height:48px; padding:0 24px;
+  display:flex; align-items:center; gap:14px;
+  position:sticky; top:0; z-index:50;
+}
+.nav-logo{display:flex;align-items:center;gap:8px}
+.nav-logo svg{opacity:.9}
+.nav-wordmark{font-size:13px;font-weight:700;color:#fff;letter-spacing:.01em}
+.nav-sep{width:1px;height:16px;background:rgba(255,255,255,.15)}
+.nav-ws{font-size:12.5px;color:rgba(255,255,255,.55);font-weight:500}
+.nav-spacer{flex:1}
+.usage-pill{
+  display:flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);
+  border-radius:20px;padding:4px 12px;
+}
+.usage-label{font-size:11px;color:rgba(255,255,255,.5);font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+.usage-bar{width:80px;height:4px;background:rgba(255,255,255,.15);border-radius:2px;overflow:hidden}
+.usage-fill{height:100%;border-radius:2px;background:#6D28D9;transition:width .4s}
+.usage-count{font-size:11.5px;color:rgba(255,255,255,.8);font-weight:700;font-variant-numeric:tabular-nums}
+.plan-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:rgba(124,58,237,.3);color:#C4B5FD;text-transform:uppercase;letter-spacing:.08em}
+
+/* ── MAIN WRAP ───────────────────────────────────────────── */
+.main{max-width:1100px;margin:0 auto;padding:28px 24px}
+
+/* ── KPI STRIP ───────────────────────────────────────────── */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.kpi{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--sh)}
+.kpi-label{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:8px}
+.kpi-val{font-size:26px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1}
+.kpi-sub{font-size:11.5px;color:var(--muted);margin-top:4px}
+
+/* ── SECTION HEADER ──────────────────────────────────────── */
+.section-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.section-title{font-size:15px;font-weight:700;color:var(--ink)}
+.section-count{font-size:12px;font-weight:600;color:var(--muted);background:var(--surf2);border:1px solid var(--bdr);border-radius:20px;padding:1px 9px}
+.filter-tabs{display:flex;gap:4px;margin-left:auto}
+.tab{font-size:12px;font-weight:600;color:var(--muted);padding:5px 12px;border-radius:6px;border:1px solid transparent;transition:all .14s;cursor:pointer}
+.tab:hover{color:var(--ink2);background:var(--surf2)}
+.tab.active{color:var(--ink);background:var(--surf);border-color:var(--bdr);box-shadow:var(--sh)}
+
+/* ── COMPANY TABLE ───────────────────────────────────────── */
+.card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--radius);box-shadow:var(--sh);overflow:hidden}
+.tbl{width:100%;border-collapse:collapse}
+.tbl thead tr{border-bottom:1px solid var(--bdr)}
+.tbl th{padding:10px 16px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);text-align:left;background:var(--surf2);white-space:nowrap}
+.tbl tbody tr.company-row{border-bottom:1px solid var(--bdr);cursor:pointer;transition:background .12s}
+.tbl tbody tr.company-row:hover{background:var(--surf2)}
+.tbl tbody tr.company-row:last-child{border-bottom:none}
+.tbl td{padding:13px 16px;vertical-align:middle}
+.tbl tr.detail-row td{padding:0;border-bottom:1px solid var(--bdr)}
+.tbl tr.detail-row.hidden{display:none}
+
+/* company cell */
+.co-cell{display:flex;align-items:center;gap:10px}
+.co-logo{width:32px;height:32px;border-radius:6px;object-fit:cover;background:var(--surf2);border:1px solid var(--bdr);flex-shrink:0}
+.co-logo-placeholder{width:32px;height:32px;border-radius:6px;background:var(--surf2);border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--muted);flex-shrink:0}
+.co-name{font-weight:700;color:var(--ink);font-size:13.5px}
+.co-domain{font-size:11px;color:var(--muted);margin-top:1px}
+
+/* ICP badge */
+.icp{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;font-size:12px;font-weight:800;flex-shrink:0}
+.icp-S{background:var(--icp-s-bg);color:var(--icp-s)}
+.icp-A{background:var(--icp-a-bg);color:var(--icp-a)}
+.icp-B{background:var(--icp-b-bg);color:var(--icp-b)}
+.icp-C{background:var(--icp-c-bg);color:var(--icp-c)}
+.icp-D{background:var(--icp-d-bg);color:var(--icp-d)}
+
+/* pills */
+.pill{display:inline-block;font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:4px;border:1px solid var(--bdr);color:var(--ink2);background:var(--surf2);white-space:nowrap}
+.seg-pill{font-size:10.5px;font-weight:600;padding:2px 9px;border-radius:10px;background:var(--icp-s-bg);color:var(--icp-s);border:1px solid rgba(124,58,237,.15)}
+
+/* stat cell */
+.stat-num{font-variant-numeric:tabular-nums;font-weight:700;color:var(--ink)}
+.stat-sub{font-size:11px;color:var(--muted)}
+
+/* expand toggle */
+.expand-btn{display:flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:4px;color:var(--muted);transition:all .12s}
+.expand-btn:hover{background:var(--surf2);color:var(--ink)}
+.expand-btn svg{transition:transform .2s}
+.expand-btn.open svg{transform:rotate(90deg)}
+
+/* ── DETAIL PANEL ────────────────────────────────────────── */
+.detail-panel{padding:20px 24px;background:var(--surf2);border-top:1px solid var(--bdr)}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr 2fr;gap:20px}
+
+.detail-block-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin-bottom:10px}
+.detail-row{display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;border-bottom:1px solid var(--bdr);gap:12px}
+.detail-row:last-child{border-bottom:none}
+.detail-key{font-size:12px;color:var(--muted);flex-shrink:0}
+.detail-val{font-size:12.5px;font-weight:600;color:var(--ink2);text-align:right}
+
+/* tech stack */
+.tech-cats{display:flex;flex-direction:column;gap:10px}
+.tech-cat-name{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px}
+.tech-pills{display:flex;flex-wrap:wrap;gap:4px}
+.tech-pill{font-size:11px;padding:2px 8px;border-radius:4px;background:var(--surf);border:1px solid var(--bdr);color:var(--ink2);font-weight:500}
+
+/* sessions list */
+.session-list{display:flex;flex-direction:column;gap:6px;margin-top:4px}
+.session-item{background:var(--surf);border:1px solid var(--bdr);border-radius:6px;padding:8px 12px}
+.session-top{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.session-time{font-size:11px;color:var(--muted)}
+.session-loc{font-size:11px;color:var(--ink2);font-weight:600}
+.session-device{font-size:10.5px;color:var(--muted);background:var(--surf2);border:1px solid var(--bdr);border-radius:3px;padding:1px 6px}
+.session-pages{display:flex;flex-direction:column;gap:2px}
+.session-page{font-size:11px;color:var(--icp-b);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ── LOADING ─────────────────────────────────────────────── */
+.skeleton{background:linear-gradient(90deg,var(--surf2) 25%,var(--bdr) 50%,var(--surf2) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:4px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* ── RESPONSIVE ──────────────────────────────────────────── */
+@media(max-width:768px){
+  .kpi-row{grid-template-columns:1fr 1fr}
+  .detail-grid{grid-template-columns:1fr}
+  .tbl th:nth-child(n+5),.tbl td:nth-child(n+5){display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="10" fill="rgba(124,58,237,.3)" stroke="#A78BFA" stroke-width="1.5"/>
+      <circle cx="12" cy="12" r="5" fill="#7C3AED"/>
+      <circle cx="12" cy="12" r="2" fill="#fff"/>
+    </svg>
+    <span class="nav-wordmark">Snitcher Intelligence</span>
+  </div>
+  <div class="nav-sep"></div>
+  <span class="nav-ws" id="ws-name">Loading…</span>
+  <div class="nav-spacer"></div>
+  <div class="usage-pill">
+    <span class="usage-label">Usage</span>
+    <div class="usage-bar"><div class="usage-fill" id="usage-fill" style="width:0%"></div></div>
+    <span class="usage-count" id="usage-count">—</span>
+  </div>
+  <span class="plan-badge" id="plan-badge">Trial</span>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- KPI STRIP -->
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="kpi-label">Companies Identified</div>
+      <div class="kpi-val" id="kpi-total">—</div>
+      <div class="kpi-sub">this billing period</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">ICP Matches</div>
+      <div class="kpi-val" id="kpi-icp" style="color:var(--icp-s)">—</div>
+      <div class="kpi-sub">S / A / B / C tier</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Total Sessions</div>
+      <div class="kpi-val" id="kpi-sessions">—</div>
+      <div class="kpi-sub">across all companies</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Identifications Used</div>
+      <div class="kpi-val" id="kpi-usage">—</div>
+      <div class="kpi-sub" id="kpi-usage-sub">trial plan</div>
+    </div>
+  </div>
+
+  <!-- COMPANY TABLE -->
+  <div class="section-head">
+    <span class="section-title">Identified Companies</span>
+    <span class="section-count" id="tbl-count">—</span>
+    <div class="filter-tabs">
+      <button class="tab active" onclick="filterTable('all',this)">All</button>
+      <button class="tab" onclick="filterTable('icp',this)">ICP Match</button>
+      <button class="tab" onclick="filterTable('new',this)">New</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <table class="tbl" id="company-table">
+      <thead>
+        <tr>
+          <th style="width:32px"></th>
+          <th style="width:36px">ICP</th>
+          <th>Company</th>
+          <th>Industry</th>
+          <th>Size</th>
+          <th>Revenue</th>
+          <th>Sessions</th>
+          <th>Last Seen</th>
+          <th>Segments</th>
+          <th style="width:36px"></th>
+        </tr>
+      </thead>
+      <tbody id="company-tbody">
+        <tr><td colspan="10" style="padding:40px;text-align:center;color:var(--muted)">
+          <div class="skeleton" style="height:14px;width:200px;margin:0 auto 8px"></div>
+          <div class="skeleton" style="height:14px;width:160px;margin:0 auto"></div>
+        </td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+const API = 'https://sgaaeuqsmuydftxbftpw.supabase.co/functions/v1/snitcher-intel'
+let allOrgs = []
+let expandedOrg = null
+
+// ── ICP helpers ───────────────────────────────────────────
+const ICP_LABEL = { S:'Star', A:'Strong', B:'Good', C:'Weak', D:'Low' }
+const ICP_ORDER = { S:0, A:1, B:2, C:3, D:4, null:5 }
+
+function icpBadge(tier) {
+  const t = tier || 'D'
+  return `<span class="icp icp-${t}" title="ICP ${t} — ${ICP_LABEL[t] || t}">${t}</span>`
+}
+
+function fmtRevenue(n) {
+  if (!n) return '—'
+  if (n >= 1e9) return `$${(n/1e9).toFixed(1)}B`
+  if (n >= 1e6) return `$${(n/1e6).toFixed(1)}M`
+  return `$${(n/1e3).toFixed(0)}K`
+}
+
+function fmtDate(iso) {
+  if (!iso) return '—'
+  const d = new Date(iso)
+  const diff = (Date.now() - d) / 1000
+  if (diff < 3600)   return `${Math.floor(diff/60)}m ago`
+  if (diff < 86400)  return `${Math.floor(diff/3600)}h ago`
+  if (diff < 604800) return `${Math.floor(diff/86400)}d ago`
+  return d.toLocaleDateString('en-GB', { day:'2-digit', month:'short' })
+}
+
+function logoEl(org) {
+  const initials = (org.name || '?').slice(0,2).toUpperCase()
+  return `<div class="co-logo-placeholder">${initials}</div>`
+}
+
+// ── Build table row ───────────────────────────────────────
+function buildRow(org, idx) {
+  const segs = (org.segments || []).map(s =>
+    `<span class="seg-pill">${s.emoji || ''} ${s.name}</span>`
+  ).join(' ')
+
+  return `
+  <tr class="company-row" data-uuid="${org.uuid}" data-icp="${org.icp_tier||'D'}" data-new="${org.is_new||false}" onclick="toggleDetail('${org.uuid}')">
+    <td>${logoEl(org)}</td>
+    <td>${icpBadge(org.icp_tier)}</td>
+    <td>
+      <div class="co-cell">
+        <div>
+          <div class="co-name">${org.name || '—'}</div>
+          <div class="co-domain">${org.website || ''}</div>
+        </div>
+      </div>
+    </td>
+    <td style="font-size:12.5px;color:var(--ink2)">${org.industry || '—'}</td>
+    <td><span class="pill">${org.size || '—'}</span></td>
+    <td class="stat-num" style="font-size:13px">${fmtRevenue(org.annual_revenue)}</td>
+    <td>
+      <div class="stat-num">${org.total_sessions || 0}</div>
+      <div class="stat-sub">visits</div>
+    </td>
+    <td style="font-size:12px;color:var(--muted)">${fmtDate(org.last_seen)}</td>
+    <td>${segs || '<span style="color:var(--muted);font-size:12px">—</span>'}</td>
+    <td>
+      <button class="expand-btn" id="btn-${org.uuid}">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </button>
+    </td>
+  </tr>
+  <tr class="detail-row hidden" id="detail-${org.uuid}">
+    <td colspan="10">
+      <div class="detail-panel">
+        <div style="color:var(--muted);font-size:12.5px;padding:8px 0">Loading company detail…</div>
+      </div>
+    </td>
+  </tr>`
+}
+
+// ── Toggle detail panel ───────────────────────────────────
+async function toggleDetail(uuid) {
+  const row   = document.getElementById(`detail-${uuid}`)
+  const btn   = document.getElementById(`btn-${uuid}`)
+  const isOpen = !row.classList.contains('hidden')
+
+  // Close all
+  document.querySelectorAll('.detail-row').forEach(r => r.classList.add('hidden'))
+  document.querySelectorAll('.expand-btn').forEach(b => b.classList.remove('open'))
+
+  if (isOpen) return // was open, now closed
+
+  row.classList.remove('hidden')
+  btn.classList.add('open')
+
+  // Already loaded?
+  if (row._loaded) return
+
+  try {
+    const res  = await fetch(`${API}?org=${uuid}`)
+    const data = await res.json()
+    row.querySelector('td').innerHTML = `<div class="detail-panel">${buildDetailPanel(data)}</div>`
+    row._loaded = true
+  } catch(e) {
+    row.querySelector('td').innerHTML = `<div class="detail-panel" style="color:var(--red)">Failed to load detail: ${e}</div>`
+  }
+}
+
+// ── Detail panel renderer ─────────────────────────────────
+function buildDetailPanel(data) {
+  const d = data.detail || {}
+  const acts = data.activities?.activities || []
+
+  // Tech stack grouped by category
+  const techs = d.technologies || []
+  const bycat = {}
+  const CAT_ORDER = ['Hosting','Cloud Services','Frameworks and Programming Languages','CMS',
+    'E-commerce Platforms','Analytics and Tracking','Marketing Automation',
+    'Database','Security','CSS and JavaScript Libraries','Other']
+  techs.forEach(t => {
+    const c = t.category || 'Other'
+    if (!bycat[c]) bycat[c] = []
+    bycat[c].push(t.name)
+  })
+
+  const catOrder = [...CAT_ORDER, ...Object.keys(bycat).filter(c => !CAT_ORDER.includes(c))]
+  const techHTML = catOrder.filter(c => bycat[c]?.length).slice(0,8).map(cat =>
+    `<div>
+      <div class="tech-cat-name">${cat} (${bycat[cat].length})</div>
+      <div class="tech-pills">${bycat[cat].slice(0,12).map(n => `<span class="tech-pill">${n}</span>`).join('')}${bycat[cat].length>12?`<span class="tech-pill" style="color:var(--muted)">+${bycat[cat].length-12} more</span>`:''}</div>
+    </div>`
+  ).join('')
+
+  // Socials
+  const profiles = (d.profiles || []).filter(p => p.url || p.handle)
+  const socialHTML = profiles.map(p =>
+    `<a href="${p.url || `https://${p.name}.com/${p.handle}`}" target="_blank" rel="noopener"
+        style="font-size:12px;color:var(--icp-b);font-weight:600;text-transform:capitalize">${p.name}</a>`
+  ).join(' · ')
+
+  // Sessions
+  const sessHTML = acts.slice(0,5).map(s => {
+    const pages = (s.events||[]).map(e =>
+      `<div class="session-page">${e.url.replace(/^https?:\/\/[^/]+/,'') || '/'}</div>`
+    ).join('')
+    return `<div class="session-item">
+      <div class="session-top">
+        <span class="session-time">${fmtDate(s.occurred_at)}</span>
+        <span class="session-loc">${s.location?.city||''} ${s.location?.country_code||''}</span>
+        <span class="session-device">${s.device_type||'?'} · ${s.browser||'?'}</span>
+      </div>
+      <div class="session-pages">${pages}</div>
+    </div>`
+  }).join('') || '<div style="color:var(--muted);font-size:12px">No sessions data</div>'
+
+  return `
+    <div class="detail-grid">
+      <!-- Company info -->
+      <div>
+        <div class="detail-block-title">Company Info</div>
+        <div class="detail-row"><span class="detail-key">Founded</span><span class="detail-val">${d.founded || '—'}</span></div>
+        <div class="detail-row"><span class="detail-key">Revenue</span><span class="detail-val">${fmtRevenue(d.annual_revenue)}</span></div>
+        <div class="detail-row"><span class="detail-key">Size</span><span class="detail-val">${d.size || '—'}</span></div>
+        <div class="detail-row"><span class="detail-key">Industry</span><span class="detail-val">${d.industry || '—'}</span></div>
+        <div class="detail-row"><span class="detail-key">Phone</span><span class="detail-val">${d.phone || '—'}</span></div>
+        <div class="detail-row"><span class="detail-key">Location</span><span class="detail-val">${d.address?.city||''} ${d.address?.country_code ? ', '+d.address.country_code : ''}</span></div>
+        <div class="detail-row"><span class="detail-key">Socials</span><span class="detail-val">${socialHTML || '—'}</span></div>
+        <div class="detail-row"><span class="detail-key">Tech count</span><span class="detail-val">${techs.length} technologies</span></div>
+        ${d.description ? `<div style="margin-top:12px;font-size:12px;color:var(--ink2);line-height:1.6;border-top:1px solid var(--bdr);padding-top:10px">${d.description.slice(0,300)}${d.description.length>300?'…':''}</div>` : ''}
+      </div>
+      <!-- Recent sessions -->
+      <div>
+        <div class="detail-block-title">Recent Sessions (${acts.length})</div>
+        <div class="session-list">${sessHTML}</div>
+      </div>
+      <!-- Tech stack -->
+      <div>
+        <div class="detail-block-title">Tech Stack — ${techs.length} technologies detected</div>
+        <div class="tech-cats">${techHTML}</div>
+      </div>
+    </div>`
+}
+
+// ── Filter tabs ───────────────────────────────────────────
+function filterTable(mode, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'))
+  el.classList.add('active')
+  const rows = document.querySelectorAll('.company-row')
+  rows.forEach(row => {
+    const icp  = row.dataset.icp
+    const isNew = row.dataset.new === 'true'
+    let show = true
+    if (mode === 'icp')  show = ['S','A','B','C'].includes(icp)
+    if (mode === 'new')  show = isNew
+    row.style.display = show ? '' : 'none'
+    const drow = document.getElementById(`detail-${row.dataset.uuid}`)
+    if (drow) drow.style.display = show ? '' : 'none'
+  })
+}
+
+// ── Load data ─────────────────────────────────────────────
+async function load() {
+  try {
+    const res  = await fetch(API)
+    const data = await res.json()
+
+    // Nav + usage
+    const wsName = data.workspace?.name || data.workspace?.url || 'Workspace'
+    document.getElementById('ws-name').textContent = wsName
+    const used  = data.current_usage ?? 30
+    const limit = data.usage_limit
+    document.getElementById('usage-count').textContent = limit ? `${used} / ${limit}` : `${used} used`
+    document.getElementById('usage-fill').style.width = limit ? `${Math.min(100,(used/limit)*100)}%` : '20%'
+    const status = data.status || 'active'
+    document.getElementById('plan-badge').textContent = status.replace('_',' ')
+
+    // KPI
+    allOrgs = data.organisations || []
+    const icpMatches = allOrgs.filter(o => ['S','A','B','C'].includes(o.icp_tier)).length
+    const totalSess  = allOrgs.reduce((s,o) => s + (o.total_sessions||0), 0)
+    document.getElementById('kpi-total').textContent    = allOrgs.length
+    document.getElementById('kpi-icp').textContent      = icpMatches
+    document.getElementById('kpi-sessions').textContent = totalSess
+    document.getElementById('kpi-usage').textContent    = used
+    document.getElementById('kpi-usage-sub').textContent = status.replace(/_/g,' ')
+    document.getElementById('tbl-count').textContent    = allOrgs.length
+
+    // Sort by ICP tier then last seen
+    allOrgs.sort((a,b) => (ICP_ORDER[a.icp_tier]??5) - (ICP_ORDER[b.icp_tier]??5)
+                         || new Date(b.last_seen) - new Date(a.last_seen))
+
+    // Render rows
+    document.getElementById('company-tbody').innerHTML =
+      allOrgs.length
+        ? allOrgs.map((o,i) => buildRow(o,i)).join('')
+        : '<tr><td colspan="10" style="padding:40px;text-align:center;color:var(--muted)">No companies identified yet</td></tr>'
+
+  } catch(e) {
+    document.getElementById('company-tbody').innerHTML =
+      `<tr><td colspan="10" style="padding:40px;text-align:center;color:var(--red)">
+        Failed to load: ${e.message}<br><small style="color:var(--muted)">Check that the edge function is deployed and SNITCHER_API_KEY is set</small>
+      </td></tr>`
+  }
+}
+
+load()
+</script>
+</body>
+</html>
