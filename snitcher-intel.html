@@ -238,12 +238,13 @@ let allOrgs = []
 let expandedOrg = null
 
 // ── ICP helpers ───────────────────────────────────────────
-const ICP_LABEL = { S:'Star', A:'Strong', B:'Good', C:'Weak', D:'Low' }
-const ICP_ORDER = { S:0, A:1, B:2, C:3, D:4, null:5 }
+const ICP_LABEL = { 'A+':'Top Tier', S:'Star', A:'Strong', B:'Good', C:'Weak', D:'Low' }
+const ICP_ORDER = { 'A+':0, S:1, A:2, B:3, C:4, D:5 }
 
 function icpBadge(tier) {
-  const t = tier || 'D'
-  return `<span class="icp icp-${t}" title="ICP ${t} — ${ICP_LABEL[t] || t}">${t}</span>`
+  const t   = tier || 'D'
+  const cls = t === 'A+' ? 'S' : t   // A+ renders purple like S
+  return `<span class="icp icp-${cls}" title="ICP ${t} — ${ICP_LABEL[t]||t}">${t}</span>`
 }
 
 function fmtRevenue(n) {
@@ -264,8 +265,9 @@ function fmtDate(iso) {
 }
 
 function logoEl(org) {
-  const initials = (org.name || '?').slice(0,2).toUpperCase()
-  return `<div class="co-logo-placeholder">${initials}</div>`
+  if (org.logo) return `<img class="co-logo" src="${org.logo}" alt="${org.name}" onerror="this.style.display='none';this.nextSibling.style.display='flex'">`
+              + `<div class="co-logo-placeholder" style="display:none">${(org.name||'?').slice(0,2).toUpperCase()}</div>`
+  return `<div class="co-logo-placeholder">${(org.name||'?').slice(0,2).toUpperCase()}</div>`
 }
 
 // ── Build table row ───────────────────────────────────────
@@ -342,8 +344,11 @@ async function toggleDetail(uuid) {
 
 // ── Detail panel renderer ─────────────────────────────────
 function buildDetailPanel(data) {
-  const d = data.detail || {}
-  const acts = data.activities?.activities || []
+  const d    = data.detail || {}
+  // activities endpoint doesn't exist in v1 — use pages_visited + visitor_locations from detail
+  const pages   = d.pages_visited || []
+  const locs    = d.visitor_locations || []
+  const refs    = d.referrers || []
 
   // Tech stack grouped by category
   const techs = d.technologies || []
@@ -372,20 +377,19 @@ function buildDetailPanel(data) {
         style="font-size:12px;color:var(--icp-b);font-weight:600;text-transform:capitalize">${p.name}</a>`
   ).join(' · ')
 
-  // Sessions
-  const sessHTML = acts.slice(0,5).map(s => {
-    const pages = (s.events||[]).map(e =>
-      `<div class="session-page">${e.url.replace(/^https?:\/\/[^/]+/,'') || '/'}</div>`
-    ).join('')
-    return `<div class="session-item">
-      <div class="session-top">
-        <span class="session-time">${fmtDate(s.occurred_at)}</span>
-        <span class="session-loc">${s.location?.city||''} ${s.location?.country_code||''}</span>
-        <span class="session-device">${s.device_type||'?'} · ${s.browser||'?'}</span>
-      </div>
-      <div class="session-pages">${pages}</div>
-    </div>`
-  }).join('') || '<div style="color:var(--muted);font-size:12px">No sessions data</div>'
+  // Pages visited list
+  const pagesHTML = pages.length
+    ? `<div class="session-item">
+        <div class="session-pages">${pages.slice(0,10).map(u =>
+          `<div class="session-page">${u.replace(/^https?:\/\/[^/]+/,'') || '/'}</div>`
+        ).join('')}${pages.length>10?`<div class="session-page" style="color:var(--muted)">+${pages.length-10} more</div>`:''}</div>
+       </div>
+       ${locs.length ? `<div style="margin-top:8px;font-size:11.5px;color:var(--muted)">📍 ${locs.join(' · ')}</div>` : ''}
+       ${refs.length ? `<div style="margin-top:6px;font-size:11px;color:var(--muted)">Referrers: ${refs.slice(0,3).map(r=>r.replace(/^https?:\/\//,'')).join(', ')}</div>` : ''}`
+    : '<div style="color:var(--muted);font-size:12px">No pages data</div>'
+
+  const timeOnSite = d.total_time_on_site || '—'
+  const pageviews  = d.total_pageviews || 0
 
   return `
     <div class="detail-grid">
@@ -398,18 +402,20 @@ function buildDetailPanel(data) {
         <div class="detail-row"><span class="detail-key">Industry</span><span class="detail-val">${d.industry || '—'}</span></div>
         <div class="detail-row"><span class="detail-key">Phone</span><span class="detail-val">${d.phone || '—'}</span></div>
         <div class="detail-row"><span class="detail-key">Location</span><span class="detail-val">${d.address?.city||''} ${d.address?.country_code ? ', '+d.address.country_code : ''}</span></div>
+        <div class="detail-row"><span class="detail-key">Pageviews</span><span class="detail-val">${pageviews}</span></div>
+        <div class="detail-row"><span class="detail-key">Time on site</span><span class="detail-val">${timeOnSite}</span></div>
         <div class="detail-row"><span class="detail-key">Socials</span><span class="detail-val">${socialHTML || '—'}</span></div>
-        <div class="detail-row"><span class="detail-key">Tech count</span><span class="detail-val">${techs.length} technologies</span></div>
-        ${d.description ? `<div style="margin-top:12px;font-size:12px;color:var(--ink2);line-height:1.6;border-top:1px solid var(--bdr);padding-top:10px">${d.description.slice(0,300)}${d.description.length>300?'…':''}</div>` : ''}
+        <div class="detail-row"><span class="detail-key">Tech stack</span><span class="detail-val">${techs.length} technologies</span></div>
+        ${d.description ? `<div style="margin-top:12px;font-size:12px;color:var(--ink2);line-height:1.6;border-top:1px solid var(--bdr);padding-top:10px">${d.description.slice(0,280)}${d.description.length>280?'…':''}</div>` : ''}
       </div>
-      <!-- Recent sessions -->
+      <!-- Pages visited -->
       <div>
-        <div class="detail-block-title">Recent Sessions (${acts.length})</div>
-        <div class="session-list">${sessHTML}</div>
+        <div class="detail-block-title">Pages Visited (${pages.length})</div>
+        <div class="session-list">${pagesHTML}</div>
       </div>
       <!-- Tech stack -->
       <div>
-        <div class="detail-block-title">Tech Stack — ${techs.length} technologies detected</div>
+        <div class="detail-block-title">Tech Stack — ${techs.length} detected</div>
         <div class="tech-cats">${techHTML}</div>
       </div>
     </div>`
@@ -421,11 +427,11 @@ function filterTable(mode, el) {
   el.classList.add('active')
   const rows = document.querySelectorAll('.company-row')
   rows.forEach(row => {
-    const icp  = row.dataset.icp
+    const icp   = row.dataset.icp
     const isNew = row.dataset.new === 'true'
     let show = true
-    if (mode === 'icp')  show = ['S','A','B','C'].includes(icp)
-    if (mode === 'new')  show = isNew
+    if (mode === 'icp') show = ['A+','S','A','B','C'].includes(icp)
+    if (mode === 'new') show = isNew
     row.style.display = show ? '' : 'none'
     const drow = document.getElementById(`detail-${row.dataset.uuid}`)
     if (drow) drow.style.display = show ? '' : 'none'
@@ -438,19 +444,23 @@ async function load() {
     const res  = await fetch(API)
     const data = await res.json()
 
-    // Nav + usage
-    const wsName = data.workspace?.name || data.workspace?.url || 'Workspace'
+    // API wraps workspace in { success, data }
+    const ws     = data.workspace?.data ?? data.workspace ?? {}
+    const wsName = ws.name || ws.url || 'Workspace'
     document.getElementById('ws-name').textContent = wsName
-    const used  = data.current_usage ?? 30
-    const limit = data.usage_limit
-    document.getElementById('usage-count').textContent = limit ? `${used} / ${limit}` : `${used} used`
-    document.getElementById('usage-fill').style.width = limit ? `${Math.min(100,(used/limit)*100)}%` : '20%'
-    const status = data.status || 'active'
-    document.getElementById('plan-badge').textContent = status.replace('_',' ')
 
-    // KPI
-    allOrgs = data.organisations || []
-    const icpMatches = allOrgs.filter(o => ['S','A','B','C'].includes(o.icp_tier)).length
+    const used   = ws.current_usage ?? data.current_usage ?? 0
+    const limit  = ws.usage_limit ?? data.usage_limit ?? null
+    document.getElementById('usage-count').textContent = limit ? `${used} / ${limit}` : `${used} used`
+    document.getElementById('usage-fill').style.width  = limit ? `${Math.min(100,(used/limit)*100)}%` : `${Math.min(100,used)}%`
+    const status = ws.status ?? data.status ?? 'active'
+    document.getElementById('plan-badge').textContent  = status.replace(/_/g,' ')
+
+    // API wraps orgs in { success, data: [...] }
+    allOrgs = data.organisations?.data ?? data.organisations ?? []
+    if (!Array.isArray(allOrgs)) allOrgs = Object.values(allOrgs)
+
+    const icpMatches = allOrgs.filter(o => ['A+','S','A','B','C'].includes(o.icp_tier)).length
     const totalSess  = allOrgs.reduce((s,o) => s + (o.total_sessions||0), 0)
     document.getElementById('kpi-total').textContent    = allOrgs.length
     document.getElementById('kpi-icp').textContent      = icpMatches
@@ -460,10 +470,9 @@ async function load() {
     document.getElementById('tbl-count').textContent    = allOrgs.length
 
     // Sort by ICP tier then last seen
-    allOrgs.sort((a,b) => (ICP_ORDER[a.icp_tier]??5) - (ICP_ORDER[b.icp_tier]??5)
+    allOrgs.sort((a,b) => (ICP_ORDER[a.icp_tier]??9) - (ICP_ORDER[b.icp_tier]??9)
                          || new Date(b.last_seen) - new Date(a.last_seen))
 
-    // Render rows
     document.getElementById('company-tbody').innerHTML =
       allOrgs.length
         ? allOrgs.map((o,i) => buildRow(o,i)).join('')
@@ -472,7 +481,7 @@ async function load() {
   } catch(e) {
     document.getElementById('company-tbody').innerHTML =
       `<tr><td colspan="10" style="padding:40px;text-align:center;color:var(--red)">
-        Failed to load: ${e.message}<br><small style="color:var(--muted)">Check that the edge function is deployed and SNITCHER_API_KEY is set</small>
+        Failed to load: ${e.message}<br><small style="color:var(--muted)">Check edge function is deployed and SNITCHER_API_KEY is set</small>
       </td></tr>`
   }
 }
